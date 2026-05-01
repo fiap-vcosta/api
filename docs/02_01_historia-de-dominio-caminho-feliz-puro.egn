@@ -1,0 +1,655 @@
+{
+  "domain": {
+    "name": "default",
+    "actors": {
+      "Person": "<svg viewBox=\"0 0 24 26\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z\"/><path d=\"M0 0h24v24H0z\" fill=\"none\"/></svg>"
+    },
+    "workObjects": {
+      "Car": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z\"/><circle cx=\"7.5\" cy=\"14.5\" r=\"1.5\"/><circle cx=\"16.5\" cy=\"14.5\" r=\"1.5\"/></svg>",
+      "Document": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z\"/></svg>",
+      "Dollar": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z\"/></svg>",
+      "Receipt": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 28\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5zM19 19.09H5V4.91h14v14.18zM6 15h12v2H6zm0-4h12v2H6zm0-4h12v2H6z\"/></svg>",
+      "Call": "<svg viewBox=\"0 0 24 26\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"none\" d=\"M0,0h24v24H0V0z\"/><path d=\"M6.54,5C6.6,5.89,6.75,6.76,6.99,7.59l-1.2,1.2C5.38,7.59,5.12,6.32,5.03,5H6.54 M16.4,17.02c0.85,0.24,1.72,0.39,2.6,0.45 v1.49c-1.32-0.09-2.59-0.35-3.8-0.75L16.4,17.02 M7.5,3H4C3.45,3,3,3.45,3,4c0,9.39,7.61,17,17,17c0.55,0,1-0.45,1-1v-3.49\tc0-0.55-0.45-1-1-1c-1.24,0-2.45-0.2-3.57-0.57c-0.1-0.04-0.21-0.05-0.31-0.05c-0.26,0-0.51,0.1-0.71,0.29l-2.2,2.2 c-2.83-1.45-5.15-3.76-6.59-6.59l2.2-2.2C9.1,8.31,9.18,7.92,9.07,7.57C8.7,6.45,8.5,5.25,8.5,4C8.5,3.45,8.05,3,7.5,3L7.5,3z\"/></svg>"
+    }
+  },
+  "dst": [
+    {
+      "type": "domainStory:activity",
+      "name": "Aprova",
+      "id": "connection_0009",
+      "pickedColor": "black",
+      "number": 5,
+      "waypoints": [
+        {
+          "original": {
+            "x": 60,
+            "y": -30
+          },
+          "x": 60,
+          "y": 17
+        },
+        {
+          "original": {
+            "x": 60,
+            "y": 154
+          },
+          "x": 60,
+          "y": 116
+        }
+      ],
+      "source": "shape_6453",
+      "target": "shape_7090",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Busca",
+      "id": "connection_0096",
+      "pickedColor": "black",
+      "number": 8,
+      "waypoints": [
+        {
+          "original": {
+            "x": 60,
+            "y": -30
+          },
+          "x": 22,
+          "y": -30
+        },
+        {
+          "original": {
+            "x": -157,
+            "y": -30
+          },
+          "x": -114,
+          "y": -30
+        }
+      ],
+      "source": "shape_6453",
+      "target": "shape_2446",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Para",
+      "id": "connection_0694",
+      "pickedColor": "#000000",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 247,
+            "y": -30
+          },
+          "x": 209,
+          "y": -30
+        },
+        {
+          "original": {
+            "x": 60,
+            "y": -30
+          },
+          "x": 103,
+          "y": -30
+        }
+      ],
+      "source": "shape_4825",
+      "target": "shape_6453",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "E entrega ao",
+      "id": "connection_1657",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 758,
+            "y": -288
+          },
+          "x": 758,
+          "y": -241
+        },
+        {
+          "original": {
+            "x": 758,
+            "y": -91
+          },
+          "x": 758,
+          "y": -129
+        }
+      ],
+      "source": "shape_4708",
+      "target": "shape_3180",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_4043",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 624,
+            "y": -195
+          },
+          "x": 667,
+          "y": -195
+        },
+        {
+          "x": 708,
+          "y": -195
+        },
+        {
+          "original": {
+            "x": 758,
+            "y": -91
+          },
+          "x": 740,
+          "y": -129
+        }
+      ],
+      "source": "shape_7692",
+      "target": "shape_3180",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Efetua",
+      "id": "connection_4189",
+      "pickedColor": "black",
+      "number": 9,
+      "waypoints": [
+        {
+          "original": {
+            "x": 60,
+            "y": -30
+          },
+          "x": 22,
+          "y": -62
+        },
+        {
+          "x": -68,
+          "y": -137
+        },
+        {
+          "original": {
+            "x": -11,
+            "y": -275
+          },
+          "x": -25,
+          "y": -241
+        }
+      ],
+      "source": "shape_6453",
+      "target": "shape_8693",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Executa",
+      "id": "connection_5454",
+      "pickedColor": "black",
+      "number": 7,
+      "waypoints": [
+        {
+          "original": {
+            "x": 758,
+            "y": -91
+          },
+          "x": 801,
+          "y": -91
+        },
+        {
+          "original": {
+            "x": 957,
+            "y": -91
+          },
+          "x": 919,
+          "y": -91
+        }
+      ],
+      "source": "shape_3180",
+      "target": "shape_5802",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "E entrega ao",
+      "id": "connection_5491",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 758,
+            "y": 57
+          },
+          "x": 720,
+          "y": 57
+        },
+        {
+          "x": 611,
+          "y": 57
+        },
+        {
+          "original": {
+            "x": 432,
+            "y": -195
+          },
+          "x": 444,
+          "y": -178
+        }
+      ],
+      "source": "shape_5833",
+      "target": "shape_8485",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Entrega",
+      "id": "connection_5751",
+      "pickedColor": "black",
+      "number": 6,
+      "waypoints": [
+        {
+          "original": {
+            "x": 409,
+            "y": -195
+          },
+          "x": 452,
+          "y": -195
+        },
+        {
+          "original": {
+            "x": 624,
+            "y": -195
+          },
+          "x": 586,
+          "y": -195
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_7692",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Preenche",
+      "id": "connection_6327",
+      "pickedColor": "black",
+      "number": 3,
+      "waypoints": [
+        {
+          "original": {
+            "x": 758,
+            "y": -91
+          },
+          "x": 758,
+          "y": -44
+        },
+        {
+          "original": {
+            "x": 758,
+            "y": 57
+          },
+          "x": 758,
+          "y": 19
+        }
+      ],
+      "source": "shape_3180",
+      "target": "shape_5833",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Faz",
+      "id": "connection_6588",
+      "pickedColor": "black",
+      "number": 4,
+      "waypoints": [
+        {
+          "original": {
+            "x": 409,
+            "y": -195
+          },
+          "x": 371,
+          "y": -156
+        },
+        {
+          "original": {
+            "x": 247,
+            "y": -30
+          },
+          "x": 268,
+          "y": -51
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_4825",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:connection",
+      "name": "",
+      "id": "connection_7229",
+      "waypoints": [
+        {
+          "original": {
+            "x": 247,
+            "y": -30
+          },
+          "x": 286,
+          "y": -17
+        },
+        {
+          "original": {
+            "x": 354,
+            "y": 5
+          },
+          "x": 308,
+          "y": -10
+        }
+      ],
+      "source": "shape_4825",
+      "target": "shape_4896"
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Entrega",
+      "id": "connection_8396",
+      "pickedColor": "black",
+      "number": 1,
+      "waypoints": [
+        {
+          "original": {
+            "x": 60,
+            "y": -30
+          },
+          "x": 60,
+          "y": -68
+        },
+        {
+          "original": {
+            "x": 60,
+            "y": -195
+          },
+          "x": 60,
+          "y": -148
+        }
+      ],
+      "source": "shape_6453",
+      "target": "shape_0291",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Cria",
+      "id": "connection_8679",
+      "pickedColor": "black",
+      "number": 2,
+      "waypoints": [
+        {
+          "original": {
+            "x": 409,
+            "y": -195
+          },
+          "x": 427,
+          "y": -220
+        },
+        {
+          "x": 477,
+          "y": -288
+        },
+        {
+          "original": {
+            "x": 758,
+            "y": -288
+          },
+          "x": 720,
+          "y": -288
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_4708",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:connection",
+      "name": "",
+      "id": "connection_8749",
+      "waypoints": [
+        {
+          "original": {
+            "x": 758,
+            "y": 57
+          },
+          "x": 796,
+          "y": 71
+        },
+        {
+          "original": {
+            "x": 866,
+            "y": 96
+          },
+          "x": 816,
+          "y": 78
+        }
+      ],
+      "source": "shape_5833",
+      "target": "shape_7667"
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_9238",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": -7,
+            "y": -288
+          },
+          "x": 36,
+          "y": -288
+        },
+        {
+          "x": 412,
+          "y": -288
+        },
+        {
+          "original": {
+            "x": 412,
+            "y": -194
+          },
+          "x": 412,
+          "y": -233
+        }
+      ],
+      "source": "shape_8693",
+      "target": "shape_8485",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "No",
+      "id": "connection_9343",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 957,
+            "y": -91
+          },
+          "x": 1000,
+          "y": -91
+        },
+        {
+          "original": {
+            "x": 1114,
+            "y": -91
+          },
+          "x": 1076,
+          "y": -91
+        }
+      ],
+      "source": "shape_5802",
+      "target": "shape_7783",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_9987",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 60,
+            "y": -195
+          },
+          "x": 103,
+          "y": -195
+        },
+        {
+          "original": {
+            "x": 409,
+            "y": -195
+          },
+          "x": 371,
+          "y": -195
+        }
+      ],
+      "source": "shape_0291",
+      "target": "shape_8485",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:workObjectCar",
+      "name": "Carro",
+      "id": "shape_0291",
+      "x": 22,
+      "y": -233
+    },
+    {
+      "type": "domainStory:workObjectCar",
+      "name": "Carro Consertado",
+      "id": "shape_2446",
+      "x": -195,
+      "y": -68
+    },
+    {
+      "type": "domainStory:actorPerson",
+      "name": "Mecânico",
+      "id": "shape_3180",
+      "x": 720,
+      "y": -129
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço",
+      "id": "shape_4708",
+      "x": 720,
+      "y": -326
+    },
+    {
+      "type": "domainStory:workObjectCall",
+      "name": "Ligação",
+      "id": "shape_4825",
+      "x": 209,
+      "y": -68
+    },
+    {
+      "type": "domainStory:textAnnotation",
+      "name": "",
+      "id": "shape_4896",
+      "x": 304,
+      "y": -10,
+      "text": "Pedindo aprovação da Ordem de Serviço",
+      "number": 67,
+      "height": 67,
+      "width": 128
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço Aprovada",
+      "id": "shape_5802",
+      "x": 919,
+      "y": -129
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço",
+      "id": "shape_5833",
+      "x": 720,
+      "y": 19
+    },
+    {
+      "type": "domainStory:actorPerson",
+      "name": "Cliente",
+      "id": "shape_6453",
+      "x": 22,
+      "y": -68
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço",
+      "id": "shape_7090",
+      "x": 22,
+      "y": 116
+    },
+    {
+      "type": "domainStory:textAnnotation",
+      "name": "",
+      "id": "shape_7667",
+      "x": 816,
+      "y": 67,
+      "text": "Contendo serviços e itens necessários para o conserto",
+      "number": 41,
+      "height": 41,
+      "width": 183
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço Aprovada",
+      "id": "shape_7692",
+      "x": 586,
+      "y": -233
+    },
+    {
+      "type": "domainStory:workObjectCar",
+      "name": "Carro",
+      "id": "shape_7783",
+      "x": 1076,
+      "y": -129
+    },
+    {
+      "type": "domainStory:actorPerson",
+      "name": "Atendente",
+      "id": "shape_8485",
+      "x": 371,
+      "y": -233,
+      "pickedColor": "#000000"
+    },
+    {
+      "type": "domainStory:workObjectDollar",
+      "name": "Pagamento",
+      "id": "shape_8693",
+      "x": -45,
+      "y": -326
+    },
+    {
+      "info": "Descreve o fluxo ideal e completo, iniciando na chegada do cliente à oficina, passando pela anotação manual do diagnóstico na prancheta, aprovação do orçamento via telefone e a execução do reparo, finalizando com a entrega e o pagamento do veículo."
+    },
+    {
+      "version": "3.1.0"
+    }
+  ]
+}

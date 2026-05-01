@@ -15,7 +15,7 @@
 *   **Em diagnóstico:** O veículo está sob avaliação do mecânico, que está ativamente adicionando Itens de Serviço e Itens de Estoque à OS.
 *   **Aguardando aprovação:** O diagnóstico foi concluído, os valores foram totalizados e a OS aguarda a resposta formal do cliente.
 *   **Em revisão:** O cliente rejeitou um ou mais serviços, e a oficina está avaliando o cenário ou preparando uma contra-proposta.
-*   **Em execução:** Pelo menos um Item de Serviço da OS está sendo executado ativamente pelo mecânico no momento.
+*   **Em execução:** Pelo menos um Item de Serviço da OS está aguardando peça ou sendo executado ativamente pelo mecânico no momento.
 *   **Finalizada:** Todos os Itens de Serviço (que não foram descartados) estão com o status *Concluído*. O veículo aguarda a avaliação final e retirada pelo cliente.
 *   **Cancelada:** A OS foi abortada antes ou durante o orçamento. Estado final e irreversível.
 *   **Entregue:** O cliente avaliou os serviços, aceitou o veículo e o atendimento foi encerrado. Estado final e irreversível.

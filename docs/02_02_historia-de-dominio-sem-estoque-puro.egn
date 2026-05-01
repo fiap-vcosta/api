@@ -1,0 +1,511 @@
+{
+  "domain": {
+    "name": "default",
+    "actors": {
+      "Person": "<svg viewBox=\"0 0 24 26\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z\"/><path d=\"M0 0h24v24H0z\" fill=\"none\"/></svg>",
+      "Store": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M18.36 9l.6 3H5.04l.6-3h12.72M20 4H4v2h16V4zm0 3H4l-1 5v2h1v6h10v-6h4v6h2v-6h1v-2l-1-5zM6 18v-4h6v4H6z\"/></svg>"
+    },
+    "workObjects": {
+      "Car": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z\"/><circle cx=\"7.5\" cy=\"14.5\" r=\"1.5\"/><circle cx=\"16.5\" cy=\"14.5\" r=\"1.5\"/></svg>",
+      "Document": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z\"/></svg>",
+      "Dollar": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 26\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z\"/></svg>",
+      "Receipt": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 28\"><path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5zM19 19.09H5V4.91h14v14.18zM6 15h12v2H6zm0-4h12v2H6zm0-4h12v2H6z\"/></svg>",
+      "Call": "<svg viewBox=\"0 0 24 26\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"none\" d=\"M0,0h24v24H0V0z\"/><path d=\"M6.54,5C6.6,5.89,6.75,6.76,6.99,7.59l-1.2,1.2C5.38,7.59,5.12,6.32,5.03,5H6.54 M16.4,17.02c0.85,0.24,1.72,0.39,2.6,0.45 v1.49c-1.32-0.09-2.59-0.35-3.8-0.75L16.4,17.02 M7.5,3H4C3.45,3,3,3.45,3,4c0,9.39,7.61,17,17,17c0.55,0,1-0.45,1-1v-3.49\tc0-0.55-0.45-1-1-1c-1.24,0-2.45-0.2-3.57-0.57c-0.1-0.04-0.21-0.05-0.31-0.05c-0.26,0-0.51,0.1-0.71,0.29l-2.2,2.2 c-2.83-1.45-5.15-3.76-6.59-6.59l2.2-2.2C9.1,8.31,9.18,7.92,9.07,7.57C8.7,6.45,8.5,5.25,8.5,4C8.5,3.45,8.05,3,7.5,3L7.5,3z\"/></svg>",
+      "Grid": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 28\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z\"/></svg>"
+    }
+  },
+  "dst": [
+    {
+      "type": "domainStory:activity",
+      "name": "Na",
+      "id": "connection_0387",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 759,
+            "y": 412
+          },
+          "x": 794,
+          "y": 428
+        },
+        {
+          "original": {
+            "x": 974,
+            "y": 510
+          },
+          "x": 936,
+          "y": 493
+        }
+      ],
+      "source": "shape_4121",
+      "target": "shape_1447",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_1019",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 974,
+            "y": 84
+          },
+          "x": 936,
+          "y": 106
+        },
+        {
+          "original": {
+            "x": 759,
+            "y": 211
+          },
+          "x": 786,
+          "y": 195
+        }
+      ],
+      "source": "shape_1299",
+      "target": "shape_8485",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Compra",
+      "id": "connection_1498",
+      "pickedColor": "black",
+      "number": 4,
+      "waypoints": [
+        {
+          "original": {
+            "x": 759,
+            "y": 211
+          },
+          "x": 757,
+          "y": 258
+        },
+        {
+          "original": {
+            "x": 752,
+            "y": 421
+          },
+          "x": 754,
+          "y": 374
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_4121",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_1977",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 974,
+            "y": 368
+          },
+          "x": 997,
+          "y": 348
+        },
+        {
+          "original": {
+            "x": 1159,
+            "y": 211
+          },
+          "x": 1121,
+          "y": 243
+        }
+      ],
+      "source": "shape_1081",
+      "target": "shape_3180",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "No",
+      "id": "connection_3563",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 1379,
+            "y": 211
+          },
+          "x": 1422,
+          "y": 211
+        },
+        {
+          "original": {
+            "x": 1543,
+            "y": 211
+          },
+          "x": 1505,
+          "y": 211
+        }
+      ],
+      "source": "shape_4098",
+      "target": "shape_7814",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Procura",
+      "id": "connection_3931",
+      "pickedColor": "black",
+      "number": 2,
+      "waypoints": [
+        {
+          "original": {
+            "x": 1159,
+            "y": 211
+          },
+          "x": 1202,
+          "y": 211
+        },
+        {
+          "original": {
+            "x": 1379,
+            "y": 211
+          },
+          "x": 1341,
+          "y": 211
+        }
+      ],
+      "source": "shape_3180",
+      "target": "shape_4098",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Ao",
+      "id": "connection_4043",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 974,
+            "y": 211
+          },
+          "x": 1017,
+          "y": 211
+        },
+        {
+          "original": {
+            "x": 1159,
+            "y": 211
+          },
+          "x": 1121,
+          "y": 211
+        }
+      ],
+      "source": "shape_7692",
+      "target": "shape_3180",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "No",
+      "id": "connection_4262",
+      "pickedColor": "black",
+      "number": null,
+      "waypoints": [
+        {
+          "original": {
+            "x": 1379,
+            "y": 368
+          },
+          "x": 1422,
+          "y": 368
+        },
+        {
+          "original": {
+            "x": 1543,
+            "y": 368
+          },
+          "x": 1505,
+          "y": 368
+        }
+      ],
+      "source": "shape_4011",
+      "target": "shape_1008",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Entrega",
+      "id": "connection_5751",
+      "pickedColor": "black",
+      "number": 1,
+      "waypoints": [
+        {
+          "original": {
+            "x": 759,
+            "y": 211
+          },
+          "x": 802,
+          "y": 211
+        },
+        {
+          "original": {
+            "x": 974,
+            "y": 211
+          },
+          "x": 936,
+          "y": 211
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_7692",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Entrega",
+      "id": "connection_6637",
+      "pickedColor": "black",
+      "number": 5,
+      "waypoints": [
+        {
+          "original": {
+            "x": 759,
+            "y": 211
+          },
+          "x": 788,
+          "y": 233
+        },
+        {
+          "original": {
+            "x": 973,
+            "y": 371
+          },
+          "x": 936,
+          "y": 343
+        }
+      ],
+      "source": "shape_8485",
+      "target": "shape_1081",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Executa",
+      "id": "connection_7420",
+      "pickedColor": "black",
+      "number": 6,
+      "waypoints": [
+        {
+          "original": {
+            "x": 1159,
+            "y": 211
+          },
+          "x": 1189,
+          "y": 232
+        },
+        {
+          "original": {
+            "x": 1379,
+            "y": 368
+          },
+          "x": 1341,
+          "y": 341
+        }
+      ],
+      "source": "shape_3180",
+      "target": "shape_4011",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:connection",
+      "name": "",
+      "id": "connection_7778",
+      "waypoints": [
+        {
+          "original": {
+            "x": 1543,
+            "y": 211
+          },
+          "x": 1568,
+          "y": 193
+        },
+        {
+          "original": {
+            "x": 1655,
+            "y": 130
+          },
+          "x": 1608,
+          "y": 164
+        }
+      ],
+      "source": "shape_7814",
+      "target": "shape_3381"
+    },
+    {
+      "type": "domainStory:connection",
+      "name": "",
+      "id": "connection_7907",
+      "waypoints": [
+        {
+          "original": {
+            "x": 1543,
+            "y": 368
+          },
+          "x": 1577,
+          "y": 360
+        },
+        {
+          "original": {
+            "x": 1710,
+            "y": 327
+          },
+          "x": 1605,
+          "y": 353
+        }
+      ],
+      "source": "shape_1008",
+      "target": "shape_1597"
+    },
+    {
+      "type": "domainStory:activity",
+      "name": "Solicita",
+      "id": "connection_8008",
+      "pickedColor": "black",
+      "number": 3,
+      "waypoints": [
+        {
+          "original": {
+            "x": 1159,
+            "y": 211
+          },
+          "x": 1121,
+          "y": 185
+        },
+        {
+          "original": {
+            "x": 974,
+            "y": 84
+          },
+          "x": 1005,
+          "y": 105
+        }
+      ],
+      "source": "shape_3180",
+      "target": "shape_1299",
+      "multipleNumberAllowed": false
+    },
+    {
+      "type": "domainStory:workObjectCar",
+      "name": "Carro",
+      "id": "shape_1008",
+      "x": 1505,
+      "y": 330
+    },
+    {
+      "type": "domainStory:workObjectDocument",
+      "name": "Itens",
+      "id": "shape_1081",
+      "x": 936,
+      "y": 330
+    },
+    {
+      "type": "domainStory:workObjectDocument",
+      "name": "Itens",
+      "id": "shape_1299",
+      "x": 936,
+      "y": 46
+    },
+    {
+      "type": "domainStory:actorStore",
+      "name": "Loja",
+      "id": "shape_1447",
+      "x": 936,
+      "y": 472
+    },
+    {
+      "type": "domainStory:textAnnotation",
+      "name": "",
+      "id": "shape_1597",
+      "x": 1605,
+      "y": 289,
+      "text": "Estava parado no pátio ocupando espaço esperando pelos itens",
+      "number": 75,
+      "height": 75,
+      "width": 209
+    },
+    {
+      "type": "domainStory:actorPerson",
+      "name": "Mecânico",
+      "id": "shape_3180",
+      "x": 1121,
+      "y": 173
+    },
+    {
+      "type": "domainStory:textAnnotation",
+      "name": "",
+      "id": "shape_3381",
+      "x": 1586,
+      "y": 95,
+      "text": "Suposição: itens não existem no estoque",
+      "number": 69,
+      "height": 69,
+      "width": 138
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço Aprovada",
+      "id": "shape_4011",
+      "x": 1341,
+      "y": 330
+    },
+    {
+      "type": "domainStory:workObjectDocument",
+      "name": "Itens",
+      "id": "shape_4098",
+      "x": 1341,
+      "y": 173
+    },
+    {
+      "type": "domainStory:workObjectDocument",
+      "name": "Itens",
+      "id": "shape_4121",
+      "x": 721,
+      "y": 374
+    },
+    {
+      "type": "domainStory:workObjectReceipt",
+      "name": "Ordem de Serviço Aprovada",
+      "id": "shape_7692",
+      "x": 936,
+      "y": 173
+    },
+    {
+      "type": "domainStory:workObjectGrid",
+      "name": "Estoque",
+      "id": "shape_7814",
+      "x": 1505,
+      "y": 173
+    },
+    {
+      "type": "domainStory:actorPerson",
+      "name": "Atendente",
+      "id": "shape_8485",
+      "x": 721,
+      "y": 173,
+      "pickedColor": "#000000"
+    },
+    {
+      "info": "Descreve o gargalo operacional gerado pelo controle manual de peças, detalhando a ida do mecânico ao almoxarifado, a constatação de que itens descritos na Ordem de Serviço precisam ser comprados, a interrupção abrupta do trabalho para realizar uma compra emergencial por telefone e o bloqueio físico do elevador com o carro parado aguardando o item."
+    },
+    {
+      "version": "3.1.0"
+    }
+  ]
+}

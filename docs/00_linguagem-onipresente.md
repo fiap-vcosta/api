@@ -9,16 +9,20 @@
 *   **Item de Estoque na OS:** A relação de uma Peça ou Insumo que será utilizada na execução de um Item de Serviço específico dentro da OS.
 *   **Retrabalho:** A ação de reabrir um Item de Serviço que já estava marcado como concluído devido à reprovação do cliente na entrega, exigindo a reversão do status da OS para execução.
 *   **Contra-proposta:** Ação do mecânico ou atendente de alterar valores, itens ou peças de um Item de Serviço que foi previamente rejeitado pelo cliente, visando uma nova negociação.
+*   **Pagamento:** A transação financeira para quitar o valor total de uma OS.
+*   **Gateway de Pagamento:** O sistema externo responsável por processar transações financeiras.
+*   **Serviço SMTP:** O serviço de e-mail utilizado para enviar notificações aos clientes.
+*   **Liberação de Veículo:** A ação final de entregar o veículo ao cliente após a conclusão e pagamento da OS.
 
 ### 1.1 Status da Ordem de Serviço (OS)
 *   **Recebida:** A OS foi criada com os dados iniciais do cliente e do veículo, aguardando o início do atendimento pelo mecânico.
 *   **Em diagnóstico:** O veículo está sob avaliação do mecânico, que está ativamente adicionando Itens de Serviço e Itens de Estoque à OS.
 *   **Aguardando aprovação:** O diagnóstico foi concluído, os valores foram totalizados e a OS aguarda a resposta formal do cliente.
-*   **Em revisão:** O cliente rejeitou um ou mais serviços, e a oficina está avaliando o cenário ou preparando uma contra-proposta.
 *   **Em execução:** Pelo menos um Item de Serviço da OS está aguardando peça ou sendo executado ativamente pelo mecânico no momento.
 *   **Finalizada:** Todos os Itens de Serviço (que não foram descartados) estão com o status *Concluído*. O veículo aguarda a avaliação final e retirada pelo cliente.
-*   **Cancelada:** A OS foi abortada antes ou durante o orçamento. Estado final e irreversível.
+*   **Paga:** O valor total da Ordem de Serviço foi quitado pelo cliente.
 *   **Entregue:** O cliente avaliou os serviços, aceitou o veículo e o atendimento foi encerrado. Estado final e irreversível.
+*   **Descartada:** A Ordem de Serviço foi completamente abandonada e removida do fluxo principal de atendimento, geralmente após a reprovação do orçamento ou falta de acordo, e não será mais processada Estado final e irreversível.
 
 ### 1.2 Status do Item de Serviço
 *   **Sugerido:** O serviço foi adicionado à OS pelo mecânico durante o diagnóstico, mas ainda não foi submetido à aprovação do cliente.
@@ -28,6 +32,7 @@
 *   **Aguardando Peça:** O serviço foi aprovado, mas sua execução ou conclusão está bloqueada devido à falta temporária da peça/insumo no estoque físico.
 *   **Concluído:** O trabalho mecânico referente a este serviço foi terminado.
 *   **Descartado:** O serviço foi removido definitivamente da OS (por decisão do cliente ou da oficina). Estado final para este item.
+*   **Pago:** O valor do serviço foi quitado pelo cliente.
 *   **Entregue:** A OS como um todo foi finalizada e entregue ao cliente, travando o serviço contra alterações. Estado final e irreversível.
 *   
 ## 2. Administrativo (Cadastros Básicos)
@@ -48,5 +53,4 @@
 *   **Movimentação de Estoque:** O registro imutável de uma entrada (reabastecimento, ajuste positivo) ou saída (baixa, ajuste negativo) no estoque.
 *   **Reserva Temporária:** Uma "trava" temporária no saldo do estoque atrelada a uma OS que está aguardando aprovação, garantindo que os itens orçados não sejam consumidos por outra OS concorrente.
 *   **Baixa Definitiva:** A efetivação da saída de um item do estoque, ocorrendo quando um serviço é aprovado ou finalizado.
-*   **Estoque Negativo:** Estado excepcional permitido pelo sistema onde o saldo de um item é menor que zero, resultante da aprovação de uma OS sem saldo físico suficiente.
 *   **Reabastecimento:** A movimentação de entrada de novos itens no sistema, que automaticamente libera serviços que estavam travados pelo status "Aguardando Peça".

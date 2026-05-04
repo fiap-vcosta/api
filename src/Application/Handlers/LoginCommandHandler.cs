@@ -1,7 +1,6 @@
 using Application.Commands;
 using Application.Repositories;
 using Application.Services;
-using Domain;
 using MediatR;
 
 namespace Application.Handlers;

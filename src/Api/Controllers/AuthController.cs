@@ -15,7 +15,7 @@ public class AuthController(IMediator mediator, IValidator<LoginRequest> validat
         var validationResult = validator.Validate(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new { Errors = validationResult.Errors });
+            return BadRequest(new { validationResult.Errors });
         }
 
         try

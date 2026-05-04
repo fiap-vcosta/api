@@ -1,6 +1,4 @@
-using Domain;
 using Domain.Admin;
-using Infrastructure;
 using Infrastructure.Database;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -57,9 +55,10 @@ public class UsuarioRepositoryTests : IDisposable
     public async Task GetAllAsync_ReturnsAllUsers()
     {
         // Act
-        var users = await _repository.GetAllAsync();
+        var users = (await _repository.GetAllAsync()).ToList();
 
         // Assert
+        Assert.NotNull(users);
         Assert.Equal(3, users.Count());
         Assert.Contains(users, u => u.Login == "admin");
         Assert.Contains(users, u => u.Login == "atendente");

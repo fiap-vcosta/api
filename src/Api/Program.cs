@@ -1,7 +1,7 @@
 using Api.Extensions;
-using Application;
+using Api.Middlewares;
 using Application.Services;
-using Infrastructure;
+using Domain.Admin;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +11,11 @@ builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 app.UseApiConfiguration();
+
+app.UseWhen(context => context.Request.Path.Equals("/health", StringComparison.OrdinalIgnoreCase), cfg =>
+{
+    cfg.UseMiddleware<UserRoleValidationMiddleware>(new[] { TipoUsuario.Admin });
+});
 
 using (var scope = app.Services.CreateScope())
 {

@@ -1,14 +1,9 @@
-using Application;
 using Application.Commands;
 using Application.Services;
 using Application.Validators;
-using Infrastructure;
 using Infrastructure.Services;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Application.Repositories;

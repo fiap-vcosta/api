@@ -1,12 +1,8 @@
-using Application;
 using Application.Commands;
 using Application.Handlers;
-using Application.Services;
-using Domain;
 using Domain.Admin;
 using UnitTests.Resources.Stub.Services;
 using UnitTests.Resources.Stub.Repositories;
-using Xunit;
 
 namespace UnitTests.Application.Handlers;
 
@@ -15,6 +11,7 @@ public class LoginCommandHandlerTests
     [Fact]
     public async Task Handle_ReturnsToken_WhenCredentialsAreValid()
     {
+        // Arrange
         var repository = new StubUsuarioRepository(new Usuario
         {
             Id = 1,
@@ -24,15 +21,19 @@ public class LoginCommandHandlerTests
         });
         var jwtService = new StubJwtService();
         var handler = new LoginCommandHandler(repository, jwtService);
+        var command = new LoginCommand { Login = "admin", Password = "secret" };
 
-        var token = await handler.Handle(new LoginCommand { Login = "admin", Password = "secret" }, default);
+        // Act
+        var token = await handler.Handle(command, default);
 
+        // Assert
         Assert.Equal("admin-Admin-1", token);
     }
 
     [Fact]
     public async Task Handle_ThrowsUnauthorizedAccessException_WhenCredentialsAreInvalid()
     {
+        // Arrange
         var repository = new StubUsuarioRepository(new Usuario
         {
             Id = 1,
@@ -42,8 +43,10 @@ public class LoginCommandHandlerTests
         });
         var jwtService = new StubJwtService();
         var handler = new LoginCommandHandler(repository, jwtService);
+        var command = new LoginCommand { Login = "admin", Password = "wrong" };
 
+        // Act & Assert
         await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
-            await handler.Handle(new LoginCommand { Login = "admin", Password = "wrong" }, default));
+            await handler.Handle(command, default));
     }
 }

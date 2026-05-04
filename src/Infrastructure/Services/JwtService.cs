@@ -19,12 +19,11 @@ public class JwtService(IConfiguration configuration) : IJwtService
         var key = Encoding.ASCII.GetBytes(_key);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
+            Subject = new ClaimsIdentity([
                 new Claim(ClaimTypes.Name, login),
                 new Claim(ClaimTypes.Role, role),
                 new Claim("userId", userId.ToString())
-            }),
+            ]),
             Expires = DateTime.UtcNow.AddMinutes(30),
             Issuer = _issuer,
             Audience = _audience,

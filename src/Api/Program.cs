@@ -1,16 +1,16 @@
-using Infrastructure;
+using Api.Extensions;
 using Application;
+using Application.Services;
+using Infrastructure;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IHealthService, HealthService>();
+builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
+app.UseApiConfiguration();
 
 using (var scope = app.Services.CreateScope())
 {

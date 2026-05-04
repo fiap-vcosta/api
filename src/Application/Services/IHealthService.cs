@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Application;
+namespace Application.Services;
 
 public interface IHealthService
 {

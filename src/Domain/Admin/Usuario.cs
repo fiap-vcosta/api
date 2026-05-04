@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace Domain.Admin;
 
 public enum TipoUsuario
 {

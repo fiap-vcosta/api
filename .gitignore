@@ -42,7 +42,7 @@ logs/
 *.log
 
 # Test results
-TestResults/
+test-results/
 *.trx
 
 # SonarQube

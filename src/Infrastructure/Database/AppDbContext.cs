@@ -1,12 +1,12 @@
 using Domain;
+using Domain.Admin;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Database;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
     public DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
             {
                 Id = 1,
                 Login = "admin",
-                Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                Password = PasswordHasher.HashPassword("admin"),
                 TipoUsuario = TipoUsuario.Admin
             }
         );

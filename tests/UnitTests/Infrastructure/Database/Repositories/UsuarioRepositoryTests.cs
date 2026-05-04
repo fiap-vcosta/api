@@ -1,5 +1,8 @@
 using Domain;
+using Domain.Admin;
 using Infrastructure;
+using Infrastructure.Database;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Infrastructure.Database.Repositories;
@@ -20,9 +23,9 @@ public class UsuarioRepositoryTests : IDisposable
 
         // Seed test data
         _context.Usuarios.AddRange(
-            new Usuario { Id = 1, Login = "admin", Password = "hashed_admin", TipoUsuario = TipoUsuario.Admin },
-            new Usuario { Id = 2, Login = "atendente", Password = "hashed_atendente", TipoUsuario = TipoUsuario.Atendente },
-            new Usuario { Id = 3, Login = "mecanico", Password = "hashed_mecanico", TipoUsuario = TipoUsuario.Mecanico }
+            new Usuario { Id = 1, Login = "admin", Password = PasswordHasher.HashPassword("admin"), TipoUsuario = TipoUsuario.Admin },
+            new Usuario { Id = 2, Login = "atendente", Password = PasswordHasher.HashPassword("atendente"), TipoUsuario = TipoUsuario.Atendente },
+            new Usuario { Id = 3, Login = "mecanico", Password = PasswordHasher.HashPassword("mecanico"), TipoUsuario = TipoUsuario.Mecanico }
         );
         _context.SaveChanges();
     }
@@ -64,10 +67,10 @@ public class UsuarioRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task GetByLoginAsync_ReturnsUser_WhenLoginExists()
+    public async Task GetByLoginAndPasswordAsync_ReturnsUser_WhenCredentialsMatch()
     {
         // Act
-        var user = await _repository.GetByLoginAsync("admin");
+        var user = await _repository.GetByLoginAndPasswordAsync("admin", "admin");
 
         // Assert
         Assert.NotNull(user);
@@ -77,10 +80,10 @@ public class UsuarioRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task GetByLoginAsync_ReturnsNull_WhenLoginDoesNotExist()
+    public async Task GetByLoginAndPasswordAsync_ReturnsNull_WhenPasswordDoesNotMatch()
     {
         // Act
-        var user = await _repository.GetByLoginAsync("nonexistent");
+        var user = await _repository.GetByLoginAndPasswordAsync("admin", "wrong");
 
         // Assert
         Assert.Null(user);

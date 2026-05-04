@@ -1,22 +1,17 @@
 using Application;
+using Application.Services;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Services;
 
-public class HealthService : IHealthService
+public class HealthService(AppDbContext context) : IHealthService
 {
-    private readonly AppDbContext _context;
-
-    public HealthService(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<bool> CheckDatabaseAsync()
     {
         try
         {
-            await _context.Usuarios.AnyAsync();
+            await context.Usuarios.AnyAsync();
             return true;
         }
         catch

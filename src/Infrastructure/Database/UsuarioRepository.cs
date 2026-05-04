@@ -1,31 +1,27 @@
 using Application;
+using Application.Repositories;
 using Domain;
+using Domain.Admin;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
-namespace Infrastructure;
+namespace Infrastructure.Database;
 
-public class UsuarioRepository : IUsuarioRepository
+public class UsuarioRepository(AppDbContext context) : IUsuarioRepository
 {
-    private readonly AppDbContext _context;
-
-    public UsuarioRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Usuario?> GetByIdAsync(int id)
     {
-        return await _context.Usuarios.FindAsync(id);
+        return await context.Usuarios.FindAsync(id);
     }
 
     public async Task<IEnumerable<Usuario>> GetAllAsync()
     {
-        return await _context.Usuarios.ToListAsync();
+        return await context.Usuarios.ToListAsync();
     }
 
-    public async Task<Usuario?> GetByLoginAsync(string login)
+    public async Task<Usuario?> GetByLoginAndPasswordAsync(string login, string password)
     {
-        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Login == login);
+        var hashedPassword = PasswordHasher.HashPassword(password);
+        return await context.Usuarios.FirstOrDefaultAsync(u => u.Login == login && u.Password == hashedPassword);
     }
 }

@@ -1,0 +1,54 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.tmp
+*.temp
+*.swp
+*.bak
+*.orig
+*.rej
+*.vs/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# NuGet
+packages/
+*.nupkg
+.nuget/
+
+# EF Core
+Migrations/*.cs
+Migrations/*.Designer.cs
+
+# Docker
+docker-compose.override.yml
+.env
+
+# IDEs
+.idea/
+*.sln.DotSettings.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test results
+TestResults/
+*.trx
+
+# SonarQube
+.scannerwork/
+.sonarqube/
+
+# Build outputs
+publish/
+build/

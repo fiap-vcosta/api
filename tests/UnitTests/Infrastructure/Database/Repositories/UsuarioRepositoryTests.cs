@@ -1,4 +1,4 @@
-using Domain.Admin;
+using Domain.Entities;
 using Infrastructure.Database;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;

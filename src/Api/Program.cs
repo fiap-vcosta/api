@@ -1,7 +1,7 @@
 using Api.Extensions;
 using Api.Middlewares;
 using Application.Services;
-using Domain.Admin;
+using Domain.Entities;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 

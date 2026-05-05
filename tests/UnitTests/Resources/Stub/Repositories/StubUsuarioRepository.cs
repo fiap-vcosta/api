@@ -1,5 +1,5 @@
-using Application.Repositories;
-using Domain.Admin;
+using Domain.Repositories;
+using Domain.Entities;
 
 namespace UnitTests.Resources.Stub.Repositories;
 

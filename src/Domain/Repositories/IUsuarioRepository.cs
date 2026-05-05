@@ -1,6 +1,6 @@
-﻿using Domain.Admin;
+﻿using Domain.Entities;
 
-namespace Application.Repositories;
+namespace Domain.Repositories;
 
 public interface IUsuarioRepository
 {

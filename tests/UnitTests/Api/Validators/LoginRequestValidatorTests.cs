@@ -1,6 +1,6 @@
-using Application.Validators;
+using Api.Validators;
 
-namespace UnitTests.Application.Validators;
+namespace UnitTests.Api.Validators;
 
 public class LoginRequestValidatorTests
 {

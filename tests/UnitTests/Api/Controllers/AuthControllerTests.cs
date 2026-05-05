@@ -1,4 +1,4 @@
-using Application.Validators;
+using Api.Validators;
 using Api.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

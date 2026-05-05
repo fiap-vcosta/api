@@ -1,5 +1,5 @@
-using Application.Commands;
-using Application.Validators;
+using Application.Usuario.Commands;
+using Api.Validators;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

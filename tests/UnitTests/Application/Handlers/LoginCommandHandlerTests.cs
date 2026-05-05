@@ -1,6 +1,6 @@
-using Application.Commands;
-using Application.Handlers;
-using Domain.Admin;
+using Application.Usuario.Commands;
+using Application.Usuario.Commands.Handlers;
+using Domain.Entities;
 using UnitTests.Resources.Stub.Services;
 using UnitTests.Resources.Stub.Repositories;
 

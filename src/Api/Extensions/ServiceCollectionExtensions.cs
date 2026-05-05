@@ -1,12 +1,12 @@
-using Application.Commands;
+using Application.Usuario.Commands;
 using Application.Services;
-using Application.Validators;
+using Api.Validators;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Application.Repositories;
+using Domain.Repositories;
 using Infrastructure.Database;
 
 namespace Api.Extensions;

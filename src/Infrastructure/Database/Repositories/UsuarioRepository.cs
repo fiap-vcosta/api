@@ -1,5 +1,5 @@
-using Application.Repositories;
-using Domain.Admin;
+using Domain.Repositories;
+using Domain.Entities;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 

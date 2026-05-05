@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
-using Domain.Admin;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 

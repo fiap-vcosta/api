@@ -1,9 +1,9 @@
-using Application.Commands;
-using Application.Repositories;
+using Application.Usuario.Commands;
+using Domain.Repositories;
 using Application.Services;
 using MediatR;
 
-namespace Application.Handlers;
+namespace Application.Usuario.Commands.Handlers;
 
 public class LoginCommandHandler(IUsuarioRepository usuarioRepository, IJwtService jwtService)
     : IRequestHandler<LoginCommand, string>

@@ -1,4 +1,4 @@
-namespace Application.Validators;
+namespace Api.Validators;
 
 public class LoginRequest
 {

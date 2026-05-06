@@ -1,9 +1,9 @@
+using Api.Contracts;
 using Application.Usuario.Commands;
-using Api.Validators;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Auth;
 
 [ApiController]
 [Route("api/[controller]")]

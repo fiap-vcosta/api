@@ -1,9 +1,9 @@
-using Domain.Repositories;
 using Domain.Entities;
+using Domain.Repositories;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Database;
+namespace Infrastructure.Database.Repositories;
 
 public class UsuarioRepository(AppDbContext context) : IUsuarioRepository
 {

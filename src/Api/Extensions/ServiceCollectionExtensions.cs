@@ -1,13 +1,16 @@
 using Application.Usuario.Commands;
 using Application.Services;
-using Api.Validators;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Api.Contracts;
+using Api.Controllers.Auth;
+using Api.Controllers.Cliente;
 using Domain.Repositories;
 using Infrastructure.Database;
+using Infrastructure.Database.Repositories;
 
 namespace Api.Extensions;
 
@@ -19,9 +22,12 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<IHealthService, HealthService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
+        services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
+        services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
         services.AddControllers();
@@ -31,7 +37,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtKey = configuration["Jwt:Key"] ?? "default-key";
         var jwtIssuer = configuration["Jwt:Issuer"] ?? "default-issuer";

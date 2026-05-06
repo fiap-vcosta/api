@@ -12,6 +12,47 @@ Content-Type: application/json
 @token = {{login.response.body.$.token}}
 
 ### Health check
-# @name health-check
+# @name healthCheck
 GET http://localhost:8080/health
+
+### GET Clientes
+# @name getClientes
+GET http://localhost:8080/api/cliente
+Authorization: Bearer {{token}}
+
+### Create Cliente
+# @name createCliente
+POST http://localhost:8080/api/cliente
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Nome": "Cliente Teste",
+  "TipoDocumento": "0",
+  "Documento": "92561324354"
+}
+
+### Define Cliente ID Variable
+@clienteId = {{createCliente.response.body.$.id}}
+
+### Get Cliente by ID
+# @name getClienteById
+GET http://localhost:8080/api/cliente/{{clienteId}}
+Authorization: Bearer {{token}}
+
+### Update Cliente by ID
+# @name updateClienteById
+PUT http://localhost:8080/api/cliente/{{clienteId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Nome": "Cliente Teste Atualizado",
+  "TipoDocumento": "1",
+  "Documento": "29040653186"
+}
+
+### Delete Cliente by ID
+# @name deleteClienteById
+DELETE http://localhost:8080/api/cliente/{{clienteId}}
 Authorization: Bearer {{token}}

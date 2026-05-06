@@ -1,5 +1,4 @@
-using Api.Validators;
-using Api.Controllers;
+using Api.Controllers.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

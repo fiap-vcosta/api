@@ -1,4 +1,4 @@
-namespace Api.Validators;
+namespace Api.Contracts;
 
 public class ValidationResult
 {

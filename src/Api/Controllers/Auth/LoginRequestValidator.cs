@@ -1,4 +1,6 @@
-namespace Api.Validators;
+using Api.Contracts;
+
+namespace Api.Controllers.Auth;
 
 public class LoginRequestValidator : IValidator<LoginRequest>
 {

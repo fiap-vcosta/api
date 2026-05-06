@@ -1,4 +1,4 @@
-using Api.Validators;
+using Api.Controllers.Auth;
 
 namespace UnitTests.Api.Validators;
 

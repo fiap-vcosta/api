@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Infrastructure.Database;
+using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 

@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Veiculo> Veiculos { get; set; }
+    public DbSet<Servico> Servicos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .HasForeignKey(v => v.DonoId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Servico>().HasIndex(s => s.Codigo).IsUnique();
+        modelBuilder.Entity<Servico>().Property(s => s.Codigo).IsRequired();
+        modelBuilder.Entity<Servico>().Property(s => s.Nome).IsRequired();
+        modelBuilder.Entity<Servico>().Property(s => s.PrecoPadrao).HasPrecision(10, 2).IsRequired();
 
         modelBuilder.Entity<Usuario>().HasData(
             new Usuario

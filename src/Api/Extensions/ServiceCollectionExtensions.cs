@@ -8,6 +8,7 @@ using System.Text;
 using Api.Contracts;
 using Api.Controllers.Auth;
 using Api.Controllers.Cliente;
+using Api.Controllers.Servico;
 using Api.Controllers.Veiculo;
 using Domain.Repositories;
 using Infrastructure.Database;
@@ -26,6 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddUsuarioServices();
         services.AddClienteServices();
         services.AddVeiculoServices();
+        services.AddServicoServices();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
         services.AddControllers();
@@ -62,6 +64,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVeiculoRepository, VeiculoRepository>();
         services.AddSingleton<IValidator<CreateVeiculoRequest>, CreateVeiculoRequestValidator>();
         services.AddSingleton<IValidator<UpdateVeiculoRequest>, UpdateVeiculoRequestValidator>();
+        return services;
+    }
+
+    private static IServiceCollection AddServicoServices(this IServiceCollection services)
+    {
+        services.AddScoped<IServicoRepository, ServicoRepository>();
+        services.AddSingleton<IValidator<CreateServicoRequest>, CreateServicoRequestValidator>();
+        services.AddSingleton<IValidator<UpdateServicoRequest>, UpdateServicoRequestValidator>();
         return services;
     }
 

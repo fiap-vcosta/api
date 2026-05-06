@@ -105,3 +105,47 @@ Content-Type: application/json
 # @name deleteVeiculoById
 DELETE http://localhost:8080/api/veiculo/{{veiculoId}}
 Authorization: Bearer {{token}}
+
+### GET Servicos
+# @name getServicos
+GET http://localhost:8080/api/servico
+Authorization: Bearer {{token}}
+
+### Create Servico
+# @name createServico
+POST http://localhost:8080/api/servico
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Codigo": "OLE-001",
+  "Nome": "Serviço de Óleo",
+  "PrecoPadrao": 150.00,
+  "Ativo": true
+}
+
+### Define Servico ID Variable
+@servicoId = {{createServico.response.body.$.id}}
+
+### Get Servico by ID
+# @name getServicoById
+GET http://localhost:8080/api/servico/{{servicoId}}
+Authorization: Bearer {{token}}
+
+### Update Servico by ID
+# @name updateServicoById
+PUT http://localhost:8080/api/servico/{{servicoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Codigo": "FRE-001",
+  "Nome": "Serviço de Freio",
+  "PrecoPadrao": 250.00,
+  "Ativo": true
+}
+
+### Delete Servico by ID
+# @name deleteServicoById
+DELETE http://localhost:8080/api/servico/{{servicoId}}
+Authorization: Bearer {{token}}

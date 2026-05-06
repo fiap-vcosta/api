@@ -8,6 +8,7 @@ using System.Text;
 using Api.Contracts;
 using Api.Controllers.Auth;
 using Api.Controllers.Cliente;
+using Api.Controllers.Veiculo;
 using Domain.Repositories;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
@@ -21,19 +22,46 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-        services.AddScoped<IClienteRepository, ClienteRepository>();
-        services.AddScoped<IHealthService, HealthService>();
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
-        services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
-        services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
+        services.AddCoreServices();
+        services.AddUsuarioServices();
+        services.AddClienteServices();
+        services.AddVeiculoServices();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
         services.AddControllers();
         services.AddJwtAuthentication(configuration);
         services.AddAuthorization();
 
+        return services;
+    }
+
+    private static IServiceCollection AddCoreServices(this IServiceCollection services)
+    {
+        services.AddScoped<IHealthService, HealthService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
+        return services;
+    }
+
+    private static IServiceCollection AddUsuarioServices(this IServiceCollection services)
+    {
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        return services;
+    }
+
+    private static IServiceCollection AddClienteServices(this IServiceCollection services)
+    {
+        services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
+        services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
+        return services;
+    }
+
+    private static IServiceCollection AddVeiculoServices(this IServiceCollection services)
+    {
+        services.AddScoped<IVeiculoRepository, VeiculoRepository>();
+        services.AddSingleton<IValidator<CreateVeiculoRequest>, CreateVeiculoRequestValidator>();
+        services.AddSingleton<IValidator<UpdateVeiculoRequest>, UpdateVeiculoRequestValidator>();
         return services;
     }
 

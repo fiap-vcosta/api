@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
+    public DbSet<Veiculo> Veiculos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -15,6 +16,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Cliente>().HasIndex(c => c.Documento).IsUnique();
         modelBuilder.Entity<Cliente>().Property(c => c.Documento).IsRequired();
+
+        modelBuilder.Entity<Veiculo>().HasIndex(v => v.Placa).IsUnique();
+        modelBuilder.Entity<Veiculo>().Property(v => v.Placa).IsRequired();
+        modelBuilder.Entity<Veiculo>().Property(v => v.Modelo).IsRequired();
+        modelBuilder.Entity<Veiculo>().Property(v => v.Marca).IsRequired();
+        modelBuilder.Entity<Veiculo>()
+            .HasOne(v => v.Dono)
+            .WithMany()
+            .HasForeignKey(v => v.DonoId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Usuario>().HasData(
             new Usuario

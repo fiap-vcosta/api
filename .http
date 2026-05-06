@@ -56,3 +56,52 @@ Content-Type: application/json
 # @name deleteClienteById
 DELETE http://localhost:8080/api/cliente/{{clienteId}}
 Authorization: Bearer {{token}}
+
+### GET Veiculos
+# @name getVeiculos
+GET http://localhost:8080/api/veiculo
+Authorization: Bearer {{token}}
+
+### Create Veiculo
+# @name createVeiculo
+POST http://localhost:8080/api/veiculo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Placa": "ABC-1D23",
+  "DonoId": {{clienteId}},
+  "Modelo": "Gol",
+  "Marca": "Volkswagen"
+}
+
+### Define Veiculo ID Variable
+@veiculoId = {{createVeiculo.response.body.$.id}}
+
+### Get Veiculo by ID
+# @name getVeiculoById
+GET http://localhost:8080/api/veiculo/{{veiculoId}}
+Authorization: Bearer {{token}}
+
+### Get Veiculos by Dono
+# @name getVeiculosByDono
+GET http://localhost:8080/api/veiculo/por-dono/{{clienteId}}
+Authorization: Bearer {{token}}
+
+### Update Veiculo by ID
+# @name updateVeiculoById
+PUT http://localhost:8080/api/veiculo/{{veiculoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Placa": "DEF-2G34",
+  "DonoId": {{clienteId}},
+  "Modelo": "Polo",
+  "Marca": "Volkswagen"
+}
+
+### Delete Veiculo by ID
+# @name deleteVeiculoById
+DELETE http://localhost:8080/api/veiculo/{{veiculoId}}
+Authorization: Bearer {{token}}

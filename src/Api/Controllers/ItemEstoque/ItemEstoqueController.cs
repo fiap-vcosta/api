@@ -90,8 +90,6 @@ public class ItemEstoqueController(
                 Nome = request.Nome,
                 UnidadeMedida = (UnidadeMedida)request.UnidadeMedida,
                 PrecoVenda = request.PrecoVenda,
-                Saldo = request.Saldo,
-                SaldoReservado = request.SaldoReservado
             };
 
             var response = await mediator.Send(command);

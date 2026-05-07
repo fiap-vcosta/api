@@ -7,6 +7,4 @@ public class UpdateItemEstoqueRequest
     public string Nome { get; init; } = string.Empty;
     public int UnidadeMedida { get; init; }
     public decimal PrecoVenda { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal SaldoReservado { get; init; }
 }

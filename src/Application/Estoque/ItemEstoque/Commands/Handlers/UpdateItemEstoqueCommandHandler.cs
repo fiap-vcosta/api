@@ -25,8 +25,6 @@ public class UpdateItemEstoqueCommandHandler(IItemEstoqueRepository itemEstoqueR
         item.Nome = request.Nome;
         item.UnidadeMedida = request.UnidadeMedida;
         item.PrecoVenda = request.PrecoVenda;
-        item.Saldo = request.Saldo;
-        item.SaldoReservado = request.SaldoReservado;
 
         await itemEstoqueRepository.UpdateAsync(item);
 

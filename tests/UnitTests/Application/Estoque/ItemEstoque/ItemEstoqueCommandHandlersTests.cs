@@ -95,8 +95,6 @@ public class UpdateItemEstoqueCommandHandlerTests
             Nome = "Óleo de Motor",
             UnidadeMedida = UnidadeMedida.Litro,
             PrecoVenda = 25.00m,
-            Saldo = 20.000m,
-            SaldoReservado = 5.000m
         };
 
         _mockRepository.Setup(r => r.GetByIdAsync(1))
@@ -127,8 +125,6 @@ public class UpdateItemEstoqueCommandHandlerTests
             Nome = "Óleo de Motor",
             UnidadeMedida = UnidadeMedida.Litro,
             PrecoVenda = 25.00m,
-            Saldo = 20.000m,
-            SaldoReservado = 5.000m
         };
 
         _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Estoque.Entities.ItemEstoque?)null);

@@ -190,9 +190,7 @@ Content-Type: application/json
   "Tipo": 1,
   "Nome": "Óleo de Motor",
   "UnidadeMedida": 3,
-  "PrecoVenda": 25.00,
-  "Saldo": 20.000,
-  "SaldoReservado": 5.000
+  "PrecoVenda": 25.00
 }
 
 ### Delete Item de Estoque by ID

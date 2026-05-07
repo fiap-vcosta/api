@@ -34,11 +34,6 @@ public class UpdateItemEstoqueRequestValidator : IValidator<UpdateItemEstoqueReq
             result.Errors.Add("Preço de venda deve ser maior que zero.");
         }
 
-        if (request.SaldoReservado < 0)
-        {
-            result.Errors.Add("Saldo reservado não pode ser negativo.");
-        }
-
         return result;
     }
 }

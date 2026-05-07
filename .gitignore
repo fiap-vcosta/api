@@ -43,6 +43,7 @@ logs/
 
 # Test results
 test-results/
+tests/UnitTests/TestResults/
 *.trx
 
 # SonarQube

@@ -8,6 +8,7 @@ using System.Text;
 using Api.Contracts;
 using Api.Controllers.Auth;
 using Api.Controllers.Cliente;
+using Api.Controllers.ItemEstoque;
 using Api.Controllers.Servico;
 using Api.Controllers.Veiculo;
 using Domain.Repositories;
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddClienteServices();
         services.AddVeiculoServices();
         services.AddServicoServices();
+        services.AddItemEstoqueServices();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
         services.AddControllers();
@@ -72,6 +74,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IServicoRepository, ServicoRepository>();
         services.AddSingleton<IValidator<CreateServicoRequest>, CreateServicoRequestValidator>();
         services.AddSingleton<IValidator<UpdateServicoRequest>, UpdateServicoRequestValidator>();
+        return services;
+    }
+
+    private static IServiceCollection AddItemEstoqueServices(this IServiceCollection services)
+    {
+        services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
+        services.AddSingleton<IValidator<CreateItemEstoqueRequest>, CreateItemEstoqueRequestValidator>();
+        services.AddSingleton<IValidator<UpdateItemEstoqueRequest>, UpdateItemEstoqueRequestValidator>();
         return services;
     }
 

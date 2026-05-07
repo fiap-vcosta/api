@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Veiculo> Veiculos { get; set; }
     public DbSet<Servico> Servicos { get; set; }
+    public DbSet<ItemEstoque> ItensEstoque { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +33,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Servico>().Property(s => s.Codigo).IsRequired();
         modelBuilder.Entity<Servico>().Property(s => s.Nome).IsRequired();
         modelBuilder.Entity<Servico>().Property(s => s.PrecoPadrao).HasPrecision(10, 2).IsRequired();
+        modelBuilder.Entity<Servico>()
+            .HasMany(s => s.ItensNecessarios)
+            .WithMany(i => i.Servicos)
+            .UsingEntity<Dictionary<string, object>>(
+                "ServicoItemEstoque",
+                j => j.HasOne<ItemEstoque>().WithMany().HasForeignKey("ItemEstoqueId").OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<Servico>().WithMany().HasForeignKey("ServicoId").OnDelete(DeleteBehavior.Cascade),
+                j => j.HasKey("ServicoId", "ItemEstoqueId")
+            );
+
+        modelBuilder.Entity<ItemEstoque>().HasIndex(i => i.Codigo).IsUnique();
+        modelBuilder.Entity<ItemEstoque>().Property(i => i.Codigo).IsRequired();
+        modelBuilder.Entity<ItemEstoque>().Property(i => i.Nome).IsRequired();
+        modelBuilder.Entity<ItemEstoque>().Property(i => i.PrecoVenda).HasPrecision(10, 2).IsRequired();
+        modelBuilder.Entity<ItemEstoque>().Property(i => i.Saldo).HasPrecision(10, 3).IsRequired();
+        modelBuilder.Entity<ItemEstoque>().Property(i => i.SaldoReservado).HasPrecision(10, 3).IsRequired();
 
         modelBuilder.Entity<Usuario>().HasData(
             new Usuario

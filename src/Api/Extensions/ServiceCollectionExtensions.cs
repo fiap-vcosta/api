@@ -1,17 +1,22 @@
-using Application.Usuario.Commands;
-using Application.Services;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Api.Contracts;
-using Api.Controllers.Auth;
-using Api.Controllers.Cliente;
-using Api.Controllers.ItemEstoque;
-using Api.Controllers.Servico;
-using Api.Controllers.Veiculo;
-using Domain.Repositories;
+using Api.Contracts.Validation;
+using Api.Controllers.Auth.Login;
+using Api.Controllers.Cliente.CreateCliente;
+using Api.Controllers.Cliente.UpdateCliente;
+using Api.Controllers.ItemEstoque.CreateItemEstoque;
+using Api.Controllers.ItemEstoque.UpdateItemEstoque;
+using Api.Controllers.Servico.CreateServico;
+using Api.Controllers.Servico.UpdateServico;
+using Api.Controllers.Veiculo.CreateVeiculo;
+using Api.Controllers.Veiculo.UpdateVeiculo;
+using Application.Abstractions.Services;
+using Application.Administrativo.Usuario.Commands;
+using Domain.Administrativo.Repositories;
+using Domain.Estoque.Repositories;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 
@@ -19,7 +24,7 @@ namespace Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
@@ -35,57 +40,49 @@ public static class ServiceCollectionExtensions
         services.AddControllers();
         services.AddJwtAuthentication(configuration);
         services.AddAuthorization();
-
-        return services;
     }
 
-    private static IServiceCollection AddCoreServices(this IServiceCollection services)
+    private static void AddCoreServices(this IServiceCollection services)
     {
         services.AddScoped<IHealthService, HealthService>();
         services.AddScoped<IJwtService, JwtService>();
-        services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
-        return services;
     }
 
-    private static IServiceCollection AddUsuarioServices(this IServiceCollection services)
+    private static void AddUsuarioServices(this IServiceCollection services)
     {
+        services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-        return services;
     }
 
-    private static IServiceCollection AddClienteServices(this IServiceCollection services)
+    private static void AddClienteServices(this IServiceCollection services)
     {
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
         services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
-        return services;
     }
 
-    private static IServiceCollection AddVeiculoServices(this IServiceCollection services)
+    private static void AddVeiculoServices(this IServiceCollection services)
     {
         services.AddScoped<IVeiculoRepository, VeiculoRepository>();
         services.AddSingleton<IValidator<CreateVeiculoRequest>, CreateVeiculoRequestValidator>();
         services.AddSingleton<IValidator<UpdateVeiculoRequest>, UpdateVeiculoRequestValidator>();
-        return services;
     }
 
-    private static IServiceCollection AddServicoServices(this IServiceCollection services)
+    private static void AddServicoServices(this IServiceCollection services)
     {
         services.AddScoped<IServicoRepository, ServicoRepository>();
         services.AddSingleton<IValidator<CreateServicoRequest>, CreateServicoRequestValidator>();
         services.AddSingleton<IValidator<UpdateServicoRequest>, UpdateServicoRequestValidator>();
-        return services;
     }
 
-    private static IServiceCollection AddItemEstoqueServices(this IServiceCollection services)
+    private static void AddItemEstoqueServices(this IServiceCollection services)
     {
         services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
         services.AddSingleton<IValidator<CreateItemEstoqueRequest>, CreateItemEstoqueRequestValidator>();
         services.AddSingleton<IValidator<UpdateItemEstoqueRequest>, UpdateItemEstoqueRequestValidator>();
-        return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtKey = configuration["Jwt:Key"] ?? "default-key";
         var jwtIssuer = configuration["Jwt:Issuer"] ?? "default-issuer";
@@ -104,7 +101,5 @@ public static class ServiceCollectionExtensions
                     ValidAudience = jwtAudience
                 };
             });
-
-        return services;
     }
 }

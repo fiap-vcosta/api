@@ -1,6 +1,9 @@
-using Api.Contracts;
-using Application.ItemEstoque.Commands;
-using Application.ItemEstoque.Queries;
+using Api.Contracts.Validation;
+using Api.Controllers.ItemEstoque.CreateItemEstoque;
+using Api.Controllers.ItemEstoque.UpdateItemEstoque;
+using Application.Estoque.ItemEstoque.Commands;
+using Application.Estoque.ItemEstoque.Queries;
+using Domain.Estoque.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +49,7 @@ public class ItemEstoqueController(
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var query = new GetItemEstoqueByIdQuery { Id = id };
@@ -68,7 +71,7 @@ public class ItemEstoqueController(
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateItemEstoqueRequest request)
     {
         var validationResult = updateValidator.Validate(request);
@@ -83,9 +86,9 @@ public class ItemEstoqueController(
             {
                 Id = id,
                 Codigo = request.Codigo,
-                Tipo = request.Tipo,
+                Tipo = (ItemTipo)request.Tipo,
                 Nome = request.Nome,
-                UnidadeMedida = request.UnidadeMedida,
+                UnidadeMedida = (UnidadeMedida)request.UnidadeMedida,
                 PrecoVenda = request.PrecoVenda,
                 Saldo = request.Saldo,
                 SaldoReservado = request.SaldoReservado
@@ -104,7 +107,7 @@ public class ItemEstoqueController(
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         try

@@ -1,4 +1,4 @@
-using Application.Services;
+using Application.Abstractions.Services;
 
 namespace UnitTests.Resources.Stub.Services;
 

@@ -1,7 +1,9 @@
-using Api.Contracts;
-using Application.Cliente.Commands;
-using Application.Cliente.Queries;
-using Domain.Entities;
+using Api.Contracts.Validation;
+using Api.Controllers.Cliente.CreateCliente;
+using Api.Controllers.Cliente.UpdateCliente;
+using Application.Administrativo.Cliente.Commands;
+using Application.Administrativo.Cliente.Queries;
+using Domain.Administrativo.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +45,7 @@ public class ClienteController(
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var query = new GetClienteByIdQuery { Id = id };
@@ -65,7 +67,7 @@ public class ClienteController(
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateClienteRequest request)
     {
         var validationResult = updateValidator.Validate(request);
@@ -97,7 +99,7 @@ public class ClienteController(
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         try

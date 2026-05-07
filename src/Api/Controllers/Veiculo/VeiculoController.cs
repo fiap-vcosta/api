@@ -1,6 +1,8 @@
-using Api.Contracts;
-using Application.Veiculo.Commands;
-using Application.Veiculo.Queries;
+using Api.Contracts.Validation;
+using Api.Controllers.Veiculo.CreateVeiculo;
+using Api.Controllers.Veiculo.UpdateVeiculo;
+using Application.Administrativo.Veiculo.Commands;
+using Application.Administrativo.Veiculo.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +45,7 @@ public class VeiculoController(
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var query = new GetVeiculoByIdQuery { Id = id };
@@ -65,7 +67,7 @@ public class VeiculoController(
         return Ok(response);
     }
 
-    [HttpGet("por-dono/{donoId}")]
+    [HttpGet("por-dono/{donoId:int}")]
     public async Task<IActionResult> GetByDono(int donoId)
     {
         var query = new GetVeiculosByDonoQuery { DonoId = donoId };
@@ -73,7 +75,7 @@ public class VeiculoController(
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateVeiculoRequest request)
     {
         var validationResult = updateValidator.Validate(request);
@@ -106,7 +108,7 @@ public class VeiculoController(
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         try

@@ -8,7 +8,7 @@ public class PasswordHasherTests
     public void HashPassword_ReturnsConsistentHash_ForSamePassword()
     {
         // Arrange
-        var password = "MySecurePassword123";
+        const string password = "MySecurePassword123";
 
         // Act
         var hash1 = PasswordHasher.HashPassword(password);
@@ -22,8 +22,8 @@ public class PasswordHasherTests
     public void HashPassword_ReturnsDifferentHashes_ForDifferentPasswords()
     {
         // Arrange
-        var firstPassword = "password1";
-        var secondPassword = "password2";
+        const string firstPassword = "password1";
+        const string secondPassword = "password2";
 
         // Act
         var hash1 = PasswordHasher.HashPassword(firstPassword);
@@ -37,7 +37,7 @@ public class PasswordHasherTests
     public void HashPassword_ReturnsNonEmptyString()
     {
         // Arrange
-        var password = "password";
+        const string password = "password";
 
         // Act
         var hash = PasswordHasher.HashPassword(password);
@@ -50,7 +50,7 @@ public class PasswordHasherTests
     public void HashPassword_ReturnsHexString()
     {
         // Arrange
-        var password = "password";
+        const string password = "password";
 
         // Act
         var hash = PasswordHasher.HashPassword(password);
@@ -63,7 +63,7 @@ public class PasswordHasherTests
     public void HashPassword_ReturnsSHA256Length_64Characters()
     {
         // Arrange
-        var password = "password";
+        const string password = "password";
 
         // Act
         var hash = PasswordHasher.HashPassword(password);

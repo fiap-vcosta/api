@@ -1,4 +1,5 @@
-using Domain.Entities;
+using Domain.Administrativo.Entities;
+using Domain.Estoque.Entities;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 

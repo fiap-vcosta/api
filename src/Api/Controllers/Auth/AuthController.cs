@@ -1,5 +1,6 @@
-using Api.Contracts;
-using Application.Usuario.Commands;
+using Api.Contracts.Validation;
+using Api.Controllers.Auth.Login;
+using Application.Administrativo.Usuario.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

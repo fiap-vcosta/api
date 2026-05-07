@@ -1,4 +1,4 @@
-using Application.Services;
+using Application.Abstractions.Services;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 

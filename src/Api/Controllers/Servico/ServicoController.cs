@@ -1,6 +1,8 @@
-using Api.Contracts;
-using Application.Servico.Commands;
-using Application.Servico.Queries;
+using Api.Contracts.Validation;
+using Api.Controllers.Servico.CreateServico;
+using Api.Controllers.Servico.UpdateServico;
+using Application.Administrativo.Servico.Commands;
+using Application.Administrativo.Servico.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +45,7 @@ public class ServicoController(
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var query = new GetServicoByIdQuery { Id = id };
@@ -65,7 +67,7 @@ public class ServicoController(
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateServicoRequest request)
     {
         var validationResult = updateValidator.Validate(request);
@@ -98,7 +100,7 @@ public class ServicoController(
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         try

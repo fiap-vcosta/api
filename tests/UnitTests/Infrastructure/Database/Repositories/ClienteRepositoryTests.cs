@@ -1,4 +1,4 @@
-using Domain.Entities;
+using Domain.Administrativo.Entities;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +59,7 @@ public class ClienteRepositoryTests : IDisposable
 
         // Assert
         Assert.NotNull(clientes);
-        Assert.Equal(2, clientes.Count());
+        Assert.Equal(2, clientes.Count);
         Assert.Contains(clientes, c => c.Nome == "Cliente 1");
         Assert.Contains(clientes, c => c.Nome == "Cliente 2");
     }
@@ -130,6 +130,7 @@ public class ClienteRepositoryTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         _context.Dispose();
     }
 }

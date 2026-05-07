@@ -1,8 +1,8 @@
-using Application.Services;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Abstractions.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services;

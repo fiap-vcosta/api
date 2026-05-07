@@ -1,4 +1,4 @@
-using Domain.Entities;
+using Domain.Administrativo.Entities;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
@@ -60,7 +60,7 @@ public class UsuarioRepositoryTests : IDisposable
 
         // Assert
         Assert.NotNull(users);
-        Assert.Equal(3, users.Count());
+        Assert.Equal(3, users.Count);
         Assert.Contains(users, u => u.Login == "admin");
         Assert.Contains(users, u => u.Login == "atendente");
         Assert.Contains(users, u => u.Login == "mecanico");
@@ -91,6 +91,7 @@ public class UsuarioRepositoryTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         _context.Dispose();
     }
 }

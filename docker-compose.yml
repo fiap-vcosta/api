@@ -50,6 +50,8 @@ services:
       - pgadmin_data:/var/lib/pgadmin
 
   api:
+    profiles:
+      - app
     build: .
     ports:
       - "8080:8080"

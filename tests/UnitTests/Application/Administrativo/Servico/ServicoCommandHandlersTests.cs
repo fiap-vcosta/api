@@ -1,5 +1,7 @@
 using Application.Administrativo.Servico.Commands;
-using Application.Administrativo.Servico.Commands.Handlers;
+using Application.Administrativo.Servico.Commands.CreateServico;
+using Application.Administrativo.Servico.Commands.DeleteServico;
+using Application.Administrativo.Servico.Commands.UpdateServico;
 using Domain.Administrativo.Repositories;
 using Moq;
 

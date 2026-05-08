@@ -1,5 +1,6 @@
 using Application.Administrativo.Servico.Queries;
-using Application.Administrativo.Servico.Queries.Handlers;
+using Application.Administrativo.Servico.Queries.GetAllServicos;
+using Application.Administrativo.Servico.Queries.GetServicoById;
 using Domain.Administrativo.Repositories;
 using Moq;
 

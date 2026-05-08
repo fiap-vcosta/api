@@ -1,5 +1,6 @@
 using Application.Administrativo.Cliente.Queries;
-using Application.Administrativo.Cliente.Queries.Handlers;
+using Application.Administrativo.Cliente.Queries.GetAllClientes;
+using Application.Administrativo.Cliente.Queries.GetClienteById;
 using Domain.Administrativo.Entities;
 using Domain.Administrativo.Repositories;
 using Moq;

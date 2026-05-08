@@ -1,5 +1,4 @@
-using Application.Administrativo.Usuario.Commands;
-using Application.Administrativo.Usuario.Commands.Handlers;
+using Application.Administrativo.Usuario.Commands.Login;
 using Domain.Administrativo.Entities;
 using UnitTests.Resources.Stub.Repositories;
 using UnitTests.Resources.Stub.Services;

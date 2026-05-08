@@ -1,5 +1,7 @@
 using Application.Estoque.ItemEstoque.Commands;
-using Application.Estoque.ItemEstoque.Commands.Handlers;
+using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
+using Application.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
+using Application.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
 using Domain.Estoque.Entities;
 using Domain.Estoque.Repositories;
 using Moq;

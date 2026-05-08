@@ -1,5 +1,7 @@
 using Application.Administrativo.Veiculo.Queries;
-using Application.Administrativo.Veiculo.Queries.Handlers;
+using Application.Administrativo.Veiculo.Queries.GetAllVeiculos;
+using Application.Administrativo.Veiculo.Queries.GetVeiculoByDono;
+using Application.Administrativo.Veiculo.Queries.GetVeiculoById;
 using Domain.Administrativo.Repositories;
 using Moq;
 

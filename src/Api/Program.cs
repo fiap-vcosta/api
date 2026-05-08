@@ -16,9 +16,9 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.MapGet("/health", async (IHealthService healthService) =>
+app.MapGet("/health", async (AppDbContext appDbContext) =>
 {
-    var isDbOk = await healthService.CheckDatabaseAsync();
+    var isDbOk = await appDbContext.Database.CanConnectAsync();
     return isDbOk ? Results.Ok("OK") : Results.StatusCode(503);
 });
 

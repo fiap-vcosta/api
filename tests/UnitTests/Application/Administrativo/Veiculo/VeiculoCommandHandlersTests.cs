@@ -1,5 +1,7 @@
 using Application.Administrativo.Veiculo.Commands;
-using Application.Administrativo.Veiculo.Commands.Handlers;
+using Application.Administrativo.Veiculo.Commands.CreateVeiculo;
+using Application.Administrativo.Veiculo.Commands.DeleteVeiculo;
+using Application.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Domain.Administrativo.Entities;
 using Domain.Administrativo.Repositories;
 using Moq;

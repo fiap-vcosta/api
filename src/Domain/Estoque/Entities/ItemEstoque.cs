@@ -30,4 +30,14 @@ public class ItemEstoque
     public decimal Saldo { get; set; }
     public decimal SaldoReservado { get; set; }
     public ICollection<Servico> Servicos { get; init; } = new List<Servico>();
+
+    public void RegistrarEntradaEstoque(Decimal quantidade)
+    {
+        Saldo += quantidade;;
+    }
+
+    public void TravarEstoque(Decimal quantidade)
+    {
+        SaldoReservado += quantidade;
+    }
 }

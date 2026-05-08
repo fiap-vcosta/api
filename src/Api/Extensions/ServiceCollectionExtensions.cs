@@ -14,7 +14,7 @@ using Api.Controllers.Servico.UpdateServico;
 using Api.Controllers.Veiculo.CreateVeiculo;
 using Api.Controllers.Veiculo.UpdateVeiculo;
 using Application.Abstractions.Services;
-using Application.Administrativo.Usuario.Commands;
+using Application.Administrativo.Usuario.Commands.Login;
 using Domain.Administrativo.Repositories;
 using Domain.Estoque.Repositories;
 using Infrastructure.Database;
@@ -44,8 +44,9 @@ public static class ServiceCollectionExtensions
 
     private static void AddCoreServices(this IServiceCollection services)
     {
-        services.AddScoped<IHealthService, HealthService>();
-        services.AddScoped<IJwtService, JwtService>();
+        services.AddSingleton<IJwtService, JwtService>();
+        services.AddSingleton<INotificacaoService, NotificacaoService>();
+        services.AddSingleton<ISMTPService, SMTPService>();
     }
 
     private static void AddUsuarioServices(this IServiceCollection services)

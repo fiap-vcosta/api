@@ -1,5 +1,7 @@
 using Application.Administrativo.Cliente.Commands;
-using Application.Administrativo.Cliente.Commands.Handlers;
+using Application.Administrativo.Cliente.Commands.CreateCliente;
+using Application.Administrativo.Cliente.Commands.DeleteCliente;
+using Application.Administrativo.Cliente.Commands.UpdateCliente;
 using Domain.Administrativo.Entities;
 using Domain.Administrativo.Repositories;
 using Moq;

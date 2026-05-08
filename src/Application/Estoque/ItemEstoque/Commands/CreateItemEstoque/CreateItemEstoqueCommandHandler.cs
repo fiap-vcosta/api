@@ -14,7 +14,7 @@ public class CreateItemEstoqueCommandHandler(IItemEstoqueRepository itemEstoqueR
             throw new InvalidOperationException("Já existe um item de estoque com este código.");
         }
 
-        var item = new Domain.Estoque.Entities.ItemEstoque
+        var item = new Domain.Estoque.Entities.ItemEstoqueAggregateRoot
         {
             Codigo = request.Codigo,
             Tipo = request.Tipo,

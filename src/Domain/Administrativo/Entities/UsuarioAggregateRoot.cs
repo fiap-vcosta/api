@@ -8,7 +8,7 @@ public enum TipoUsuario
     Cliente
 }
 
-public class Usuario
+public class UsuarioAggregateRoot
 {
     public int Id { get; init; }
     public string Login { get; init; } = string.Empty;

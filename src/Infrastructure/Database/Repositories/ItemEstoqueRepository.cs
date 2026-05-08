@@ -6,30 +6,30 @@ namespace Infrastructure.Database.Repositories;
 
 public class ItemEstoqueRepository(AppDbContext context) : IItemEstoqueRepository
 {
-    public async Task<IEnumerable<ItemEstoque>> GetAllAsync()
+    public async Task<IEnumerable<ItemEstoqueAggregateRoot>> GetAllAsync()
     {
         return await context.ItensEstoque.ToListAsync();
     }
 
-    public async Task<ItemEstoque?> GetByIdAsync(int id)
+    public async Task<ItemEstoqueAggregateRoot?> GetByIdAsync(int id)
     {
         return await context.ItensEstoque.FindAsync(id);
     }
 
-    public async Task<ItemEstoque?> GetByCodigoAsync(string codigo)
+    public async Task<ItemEstoqueAggregateRoot?> GetByCodigoAsync(string codigo)
     {
         return await context.ItensEstoque.FirstOrDefaultAsync(i => i.Codigo == codigo);
     }
 
-    public async Task CreateAsync(ItemEstoque itemEstoque)
+    public async Task CreateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot)
     {
-        context.ItensEstoque.Add(itemEstoque);
+        context.ItensEstoque.Add(itemEstoqueAggregateRoot);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(ItemEstoque itemEstoque)
+    public async Task UpdateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot)
     {
-        context.ItensEstoque.Update(itemEstoque);
+        context.ItensEstoque.Update(itemEstoqueAggregateRoot);
         await context.SaveChangesAsync();
     }
 

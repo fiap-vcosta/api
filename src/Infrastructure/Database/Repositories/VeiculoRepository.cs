@@ -6,35 +6,35 @@ namespace Infrastructure.Database.Repositories;
 
 public class VeiculoRepository(AppDbContext context) : IVeiculoRepository
 {
-    public async Task<IEnumerable<Veiculo>> GetAllAsync()
+    public async Task<IEnumerable<VeiculoAggregateRoot>> GetAllAsync()
     {
         return await context.Veiculos.Include(v => v.Dono).ToListAsync();
     }
 
-    public async Task<Veiculo?> GetByIdAsync(int id)
+    public async Task<VeiculoAggregateRoot?> GetByIdAsync(int id)
     {
         return await context.Veiculos.Include(v => v.Dono).FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public async Task<IEnumerable<Veiculo>> GetByDonoIdAsync(int donoId)
+    public async Task<IEnumerable<VeiculoAggregateRoot>> GetByDonoIdAsync(int donoId)
     {
         return await context.Veiculos.Where(v => v.DonoId == donoId).ToListAsync();
     }
 
-    public async Task<Veiculo?> GetByPlacaAsync(string placa)
+    public async Task<VeiculoAggregateRoot?> GetByPlacaAsync(string placa)
     {
         return await context.Veiculos.FirstOrDefaultAsync(v => v.Placa == placa);
     }
 
-    public async Task CreateAsync(Veiculo veiculo)
+    public async Task CreateAsync(VeiculoAggregateRoot veiculoAggregateRoot)
     {
-        context.Veiculos.Add(veiculo);
+        context.Veiculos.Add(veiculoAggregateRoot);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Veiculo veiculo)
+    public async Task UpdateAsync(VeiculoAggregateRoot veiculoAggregateRoot)
     {
-        context.Veiculos.Update(veiculo);
+        context.Veiculos.Update(veiculoAggregateRoot);
         await context.SaveChangesAsync();
     }
 

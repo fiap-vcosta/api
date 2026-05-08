@@ -14,7 +14,7 @@ public class CreateServicoCommandHandler(IServicoRepository servicoRepository)
             throw new InvalidOperationException("Já existe um serviço com este código.");
         }
 
-        var servico = new Domain.Administrativo.Entities.Servico
+        var servico = new Domain.Administrativo.Entities.ServicoAggregateRoot
         {
             Codigo = request.Codigo,
             Nome = request.Nome,

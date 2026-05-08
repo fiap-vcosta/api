@@ -15,7 +15,7 @@ public class CreateClienteCommandHandler(IClienteRepository clienteRepository)
             throw new InvalidOperationException("Já existe um cliente com este documento.");
         }
 
-        var cliente = new Domain.Administrativo.Entities.Cliente
+        var cliente = new Domain.Administrativo.Entities.ClienteAggregateRoot
         {
             Nome = request.Nome,
             TipoDocumento = request.TipoDocumento,

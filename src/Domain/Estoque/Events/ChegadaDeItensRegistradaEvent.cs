@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Domain.Estoque.Events;
 
-public record ChegadaDeItensRegistradaEvent(ItemEstoque ItemEstoque): INotification;
+public record ChegadaDeItensRegistradaEvent(ItemEstoqueAggregateRoot ItemEstoqueAggregateRoot): INotification;

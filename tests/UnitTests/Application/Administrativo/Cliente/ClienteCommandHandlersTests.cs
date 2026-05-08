@@ -30,8 +30,8 @@ public class CreateClienteCommandHandlerTests
             Documento = "11144477735"
         };
 
-        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.Cliente>()))
-            .Callback<Domain.Administrativo.Entities.Cliente>(c => c.Id = 1)
+        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()))
+            .Callback<Domain.Administrativo.Entities.ClienteAggregateRoot>(c => c.Id = 1)
             .Returns(Task.CompletedTask);
 
         // Act
@@ -43,7 +43,7 @@ public class CreateClienteCommandHandlerTests
         Assert.Equal("Cliente Teste", result.Nome);
         Assert.Equal(0, result.TipoDocumento); // CPF = 0
         Assert.Equal("11144477735", result.Documento);
-        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.Cliente>()), Times.Once);
+        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()), Times.Once);
     }
 }
 
@@ -70,12 +70,12 @@ public class UpdateClienteCommandHandlerTests
             Documento = "12345678901234"
         };
 
-        var existingCliente = new Domain.Administrativo.Entities.Cliente { Id = 1, Nome = "Old Name", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
+        var existingCliente = new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Old Name", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
         
         _mockRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(existingCliente);
 
-        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.Cliente>()))
+        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()))
             .Returns(Task.CompletedTask);
 
         // Act
@@ -86,7 +86,7 @@ public class UpdateClienteCommandHandlerTests
         Assert.Equal(1, result.Id);
         Assert.Equal("Updated Cliente", result.Nome);
         Assert.Equal(1, result.TipoDocumento); // CNPJ = 1
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.Cliente>()), Times.Once);
+        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()), Times.Once);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class UpdateClienteCommandHandlerTests
         var command = new UpdateClienteCommand { Id = 999, Nome = "Test", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
 
         _mockRepository.Setup(r => r.GetByIdAsync(999))
-            .ReturnsAsync((Domain.Administrativo.Entities.Cliente?)null);
+            .ReturnsAsync((Domain.Administrativo.Entities.ClienteAggregateRoot?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -119,7 +119,7 @@ public class DeleteClienteCommandHandlerTests
     {
         // Arrange
         var command = new DeleteClienteCommand { Id = 1 };
-        var existingCliente = new Domain.Administrativo.Entities.Cliente { Id = 1, Nome = "Cliente to Delete", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
+        var existingCliente = new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Cliente to Delete", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
 
         _mockRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(existingCliente);
@@ -141,7 +141,7 @@ public class DeleteClienteCommandHandlerTests
         var command = new DeleteClienteCommand { Id = 999 };
 
         _mockRepository.Setup(r => r.GetByIdAsync(999))
-            .ReturnsAsync((Domain.Administrativo.Entities.Cliente?)null);
+            .ReturnsAsync((Domain.Administrativo.Entities.ClienteAggregateRoot?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));

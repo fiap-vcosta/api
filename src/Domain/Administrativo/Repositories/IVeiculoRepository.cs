@@ -4,11 +4,11 @@ namespace Domain.Administrativo.Repositories;
 
 public interface IVeiculoRepository
 {
-    Task<IEnumerable<Veiculo>> GetAllAsync();
-    Task<Veiculo?> GetByIdAsync(int id);
-    Task<IEnumerable<Veiculo>> GetByDonoIdAsync(int donoId);
-    Task<Veiculo?> GetByPlacaAsync(string placa);
-    Task CreateAsync(Veiculo veiculo);
-    Task UpdateAsync(Veiculo veiculo);
+    Task<IEnumerable<VeiculoAggregateRoot>> GetAllAsync();
+    Task<VeiculoAggregateRoot?> GetByIdAsync(int id);
+    Task<IEnumerable<VeiculoAggregateRoot>> GetByDonoIdAsync(int donoId);
+    Task<VeiculoAggregateRoot?> GetByPlacaAsync(string placa);
+    Task CreateAsync(VeiculoAggregateRoot veiculoAggregateRoot);
+    Task UpdateAsync(VeiculoAggregateRoot veiculoAggregateRoot);
     Task DeleteAsync(int id);
 }

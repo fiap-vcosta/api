@@ -21,8 +21,8 @@ public class ClienteRepositoryTests : IDisposable
 
         // Seed test data
         _context.Clientes.AddRange(
-            new Cliente { Id = 1, Nome = "Cliente 1", TipoDocumento = TipoDocumento.Cpf, Documento = "12345678901" },
-            new Cliente { Id = 2, Nome = "Cliente 2", TipoDocumento = TipoDocumento.Cnpj, Documento = "12345678901234" }
+            new ClienteAggregateRoot { Id = 1, Nome = "Cliente 1", TipoDocumento = TipoDocumento.Cpf, Documento = "12345678901" },
+            new ClienteAggregateRoot { Id = 2, Nome = "Cliente 2", TipoDocumento = TipoDocumento.Cnpj, Documento = "12345678901234" }
         );
         _context.SaveChanges();
     }
@@ -89,7 +89,7 @@ public class ClienteRepositoryTests : IDisposable
     public async Task CreateAsync_AddsCliente_ToDatabase()
     {
         // Arrange
-        var newCliente = new Cliente { Nome = "New Cliente", TipoDocumento = TipoDocumento.Cpf, Documento = "98765432101" };
+        var newCliente = new ClienteAggregateRoot { Nome = "New Cliente", TipoDocumento = TipoDocumento.Cpf, Documento = "98765432101" };
 
         // Act
         await _repository.CreateAsync(newCliente);

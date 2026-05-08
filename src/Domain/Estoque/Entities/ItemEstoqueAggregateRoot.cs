@@ -19,7 +19,7 @@ public enum UnidadeMedida
     Frasco
 }
 
-public class ItemEstoque
+public class ItemEstoqueAggregateRoot
 {
     public int Id { get; set; }
     public string Codigo { get; set; } = string.Empty;
@@ -29,7 +29,7 @@ public class ItemEstoque
     public decimal PrecoVenda { get; set; }
     public decimal Saldo { get; set; }
     public decimal SaldoReservado { get; set; }
-    public ICollection<Servico> Servicos { get; init; } = new List<Servico>();
+    public ICollection<ServicoAggregateRoot> Servicos { get; init; } = new List<ServicoAggregateRoot>();
 
     public void RegistrarEntradaEstoque(Decimal quantidade)
     {

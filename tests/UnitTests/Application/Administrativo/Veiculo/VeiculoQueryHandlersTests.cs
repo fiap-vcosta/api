@@ -14,7 +14,7 @@ public class VeiculoQueryHandlersTests
     [Fact]
     public async Task GetVeiculoByIdQueryHandler_ReturnsVeiculo_WhenVeiculoExists()
     {
-        var veiculo = new Domain.Administrativo.Entities.Veiculo { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mockRepository.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(veiculo);
 
         var handler = new GetVeiculoByIdQueryHandler(_mockRepository.Object);
@@ -30,7 +30,7 @@ public class VeiculoQueryHandlersTests
     [Fact]
     public async Task GetVeiculoByIdQueryHandler_ReturnsNull_WhenVeiculoDoesNotExist()
     {
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.Veiculo?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.VeiculoAggregateRoot?)null);
 
         var handler = new GetVeiculoByIdQueryHandler(_mockRepository.Object);
         var query = new GetVeiculoByIdQuery { Id = 999 };
@@ -43,7 +43,7 @@ public class VeiculoQueryHandlersTests
     [Fact]
     public async Task GetAllVeiculosQueryHandler_ReturnsAllVeiculos()
     {
-        var veiculos = new List<Domain.Administrativo.Entities.Veiculo>
+        var veiculos = new List<Domain.Administrativo.Entities.VeiculoAggregateRoot>
         {
             new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" },
             new() { Id = 2, Placa = "DEF-2G34", DonoId = 2, Modelo = "Polo", Marca = "Volkswagen" }
@@ -64,7 +64,7 @@ public class VeiculoQueryHandlersTests
     [Fact]
     public async Task GetVeiculosByDonoQueryHandler_ReturnsVeiculos_ForDonoId()
     {
-        var veiculos = new List<Domain.Administrativo.Entities.Veiculo>
+        var veiculos = new List<Domain.Administrativo.Entities.VeiculoAggregateRoot>
         {
             new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" },
             new() { Id = 2, Placa = "ABD-3F45", DonoId = 1, Modelo = "Fox", Marca = "Volkswagen" }

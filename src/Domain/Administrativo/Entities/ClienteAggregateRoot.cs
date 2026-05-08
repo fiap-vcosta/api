@@ -6,7 +6,7 @@ public enum TipoDocumento
     Cnpj
 }
 
-public class Cliente
+public class ClienteAggregateRoot
 {
     public int Id { get; set; }
     public string Nome { get; set; } = string.Empty;

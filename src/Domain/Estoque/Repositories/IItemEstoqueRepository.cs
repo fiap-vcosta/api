@@ -4,10 +4,10 @@ namespace Domain.Estoque.Repositories;
 
 public interface IItemEstoqueRepository
 {
-    Task<IEnumerable<ItemEstoque>> GetAllAsync();
-    Task<ItemEstoque?> GetByIdAsync(int id);
-    Task<ItemEstoque?> GetByCodigoAsync(string codigo);
-    Task CreateAsync(ItemEstoque itemEstoque);
-    Task UpdateAsync(ItemEstoque itemEstoque);
+    Task<IEnumerable<ItemEstoqueAggregateRoot>> GetAllAsync();
+    Task<ItemEstoqueAggregateRoot?> GetByIdAsync(int id);
+    Task<ItemEstoqueAggregateRoot?> GetByCodigoAsync(string codigo);
+    Task CreateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot);
+    Task UpdateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot);
     Task DeleteAsync(int id);
 }

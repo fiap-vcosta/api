@@ -34,10 +34,10 @@ public class CreateItemEstoqueCommandHandlerTests
         };
 
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync((Domain.Estoque.Entities.ItemEstoque?)null);
+            .ReturnsAsync((Domain.Estoque.Entities.ItemEstoqueAggregateRoot?)null);
 
-        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoque>()))
-            .Callback<Domain.Estoque.Entities.ItemEstoque>(item => item.Id = 1)
+        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoqueAggregateRoot>()))
+            .Callback<Domain.Estoque.Entities.ItemEstoqueAggregateRoot>(item => item.Id = 1)
             .Returns(Task.CompletedTask);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -51,7 +51,7 @@ public class CreateItemEstoqueCommandHandlerTests
         Assert.Equal(55.50m, result.PrecoVenda);
         Assert.Equal(10.000m, result.Saldo);
         Assert.Equal(2.000m, result.SaldoReservado);
-        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoque>()), Times.Once);
+        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoqueAggregateRoot>()), Times.Once);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class CreateItemEstoqueCommandHandlerTests
         };
 
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoque { Id = 2, Codigo = command.Codigo, Nome = "Outro" });
+            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoqueAggregateRoot { Id = 2, Codigo = command.Codigo, Nome = "Outro" });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -100,10 +100,10 @@ public class UpdateItemEstoqueCommandHandlerTests
         };
 
         _mockRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoque { Id = 1, Codigo = "ITM-001", Tipo = ItemTipo.Peca, Nome = "Filtro", UnidadeMedida = UnidadeMedida.Unidade, PrecoVenda = 50.00m, Saldo = 10.000m, SaldoReservado = 1.000m });
+            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoqueAggregateRoot { Id = 1, Codigo = "ITM-001", Tipo = ItemTipo.Peca, Nome = "Filtro", UnidadeMedida = UnidadeMedida.Unidade, PrecoVenda = 50.00m, Saldo = 10.000m, SaldoReservado = 1.000m });
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync((Domain.Estoque.Entities.ItemEstoque?)null);
-        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoque>()))
+            .ReturnsAsync((Domain.Estoque.Entities.ItemEstoqueAggregateRoot?)null);
+        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoqueAggregateRoot>()))
             .Returns(Task.CompletedTask);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -113,7 +113,7 @@ public class UpdateItemEstoqueCommandHandlerTests
         Assert.Equal("ITM-002", result.Codigo);
         Assert.Equal(ItemTipo.Insumo, result.Tipo);
         Assert.Equal("Óleo de Motor", result.Nome);
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoque>()), Times.Once);
+        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Estoque.Entities.ItemEstoqueAggregateRoot>()), Times.Once);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class UpdateItemEstoqueCommandHandlerTests
             PrecoVenda = 25.00m,
         };
 
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Estoque.Entities.ItemEstoque?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Estoque.Entities.ItemEstoqueAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -150,7 +150,7 @@ public class DeleteItemEstoqueCommandHandlerTests
     public async Task Handle_DeletesItemEstoque_WhenItemExists()
     {
         _mockRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoque { Id = 1, Codigo = "ITM-001" });
+            .ReturnsAsync(new Domain.Estoque.Entities.ItemEstoqueAggregateRoot { Id = 1, Codigo = "ITM-001" });
         _mockRepository.Setup(r => r.DeleteAsync(1)).Returns(Task.CompletedTask);
 
         await _handler.Handle(new DeleteItemEstoqueCommand { Id = 1 }, CancellationToken.None);
@@ -161,7 +161,7 @@ public class DeleteItemEstoqueCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsKeyNotFoundException_WhenItemDoesNotExist()
     {
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Estoque.Entities.ItemEstoque?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Estoque.Entities.ItemEstoqueAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(new DeleteItemEstoqueCommand { Id = 999 }, CancellationToken.None));
     }

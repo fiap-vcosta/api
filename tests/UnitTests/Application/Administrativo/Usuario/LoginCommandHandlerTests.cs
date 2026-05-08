@@ -11,7 +11,7 @@ public class LoginCommandHandlerTests
     public async Task Handle_ReturnsToken_WhenCredentialsAreValid()
     {
         // Arrange
-        var repository = new StubUsuarioRepository(new Domain.Administrativo.Entities.Usuario
+        var repository = new StubUsuarioRepository(new Domain.Administrativo.Entities.UsuarioAggregateRoot
         {
             Id = 1,
             Login = "admin",
@@ -33,7 +33,7 @@ public class LoginCommandHandlerTests
     public async Task Handle_ThrowsUnauthorizedAccessException_WhenCredentialsAreInvalid()
     {
         // Arrange
-        var repository = new StubUsuarioRepository(new Domain.Administrativo.Entities.Usuario
+        var repository = new StubUsuarioRepository(new Domain.Administrativo.Entities.UsuarioAggregateRoot
         {
             Id = 1,
             Login = "admin",

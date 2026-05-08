@@ -13,7 +13,7 @@ public class ServicoQueryHandlersTests
     [Fact]
     public async Task GetServicoByIdQueryHandler_ReturnsServico_WhenServicoExists()
     {
-        var servico = new Domain.Administrativo.Entities.Servico { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true };
+        var servico = new Domain.Administrativo.Entities.ServicoAggregateRoot { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true };
         _mockRepository.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(servico);
 
         var handler = new GetServicoByIdQueryHandler(_mockRepository.Object);
@@ -29,7 +29,7 @@ public class ServicoQueryHandlersTests
     [Fact]
     public async Task GetServicoByIdQueryHandler_ReturnsNull_WhenServicoDoesNotExist()
     {
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.Servico?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.ServicoAggregateRoot?)null);
 
         var handler = new GetServicoByIdQueryHandler(_mockRepository.Object);
         var query = new GetServicoByIdQuery { Id = 999 };
@@ -42,7 +42,7 @@ public class ServicoQueryHandlersTests
     [Fact]
     public async Task GetAllServicosQueryHandler_ReturnsAllServicos()
     {
-        var servicos = new List<Domain.Administrativo.Entities.Servico>
+        var servicos = new List<Domain.Administrativo.Entities.ServicoAggregateRoot>
         {
             new() { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true },
             new() { Id = 2, Codigo = "FRE-001", Nome = "Freio", PrecoPadrao = 250.00m, Ativo = true }

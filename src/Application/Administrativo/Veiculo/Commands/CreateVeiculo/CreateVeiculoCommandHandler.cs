@@ -20,7 +20,7 @@ public class CreateVeiculoCommandHandler(IClienteRepository clienteRepository, I
             throw new InvalidOperationException("Já existe um veículo com esta placa.");
         }
 
-        var veiculo = new Domain.Administrativo.Entities.Veiculo
+        var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot
         {
             Placa = request.Placa,
             DonoId = request.DonoId,

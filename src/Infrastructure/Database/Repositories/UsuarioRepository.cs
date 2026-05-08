@@ -7,17 +7,17 @@ namespace Infrastructure.Database.Repositories;
 
 public class UsuarioRepository(AppDbContext context) : IUsuarioRepository
 {
-    public async Task<Usuario?> GetByIdAsync(int id)
+    public async Task<UsuarioAggregateRoot?> GetByIdAsync(int id)
     {
         return await context.Usuarios.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Usuario>> GetAllAsync()
+    public async Task<IEnumerable<UsuarioAggregateRoot>> GetAllAsync()
     {
         return await context.Usuarios.ToListAsync();
     }
 
-    public async Task<Usuario?> GetByLoginAndPasswordAsync(string login, string password)
+    public async Task<UsuarioAggregateRoot?> GetByLoginAndPasswordAsync(string login, string password)
     {
         var hashedPassword = PasswordHasher.HashPassword(password);
         return await context.Usuarios.FirstOrDefaultAsync(u => u.Login == login && u.Password == hashedPassword);

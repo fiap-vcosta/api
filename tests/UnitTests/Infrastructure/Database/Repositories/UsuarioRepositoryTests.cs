@@ -22,9 +22,9 @@ public class UsuarioRepositoryTests : IDisposable
 
         // Seed test data
         _context.Usuarios.AddRange(
-            new Usuario { Id = 1, Login = "admin", Password = PasswordHasher.HashPassword("admin"), TipoUsuario = TipoUsuario.Admin },
-            new Usuario { Id = 2, Login = "atendente", Password = PasswordHasher.HashPassword("atendente"), TipoUsuario = TipoUsuario.Atendente },
-            new Usuario { Id = 3, Login = "mecanico", Password = PasswordHasher.HashPassword("mecanico"), TipoUsuario = TipoUsuario.Mecanico }
+            new UsuarioAggregateRoot { Id = 1, Login = "admin", Password = PasswordHasher.HashPassword("admin"), TipoUsuario = TipoUsuario.Admin },
+            new UsuarioAggregateRoot { Id = 2, Login = "atendente", Password = PasswordHasher.HashPassword("atendente"), TipoUsuario = TipoUsuario.Atendente },
+            new UsuarioAggregateRoot { Id = 3, Login = "mecanico", Password = PasswordHasher.HashPassword("mecanico"), TipoUsuario = TipoUsuario.Mecanico }
         );
         _context.SaveChanges();
     }

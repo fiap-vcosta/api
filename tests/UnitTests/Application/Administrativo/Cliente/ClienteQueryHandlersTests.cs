@@ -15,7 +15,7 @@ public class ClienteQueryHandlersTests
     public async Task GetClienteByIdQueryHandler_ReturnsCliente_WhenClienteExists()
     {
         // Arrange
-        var cliente = new Domain.Administrativo.Entities.Cliente { Id = 1, Nome = "Cliente Test", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
+        var cliente = new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Cliente Test", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" };
         _mockRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(cliente);
 
@@ -37,7 +37,7 @@ public class ClienteQueryHandlersTests
     {
         // Arrange
         _mockRepository.Setup(r => r.GetByIdAsync(999))
-            .ReturnsAsync((Domain.Administrativo.Entities.Cliente?)null);
+            .ReturnsAsync((Domain.Administrativo.Entities.ClienteAggregateRoot?)null);
 
         var handler = new GetClienteByIdQueryHandler(_mockRepository.Object);
         var query = new GetClienteByIdQuery { Id = 999 };
@@ -53,7 +53,7 @@ public class ClienteQueryHandlersTests
     public async Task GetAllClientesQueryHandler_ReturnsAllClientes()
     {
         // Arrange
-        var clientes = new List<Domain.Administrativo.Entities.Cliente>
+        var clientes = new List<Domain.Administrativo.Entities.ClienteAggregateRoot>
         {
             new() { Id = 1, Nome = "Cliente 1", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" },
             new() { Id = 2, Nome = "Cliente 2", TipoDocumento = TipoDocumento.Cnpj, Documento = "12345678901234" }
@@ -80,7 +80,7 @@ public class ClienteQueryHandlersTests
     {
         // Arrange
         _mockRepository.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(new List<Domain.Administrativo.Entities.Cliente>());
+            .ReturnsAsync(new List<Domain.Administrativo.Entities.ClienteAggregateRoot>());
 
         var handler = new GetAllClientesQueryHandler(_mockRepository.Object);
         var query = new GetAllClientesQuery();

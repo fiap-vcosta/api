@@ -6,30 +6,30 @@ namespace Infrastructure.Database.Repositories;
 
 public class ServicoRepository(AppDbContext context) : IServicoRepository
 {
-    public async Task<IEnumerable<Servico>> GetAllAsync()
+    public async Task<IEnumerable<ServicoAggregateRoot>> GetAllAsync()
     {
         return await context.Servicos.ToListAsync();
     }
 
-    public async Task<Servico?> GetByIdAsync(int id)
+    public async Task<ServicoAggregateRoot?> GetByIdAsync(int id)
     {
         return await context.Servicos.FindAsync(id);
     }
 
-    public async Task<Servico?> GetByCodigoAsync(string codigo)
+    public async Task<ServicoAggregateRoot?> GetByCodigoAsync(string codigo)
     {
         return await context.Servicos.FirstOrDefaultAsync(s => s.Codigo == codigo);
     }
 
-    public async Task CreateAsync(Servico servico)
+    public async Task CreateAsync(ServicoAggregateRoot servicoAggregateRoot)
     {
-        context.Servicos.Add(servico);
+        context.Servicos.Add(servicoAggregateRoot);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Servico servico)
+    public async Task UpdateAsync(ServicoAggregateRoot servicoAggregateRoot)
     {
-        context.Servicos.Update(servico);
+        context.Servicos.Update(servicoAggregateRoot);
         await context.SaveChangesAsync();
     }
 

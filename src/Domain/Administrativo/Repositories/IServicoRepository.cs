@@ -4,10 +4,10 @@ namespace Domain.Administrativo.Repositories;
 
 public interface IServicoRepository
 {
-    Task<IEnumerable<Servico>> GetAllAsync();
-    Task<Servico?> GetByIdAsync(int id);
-    Task<Servico?> GetByCodigoAsync(string codigo);
-    Task CreateAsync(Servico servico);
-    Task UpdateAsync(Servico servico);
+    Task<IEnumerable<ServicoAggregateRoot>> GetAllAsync();
+    Task<ServicoAggregateRoot?> GetByIdAsync(int id);
+    Task<ServicoAggregateRoot?> GetByCodigoAsync(string codigo);
+    Task CreateAsync(ServicoAggregateRoot servicoAggregateRoot);
+    Task UpdateAsync(ServicoAggregateRoot servicoAggregateRoot);
     Task DeleteAsync(int id);
 }

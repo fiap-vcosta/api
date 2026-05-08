@@ -8,6 +8,7 @@ using Api.Controllers.Auth.Login;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
 using Api.Controllers.ItemEstoque.CreateItemEstoque;
+using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
 using Api.Controllers.Servico.CreateServico;
 using Api.Controllers.Servico.UpdateServico;
@@ -81,6 +82,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
         services.AddSingleton<IValidator<CreateItemEstoqueRequest>, CreateItemEstoqueRequestValidator>();
         services.AddSingleton<IValidator<UpdateItemEstoqueRequest>, UpdateItemEstoqueRequestValidator>();
+        services.AddSingleton<IValidator<RegistrarEntradaEstoqueRequest>, RegistrarEntradaEstoqueRequestValidator>();
     }
 
     private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)

@@ -1,11 +1,11 @@
 using Api.Contracts.Validation;
 using Api.Controllers.ItemEstoque.CreateItemEstoque;
+using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands;
 using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
 using Application.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
+using Application.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
 using Application.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Queries;
 using Application.Estoque.ItemEstoque.Queries.GetAllItensEstoque;
 using Application.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
 using Domain.Estoque.Entities;
@@ -18,10 +18,14 @@ namespace Api.Controllers.ItemEstoque;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "Admin")]
-public class ItemEstoqueController(
+public class ItemEstoqueController
+(
     IMediator mediator,
     IValidator<CreateItemEstoqueRequest> createValidator,
-    IValidator<UpdateItemEstoqueRequest> updateValidator) : ControllerBase
+    IValidator<UpdateItemEstoqueRequest> updateValidator,
+    IValidator<RegistrarEntradaEstoqueRequest> registrarEntradaValidator
+)
+    : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateItemEstoqueRequest request)
@@ -122,6 +126,32 @@ public class ItemEstoqueController(
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpPost("{id:int}/registrar-entrada")]
+    public async Task<IActionResult> RegistrarEntrada(int id, [FromBody] RegistrarEntradaEstoqueRequest request)
+    {
+        var validationResult = registrarEntradaValidator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new { validationResult.Errors });
+        }
+        
+        try
+        {
+            var command = new RegistrarEntradaEstoqueCommand
+            {
+                IdItemEstoque = id,
+                QuantidadeRecebida = request.Quantidade
+            };
+
+            var response = await mediator.Send(command);
+            return Ok(response);
         }
         catch (Exception ex)
         {

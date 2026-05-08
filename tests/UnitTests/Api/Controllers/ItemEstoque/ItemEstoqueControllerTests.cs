@@ -1,10 +1,9 @@
 using Api.Contracts.Validation;
 using Api.Controllers.ItemEstoque;
 using Api.Controllers.ItemEstoque.CreateItemEstoque;
+using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands;
 using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
-using Application.Estoque.ItemEstoque.Queries;
 using Application.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
 using Domain.Estoque.Entities;
 using MediatR;
@@ -24,7 +23,14 @@ public class ItemEstoqueControllerTests
         _mediatorMock = new Mock<IMediator>();
         _createValidatorMock = new Mock<IValidator<CreateItemEstoqueRequest>>();
         var updateValidatorMock = new Mock<IValidator<UpdateItemEstoqueRequest>>();
-        _controller = new ItemEstoqueController(_mediatorMock.Object, _createValidatorMock.Object, updateValidatorMock.Object);
+        var registrarEntradaMock = new Mock<IValidator<RegistrarEntradaEstoqueRequest>>();
+        
+        _controller = new ItemEstoqueController(
+            _mediatorMock.Object,
+            _createValidatorMock.Object,
+            updateValidatorMock.Object,
+            registrarEntradaMock.Object
+        );
     }
 
     [Fact]

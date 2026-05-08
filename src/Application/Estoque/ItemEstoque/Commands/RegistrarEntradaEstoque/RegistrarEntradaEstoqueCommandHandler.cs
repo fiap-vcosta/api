@@ -1,3 +1,5 @@
+using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
+using Domain.Estoque.Entities;
 using Domain.Estoque.Events;
 using Domain.Estoque.Repositories;
 using MediatR;
@@ -5,9 +7,9 @@ using MediatR;
 namespace Application.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
 
 public class RegistrarEntradaEstoqueCommandHandler(IItemEstoqueRepository itemEstoqueRepository, IMediator mediator)
-    : IRequestHandler<RegistrarEntradaEstoqueCommand, Unit>
+    : IRequestHandler<RegistrarEntradaEstoqueCommand, ItemEstoqueResponse>
 {
-    public async Task<Unit> Handle(RegistrarEntradaEstoqueCommand request, CancellationToken cancellationToken)
+    public async Task<ItemEstoqueResponse> Handle(RegistrarEntradaEstoqueCommand request, CancellationToken cancellationToken)
     {
         var item = await itemEstoqueRepository.GetByIdAsync(request.IdItemEstoque);
         if (item == null)
@@ -19,7 +21,7 @@ public class RegistrarEntradaEstoqueCommandHandler(IItemEstoqueRepository itemEs
 
         await itemEstoqueRepository.UpdateAsync(item);
         await mediator.Publish(new ChegadaDeItensRegistradaEvent(item), cancellationToken);
-        
-        return Unit.Value;
+
+        return ItemEstoqueResponse.FromAggregateRoot(item);
     }
 }

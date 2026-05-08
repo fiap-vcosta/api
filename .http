@@ -150,8 +150,8 @@ Content-Type: application/json
 DELETE http://localhost:8080/api/servico/{{servicoId}}
 Authorization: Bearer {{token}}
 
-### GET Itens de Estoque
-# @name getItensEstoque
+### GET itens de Estoque
+# @name getitensEstoque
 GET http://localhost:8080/api/itemestoque
 Authorization: Bearer {{token}}
 
@@ -197,3 +197,13 @@ Content-Type: application/json
 # @name deleteItemEstoqueById
 DELETE http://localhost:8080/api/itemestoque/{{itemEstoqueId}}
 Authorization: Bearer {{token}}
+
+### Registrar Entrada de Estoque
+# @name registrarEntradaEstoque
+POST http://localhost:8080/api/itemestoque/{{itemEstoqueId}}/registrar-entrada
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Quantidade": 5.00
+}

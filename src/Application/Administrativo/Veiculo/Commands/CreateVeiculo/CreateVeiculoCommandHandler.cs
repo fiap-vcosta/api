@@ -8,7 +8,7 @@ public class CreateVeiculoCommandHandler(IClienteRepository clienteRepository, I
 {
     public async Task<VeiculoResponse> Handle(CreateVeiculoCommand request, CancellationToken cancellationToken)
     {
-        var dono = await clienteRepository.GetByIdAsync(request.DonoId);
+        var dono = await clienteRepository.GetByIdAsync(request.IdDono);
         if (dono == null)
         {
             throw new KeyNotFoundException("Dono não encontrado.");
@@ -23,7 +23,7 @@ public class CreateVeiculoCommandHandler(IClienteRepository clienteRepository, I
         var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot
         {
             Placa = request.Placa,
-            DonoId = request.DonoId,
+            IdDono = request.IdDono,
             Modelo = request.Modelo,
             Marca = request.Marca
         };
@@ -34,7 +34,7 @@ public class CreateVeiculoCommandHandler(IClienteRepository clienteRepository, I
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            DonoId = veiculo.DonoId,
+            IdDono = veiculo.IdDono,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

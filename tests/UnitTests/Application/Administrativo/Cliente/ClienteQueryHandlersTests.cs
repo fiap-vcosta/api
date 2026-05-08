@@ -29,7 +29,7 @@ public class ClienteQueryHandlersTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Cliente Test", result.Nome);
-        Assert.Equal(0, result.TipoDocumento);
+        Assert.Equal(TipoDocumento.Cpf, result.TipoDocumento);
     }
 
     [Fact]

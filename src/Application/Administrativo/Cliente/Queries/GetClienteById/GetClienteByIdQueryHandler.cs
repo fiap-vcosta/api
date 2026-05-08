@@ -19,7 +19,7 @@ public class GetClienteByIdQueryHandler(IClienteRepository clienteRepository)
         {
             Id = cliente.Id,
             Nome = cliente.Nome,
-            TipoDocumento = (int)cliente.TipoDocumento,
+            TipoDocumento = cliente.TipoDocumento,
             Documento = cliente.Documento
         };
     }

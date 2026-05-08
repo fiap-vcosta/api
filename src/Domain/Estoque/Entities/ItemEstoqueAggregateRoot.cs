@@ -1,5 +1,3 @@
-using Domain.Administrativo.Entities;
-
 namespace Domain.Estoque.Entities;
 
 public enum ItemTipo
@@ -29,11 +27,10 @@ public class ItemEstoqueAggregateRoot
     public decimal PrecoVenda { get; set; }
     public decimal Saldo { get; set; }
     public decimal SaldoReservado { get; set; }
-    public ICollection<ServicoAggregateRoot> Servicos { get; init; } = new List<ServicoAggregateRoot>();
 
     public void RegistrarEntradaEstoque(Decimal quantidade)
     {
-        Saldo += quantidade;;
+        Saldo += quantidade;
     }
 
     public void TravarEstoque(Decimal quantidade)

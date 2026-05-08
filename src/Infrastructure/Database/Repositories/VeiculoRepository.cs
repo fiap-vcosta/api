@@ -8,17 +8,17 @@ public class VeiculoRepository(AppDbContext context) : IVeiculoRepository
 {
     public async Task<IEnumerable<VeiculoAggregateRoot>> GetAllAsync()
     {
-        return await context.Veiculos.Include(v => v.Dono).ToListAsync();
+        return await context.Veiculos.ToListAsync();
     }
 
     public async Task<VeiculoAggregateRoot?> GetByIdAsync(int id)
     {
-        return await context.Veiculos.Include(v => v.Dono).FirstOrDefaultAsync(v => v.Id == id);
+        return await context.Veiculos.FirstOrDefaultAsync(v => v.Id == id);
     }
 
     public async Task<IEnumerable<VeiculoAggregateRoot>> GetByDonoIdAsync(int donoId)
     {
-        return await context.Veiculos.Where(v => v.DonoId == donoId).ToListAsync();
+        return await context.Veiculos.Where(v => v.IdDono == donoId).ToListAsync();
     }
 
     public async Task<VeiculoAggregateRoot?> GetByPlacaAsync(string placa)

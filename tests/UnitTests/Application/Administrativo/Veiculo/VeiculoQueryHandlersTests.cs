@@ -14,7 +14,7 @@ public class VeiculoQueryHandlersTests
     [Fact]
     public async Task GetVeiculoByIdQueryHandler_ReturnsVeiculo_WhenVeiculoExists()
     {
-        var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mockRepository.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(veiculo);
 
         var handler = new GetVeiculoByIdQueryHandler(_mockRepository.Object);
@@ -45,8 +45,8 @@ public class VeiculoQueryHandlersTests
     {
         var veiculos = new List<Domain.Administrativo.Entities.VeiculoAggregateRoot>
         {
-            new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, Placa = "DEF-2G34", DonoId = 2, Modelo = "Polo", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, Placa = "DEF-2G34", IdDono = 2, Modelo = "Polo", Marca = "Volkswagen" }
         };
 
         _mockRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(veiculos);
@@ -66,18 +66,18 @@ public class VeiculoQueryHandlersTests
     {
         var veiculos = new List<Domain.Administrativo.Entities.VeiculoAggregateRoot>
         {
-            new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, Placa = "ABD-3F45", DonoId = 1, Modelo = "Fox", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, Placa = "ABD-3F45", IdDono = 1, Modelo = "Fox", Marca = "Volkswagen" }
         };
 
         _mockRepository.Setup(r => r.GetByDonoIdAsync(1)).ReturnsAsync(veiculos);
 
         var handler = new GetVeiculosByDonoQueryHandler(_mockRepository.Object);
-        var query = new GetVeiculosByDonoQuery { DonoId = 1 };
+        var query = new GetVeiculosByDonoQuery { IdDono = 1 };
 
         var result = (await handler.Handle(query, CancellationToken.None)).ToList();
 
         Assert.Equal(2, result.Count);
-        Assert.All(result, r => Assert.Equal(1, r.DonoId));
+        Assert.All(result, r => Assert.Equal(1, r.IdDono));
     }
 }

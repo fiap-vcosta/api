@@ -17,9 +17,8 @@ public class NotificarClienteSobreConclusaoCommandHandler(IClienteRepository cli
         
         // TODO: Adicionar Ordem de Serviço
         
-        // TODO: Adicionar email cliente
         var conteudo = $"Ordem de Serviço {request.IdOrdemServico} Finalizada!";
-        await smtpService.EnviarEmail(cliente.Nome, conteudo);
+        await smtpService.EnviarEmail(cliente.Email, conteudo);
 
         return Unit.Value;
     }

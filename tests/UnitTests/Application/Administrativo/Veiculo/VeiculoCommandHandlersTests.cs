@@ -27,7 +27,7 @@ public class CreateVeiculoCommandHandlerTests
         var command = new CreateVeiculoCommand
         {
             Placa = "ABC-1D23",
-            DonoId = 1,
+            IdDono = 1,
             Modelo = "Gol",
             Marca = "Volkswagen"
         };
@@ -47,7 +47,7 @@ public class CreateVeiculoCommandHandlerTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("ABC-1D23", result.Placa);
-        Assert.Equal(1, result.DonoId);
+        Assert.Equal(1, result.IdDono);
         Assert.Equal("Gol", result.Modelo);
         Assert.Equal("Volkswagen", result.Marca);
         _mockVeiculoRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.VeiculoAggregateRoot>()), Times.Once);
@@ -56,7 +56,7 @@ public class CreateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsKeyNotFoundException_WhenDonoDoesNotExist()
     {
-        var command = new CreateVeiculoCommand { Placa = "ABC-1D23", DonoId = 999, Modelo = "Gol", Marca = "Volkswagen" };
+        var command = new CreateVeiculoCommand { Placa = "ABC-1D23", IdDono = 999, Modelo = "Gol", Marca = "Volkswagen" };
         _mockClienteRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.ClienteAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -65,11 +65,11 @@ public class CreateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsInvalidOperationException_WhenPlacaAlreadyExists()
     {
-        var command = new CreateVeiculoCommand { Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var command = new CreateVeiculoCommand { Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mockClienteRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Cliente Teste", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" });
         _mockVeiculoRepository.Setup(r => r.GetByPlacaAsync(command.Placa))
-            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 2, Placa = command.Placa, DonoId = 1, Modelo = "Uno", Marca = "Fiat" });
+            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 2, Placa = command.Placa, IdDono = 1, Modelo = "Uno", Marca = "Fiat" });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -95,13 +95,13 @@ public class UpdateVeiculoCommandHandlerTests
         {
             Id = 1,
             Placa = "DEF-2G34",
-            DonoId = 1,
+            IdDono = 1,
             Modelo = "Polo",
             Marca = "Volkswagen"
         };
 
         _mockVeiculoRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
 
         _mockClienteRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Cliente Teste", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" });
@@ -124,7 +124,7 @@ public class UpdateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsKeyNotFoundException_WhenVeiculoDoesNotExist()
     {
-        var command = new UpdateVeiculoCommand { Id = 999, Placa = "DEF-2G34", DonoId = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var command = new UpdateVeiculoCommand { Id = 999, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
         _mockVeiculoRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.VeiculoAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -133,16 +133,16 @@ public class UpdateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsInvalidOperationException_WhenAnotherVeiculoHasSamePlaca()
     {
-        var command = new UpdateVeiculoCommand { Id = 1, Placa = "DEF-2G34", DonoId = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var command = new UpdateVeiculoCommand { Id = 1, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
 
         _mockVeiculoRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
 
         _mockClienteRepository.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(new Domain.Administrativo.Entities.ClienteAggregateRoot { Id = 1, Nome = "Cliente Teste", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" });
 
         _mockVeiculoRepository.Setup(r => r.GetByPlacaAsync(command.Placa))
-            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 2, Placa = command.Placa, DonoId = 1, Modelo = "Uno", Marca = "Fiat" });
+            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 2, Placa = command.Placa, IdDono = 1, Modelo = "Uno", Marca = "Fiat" });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -163,7 +163,7 @@ public class DeleteVeiculoCommandHandlerTests
     public async Task Handle_DeletesVeiculo_WhenVeiculoExists()
     {
         _mockVeiculoRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new Domain.Administrativo.Entities.VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
         _mockVeiculoRepository.Setup(r => r.DeleteAsync(1)).Returns(Task.CompletedTask);
 
         await _handler.Handle(new DeleteVeiculoCommand { Id = 1 }, CancellationToken.None);

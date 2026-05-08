@@ -14,7 +14,7 @@ public class GetAllVeiculosQueryHandler(IVeiculoRepository veiculoRepository)
         {
             Id = v.Id,
             Placa = v.Placa,
-            DonoId = v.DonoId,
+            IdDono = v.IdDono,
             Modelo = v.Modelo,
             Marca = v.Marca
         }).ToList();

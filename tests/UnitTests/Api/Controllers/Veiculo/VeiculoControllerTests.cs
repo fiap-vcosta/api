@@ -49,7 +49,7 @@ public class VeiculoControllerTests
     public async Task Create_ReturnsCreatedAtAction_WhenRequestIsValid()
     {
         var request = new CreateVeiculoRequest { Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
-        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
 
         _createValidatorMock.Setup(v => v.Validate(It.IsAny<CreateVeiculoRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<CreateVeiculoCommand>(), CancellationToken.None)).ReturnsAsync(response);
@@ -64,7 +64,7 @@ public class VeiculoControllerTests
     [Fact]
     public async Task GetById_ReturnsOk_WhenVeiculoExists()
     {
-        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculoByIdQuery>(), CancellationToken.None)).ReturnsAsync(response);
 
         var result = await _controller.GetById(1);
@@ -88,8 +88,8 @@ public class VeiculoControllerTests
     {
         var veiculos = new List<VeiculoResponse>
         {
-            new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, Placa = "DEF-2G34", DonoId = 2, Modelo = "Polo", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, Placa = "DEF-2G34", IdDono = 2, Modelo = "Polo", Marca = "Volkswagen" }
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllVeiculosQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
@@ -105,7 +105,7 @@ public class VeiculoControllerTests
     {
         var veiculos = new List<VeiculoResponse>
         {
-            new() { Id = 1, Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" }
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculosByDonoQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
@@ -120,7 +120,7 @@ public class VeiculoControllerTests
     public async Task Update_ReturnsOk_WhenRequestIsValid()
     {
         var request = new UpdateVeiculoRequest { Placa = "DEF-2G34", DonoId = 1, Modelo = "Polo", Marca = "Volkswagen" };
-        var response = new VeiculoResponse { Id = 1, Placa = "DEF-2G34", DonoId = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
 
         _updateValidatorMock.Setup(v => v.Validate(It.IsAny<UpdateVeiculoRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateVeiculoCommand>(), CancellationToken.None)).ReturnsAsync(response);

@@ -19,7 +19,7 @@ public class GetVeiculoByIdQueryHandler(IVeiculoRepository veiculoRepository)
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            DonoId = veiculo.DonoId,
+            IdDono = veiculo.IdDono,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

@@ -14,7 +14,7 @@ public class GetAllClientesQueryHandler(IClienteRepository clienteRepository)
         {
             Id = c.Id,
             Nome = c.Nome,
-            TipoDocumento = (int)c.TipoDocumento,
+            TipoDocumento = c.TipoDocumento,
             Documento = c.Documento
         }).ToList();
     }

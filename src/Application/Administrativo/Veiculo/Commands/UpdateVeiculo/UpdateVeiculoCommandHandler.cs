@@ -15,7 +15,7 @@ public class UpdateVeiculoCommandHandler(IClienteRepository clienteRepository, I
             throw new KeyNotFoundException($"Veículo com id {request.Id} não encontrado");
         }
 
-        var dono = await clienteRepository.GetByIdAsync(request.DonoId);
+        var dono = await clienteRepository.GetByIdAsync(request.IdDono);
         if (dono == null)
         {
             throw new KeyNotFoundException("Dono não encontrado.");
@@ -28,7 +28,7 @@ public class UpdateVeiculoCommandHandler(IClienteRepository clienteRepository, I
         }
 
         veiculo.Placa = request.Placa;
-        veiculo.DonoId = request.DonoId;
+        veiculo.IdDono = request.IdDono;
         veiculo.Modelo = request.Modelo;
         veiculo.Marca = request.Marca;
 
@@ -38,7 +38,7 @@ public class UpdateVeiculoCommandHandler(IClienteRepository clienteRepository, I
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            DonoId = veiculo.DonoId,
+            IdDono = veiculo.IdDono,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

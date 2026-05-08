@@ -37,7 +37,7 @@ public class VeiculoController(
             var command = new CreateVeiculoCommand
             {
                 Placa = request.Placa,
-                DonoId = request.DonoId,
+                IdDono = request.DonoId,
                 Modelo = request.Modelo,
                 Marca = request.Marca
             };
@@ -76,7 +76,7 @@ public class VeiculoController(
     [HttpGet("por-dono/{donoId:int}")]
     public async Task<IActionResult> GetByDono(int donoId)
     {
-        var query = new GetVeiculosByDonoQuery { DonoId = donoId };
+        var query = new GetVeiculosByDonoQuery { IdDono = donoId };
         var response = await mediator.Send(query);
         return Ok(response);
     }
@@ -96,7 +96,7 @@ public class VeiculoController(
             {
                 Id = id,
                 Placa = request.Placa,
-                DonoId = request.DonoId,
+                IdDono = request.DonoId,
                 Modelo = request.Modelo,
                 Marca = request.Marca
             };

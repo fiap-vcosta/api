@@ -2,13 +2,12 @@ using Api.Contracts.Validation;
 using Api.Controllers.Cliente;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
-using Application.Administrativo.Cliente.Commands;
 using Application.Administrativo.Cliente.Commands.CreateCliente;
 using Application.Administrativo.Cliente.Commands.DeleteCliente;
 using Application.Administrativo.Cliente.Commands.UpdateCliente;
-using Application.Administrativo.Cliente.Queries;
 using Application.Administrativo.Cliente.Queries.GetAllClientes;
 using Application.Administrativo.Cliente.Queries.GetClienteById;
+using Domain.Administrativo.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -107,8 +106,8 @@ public class ClienteControllerTests
         // Arrange
         var clientes = new List<ClienteResponse>
         {
-            new() { Id = 1, Nome = "Cliente 1", TipoDocumento = 0, Documento = "11144477735" },
-            new() { Id = 2, Nome = "Cliente 2", TipoDocumento = 1, Documento = "12345678901234" }
+            new() { Id = 1, Nome = "Cliente 1", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" },
+            new() { Id = 2, Nome = "Cliente 2", TipoDocumento = TipoDocumento.Cnpj, Documento = "12345678901234" }
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllClientesQuery>(), CancellationToken.None))

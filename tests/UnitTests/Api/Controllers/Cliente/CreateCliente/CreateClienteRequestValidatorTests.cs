@@ -1,4 +1,5 @@
 using Api.Controllers.Cliente.CreateCliente;
+using Domain.Administrativo.Entities;
 
 namespace UnitTests.Api.Controllers.Cliente.CreateCliente;
 
@@ -51,7 +52,7 @@ public class CreateClienteRequestValidatorTests
         var request = new CreateClienteRequest
         {
             Nome = "Cliente Teste",
-            TipoDocumento = 999,
+            TipoDocumento = (TipoDocumento)999,
             Documento = "11144477735"
         };
 
@@ -89,7 +90,7 @@ public class CreateClienteRequestValidatorTests
         var request = new CreateClienteRequest
         {
             Nome = "Cliente Teste",
-            TipoDocumento = 1, // CNPJ
+            TipoDocumento = TipoDocumento.Cnpj,
             Documento = "00000000000000"
         };
 

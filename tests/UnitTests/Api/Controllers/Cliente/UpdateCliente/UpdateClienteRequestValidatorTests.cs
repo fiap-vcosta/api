@@ -33,7 +33,7 @@ public class UpdateClienteRequestValidatorTests
         var request = new UpdateClienteRequest
         {
             Nome = "Cliente Teste",
-            TipoDocumento = (int)TipoDocumento.Cnpj,
+            TipoDocumento = TipoDocumento.Cnpj,
             Documento = "00000000000"
         };
 

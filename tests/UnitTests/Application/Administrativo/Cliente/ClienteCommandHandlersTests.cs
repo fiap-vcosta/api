@@ -41,7 +41,7 @@ public class CreateClienteCommandHandlerTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Cliente Teste", result.Nome);
-        Assert.Equal(0, result.TipoDocumento); // CPF = 0
+        Assert.Equal(TipoDocumento.Cpf, result.TipoDocumento);
         Assert.Equal("11144477735", result.Documento);
         _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()), Times.Once);
     }
@@ -85,7 +85,7 @@ public class UpdateClienteCommandHandlerTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Updated Cliente", result.Nome);
-        Assert.Equal(1, result.TipoDocumento); // CNPJ = 1
+        Assert.Equal(TipoDocumento.Cnpj, result.TipoDocumento);
         _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.ClienteAggregateRoot>()), Times.Once);
     }
 

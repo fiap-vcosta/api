@@ -24,8 +24,7 @@ public class ItemEstoqueController
     IValidator<CreateItemEstoqueRequest> createValidator,
     IValidator<UpdateItemEstoqueRequest> updateValidator,
     IValidator<RegistrarEntradaEstoqueRequest> registrarEntradaValidator
-)
-    : ControllerBase
+) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateItemEstoqueRequest request)

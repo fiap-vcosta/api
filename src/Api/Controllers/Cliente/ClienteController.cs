@@ -1,14 +1,11 @@
 using Api.Contracts.Validation;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
-using Application.Administrativo.Cliente.Commands;
 using Application.Administrativo.Cliente.Commands.CreateCliente;
 using Application.Administrativo.Cliente.Commands.DeleteCliente;
 using Application.Administrativo.Cliente.Commands.UpdateCliente;
-using Application.Administrativo.Cliente.Queries;
 using Application.Administrativo.Cliente.Queries.GetAllClientes;
 using Application.Administrativo.Cliente.Queries.GetClienteById;
-using Domain.Administrativo.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +34,7 @@ public class ClienteController(
             var command = new CreateClienteCommand
             {
                 Nome = request.Nome,
-                TipoDocumento = (TipoDocumento)request.TipoDocumento,
+                TipoDocumento = request.TipoDocumento,
                 Documento = request.Documento
             };
 
@@ -87,7 +84,7 @@ public class ClienteController(
             {
                 Id = id,
                 Nome = request.Nome,
-                TipoDocumento = (TipoDocumento)request.TipoDocumento,
+                TipoDocumento = request.TipoDocumento,
                 Documento = request.Documento
             };
 

@@ -1,5 +1,6 @@
 using Domain.Administrativo.Entities;
 using Domain.Estoque.Entities;
+using Domain.OrdemServico.Entities;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,46 +13,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<VeiculoAggregateRoot> Veiculos { get; set; }
     public DbSet<ServicoAggregateRoot> Servicos { get; set; }
     public DbSet<ItemEstoqueAggregateRoot> ItensEstoque { get; set; }
+    public DbSet<OrdemServicoAggregateRoot> OrdensServico { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<ClienteAggregateRoot>().HasIndex(c => c.Documento).IsUnique();
-        modelBuilder.Entity<ClienteAggregateRoot>().Property(c => c.Documento).IsRequired();
-
-        modelBuilder.Entity<VeiculoAggregateRoot>().HasIndex(v => v.Placa).IsUnique();
-        modelBuilder.Entity<VeiculoAggregateRoot>().Property(v => v.Placa).IsRequired();
-        modelBuilder.Entity<VeiculoAggregateRoot>().Property(v => v.Modelo).IsRequired();
-        modelBuilder.Entity<VeiculoAggregateRoot>().Property(v => v.Marca).IsRequired();
-        modelBuilder.Entity<VeiculoAggregateRoot>()
-            .HasOne(v => v.Dono)
-            .WithMany()
-            .HasForeignKey(v => v.DonoId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<ServicoAggregateRoot>().HasIndex(s => s.Codigo).IsUnique();
-        modelBuilder.Entity<ServicoAggregateRoot>().Property(s => s.Codigo).IsRequired();
-        modelBuilder.Entity<ServicoAggregateRoot>().Property(s => s.Nome).IsRequired();
-        modelBuilder.Entity<ServicoAggregateRoot>().Property(s => s.PrecoPadrao).HasPrecision(10, 2).IsRequired();
-        modelBuilder.Entity<ServicoAggregateRoot>()
-            .HasMany(s => s.ItensNecessarios)
-            .WithMany(i => i.Servicos)
-            .UsingEntity<Dictionary<string, object>>(
-                "ServicoItemEstoque",
-                j => j.HasOne<ItemEstoqueAggregateRoot>().WithMany().HasForeignKey("ItemEstoqueId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne<ServicoAggregateRoot>().WithMany().HasForeignKey("ServicoId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasKey("ServicoId", "ItemEstoqueId")
-            );
-
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().HasIndex(i => i.Codigo).IsUnique();
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().Property(i => i.Codigo).IsRequired();
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().Property(i => i.Nome).IsRequired();
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().Property(i => i.PrecoVenda).HasPrecision(10, 2).IsRequired();
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().Property(i => i.Saldo).HasPrecision(10, 3).IsRequired();
-        modelBuilder.Entity<ItemEstoqueAggregateRoot>().Property(i => i.SaldoReservado).HasPrecision(10, 3).IsRequired();
-
-        modelBuilder.Entity<UsuarioAggregateRoot>().HasData(
+        
+        // Usuários
+        var usuarios = modelBuilder.Entity<UsuarioAggregateRoot>();
+        usuarios.HasKey(u => u.Id);
+        usuarios.HasIndex(u => u.Login).IsUnique();
+        usuarios.Property(u => u.Login).IsRequired();
+        usuarios.Property(u => u.Password).IsRequired();
+        usuarios.Property(u => u.TipoUsuario).HasConversion<string>().IsRequired();
+        usuarios.HasData(
             new UsuarioAggregateRoot
             {
                 Id = 1,
@@ -60,5 +35,100 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 TipoUsuario = TipoUsuario.Admin
             }
         );
+
+        // Clientes
+        var clientes = modelBuilder.Entity<ClienteAggregateRoot>();
+        clientes.HasKey(c => c.Id);
+        clientes.HasIndex(c => c.TipoDocumento);
+        clientes.Property(c => c.TipoDocumento).HasConversion<string>().IsRequired();
+        clientes.HasIndex(c => c.Documento).IsUnique();
+        clientes.Property(c => c.Documento).IsRequired();
+        clientes.Property(c => c.Nome).IsRequired();
+        clientes.Property(c => c.Email).IsRequired();
+
+        // Veiculos
+        var veiculos = modelBuilder.Entity<VeiculoAggregateRoot>();
+        veiculos.HasKey(v => v.Id);
+        veiculos.HasIndex(v => v.Placa).IsUnique();
+        veiculos.Property(v => v.Placa).IsRequired();
+        veiculos.Property(v => v.Modelo).IsRequired();
+        veiculos.Property(v => v.Marca).IsRequired();
+        veiculos
+            .HasOne<ClienteAggregateRoot>()
+            .WithMany()
+            .HasForeignKey(v => v.IdDono)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Serviços
+        var servicos = modelBuilder.Entity<ServicoAggregateRoot>();
+        servicos.HasKey(s => s.Id);
+        servicos.HasIndex(s => s.Codigo).IsUnique();
+        servicos.Property(s => s.Codigo).IsRequired();
+        servicos.Property(s => s.Nome).IsRequired();
+        servicos.Property(s => s.PrecoPadrao).HasPrecision(10, 2).IsRequired();
+        servicos
+            .OwnsMany(s => s.ItensNecessarios, item =>
+            {
+                item.ToTable("ServicoItensNecessarios");
+                item.HasOne<ItemEstoqueAggregateRoot>()
+                    .WithMany()
+                    .HasForeignKey(i => i.IdItemEstoque)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+        // Itens Estoque
+        var itensEstoque = modelBuilder.Entity<ItemEstoqueAggregateRoot>();
+        itensEstoque.HasKey(ie => ie.Id);
+        itensEstoque.HasIndex(ie => ie.Codigo).IsUnique();
+        itensEstoque.Property(ie => ie.Codigo).IsRequired();
+        itensEstoque.Property(ie => ie.Tipo).HasConversion<string>().IsRequired();
+        itensEstoque.Property(ie => ie.Nome).IsRequired();
+        itensEstoque.Property(ie => ie.UnidadeMedida).HasConversion<string>().IsRequired();
+        itensEstoque.Property(ie => ie.PrecoVenda).HasPrecision(10, 2).IsRequired();
+        itensEstoque.Property(ie => ie.Saldo).HasPrecision(10, 3).IsRequired();
+        itensEstoque.Property(ie => ie.SaldoReservado).HasPrecision(10, 3).IsRequired();
+
+        // Ordens de Serviço
+        var ordensServico = modelBuilder.Entity<OrdemServicoAggregateRoot>();
+        ordensServico.HasKey(os => os.Id);
+        ordensServico.HasIndex(os => os.Status);
+        ordensServico.Property(os => os.Status).HasConversion<string>().IsRequired();
+        ordensServico.Property(os => os.RecebidaEm).IsRequired();
+        ordensServico.Property(os => os.EntregueEm);
+        ordensServico.Property(os => os.DescartadaEm);
+        ordensServico.ComplexProperty(os => os.Cliente);
+        ordensServico.ComplexProperty(os => os.Veiculo);
+        ordensServico
+            .HasMany(os => os.ItensServico)
+            .WithOne()
+            .HasForeignKey(ios => ios.IdOrdemServico)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        // Itens de Serviço Ordem de Serviço
+        var itensOrdemServico = modelBuilder.Entity<ItemOrdemServico>();
+        itensOrdemServico.HasKey(ios => ios.Id);
+        itensOrdemServico.HasIndex(ios => ios.Status);
+        itensOrdemServico.Property(ios => ios.Status).HasConversion<string>().IsRequired();
+        itensOrdemServico.Property(ios => ios.Nome).IsRequired();
+        itensOrdemServico.Property(ios => ios.ValorCobrado).HasPrecision(10, 2).IsRequired();
+        itensOrdemServico
+            .HasMany(ios => ios.ItensNecessarios)
+            .WithOne()
+            .HasForeignKey(ieos => ieos.IdItemOrdemServico)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Itens de Estoque Ordem de Serviço
+        var itensEstoqueOrdemServico = modelBuilder.Entity<ItemEstoqueOrdemServico>();
+        itensEstoqueOrdemServico.HasKey(ieos => ieos.Id);
+        itensEstoqueOrdemServico.Property(ieos => ieos.Codigo).IsRequired();
+        itensEstoqueOrdemServico.Property(ieos => ieos.Nome).IsRequired();
+        itensEstoqueOrdemServico.Property(ieos => ieos.UnidadeMedida).HasConversion<string>().IsRequired();
+        itensEstoqueOrdemServico.Property(ieos => ieos.Quantidade).HasPrecision(10, 3).IsRequired();
+        itensEstoqueOrdemServico
+            .HasOne<OrdemServicoAggregateRoot>()
+            .WithMany()
+            .HasForeignKey(ie => ie.IdOrdemServico)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

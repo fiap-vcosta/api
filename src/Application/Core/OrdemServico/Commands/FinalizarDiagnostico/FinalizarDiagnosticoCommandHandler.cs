@@ -2,14 +2,14 @@ using Domain.OrdemServico.Events;
 using Domain.OrdemServico.Repositories;
 using MediatR;
 
-namespace Application.Core.OrdemServico.Commands.DescartarOrdemServico;
+namespace Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
 
-public class DescartarOrdemServicoCommandHandler(
+public class FinalizarDiagnosticoCommandHandler(
     IOrdemServicoRepository ordemServicoRepository,
     IMediator mediator
-) : IRequestHandler<DescartarOrdemServicoCommand, DescartarOrdemServicoResponse>
+) : IRequestHandler<FinalizarDiagnosticoCommand, FinalizarDiagnosticoCommandResponse>
 {
-    public async Task<DescartarOrdemServicoResponse> Handle(DescartarOrdemServicoCommand request, CancellationToken cancellationToken)
+    public async Task<FinalizarDiagnosticoCommandResponse> Handle(FinalizarDiagnosticoCommand request, CancellationToken cancellationToken)
     {
         var ordemServico = await ordemServicoRepository.GetByIdAsync(request.IdOrdemServico);
         if (ordemServico == null)
@@ -17,17 +17,16 @@ public class DescartarOrdemServicoCommandHandler(
             throw new KeyNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
         
-        ordemServico.Descartar();
+        ordemServico.FinalizarDiagnostico();
         
         await ordemServicoRepository.UpdateAsync(ordemServico);
-        await mediator.Publish(new OrdemServicoDescartadaEvent(ordemServico.Id), cancellationToken);
+        await mediator.Publish(new DiagnosticoPreenchidoEvent(ordemServico.Id), cancellationToken);
 
-        return new DescartarOrdemServicoResponse
+        return new FinalizarDiagnosticoCommandResponse()
         {
             Id = ordemServico.Id,
             Status = ordemServico.Status,
             RecebidaEm = ordemServico.RecebidaEm,
-            DescartadaEm = ordemServico.DescartadaEm ?? throw new InvalidOperationException("Data de descarte precisa estar preenchida ao descartas ordem de serviço"),
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
             Itens = ordemServico.ItensOrdemServico.ToList()

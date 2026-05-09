@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Domain.Estoque.Entities;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -20,6 +21,8 @@ public class OrdemServicoAggregateRoot
     public int Id { get; private set; }
     
     public StatusOrdemServico Status { get; private set; }
+    public decimal ValorTotal { get; private set; }
+    
     public DateTime RecebidaEm { get; private set; }
     public DateTime? EntregueEm { get; private set; }
     public DateTime? DescartadaEm { get; private set; }
@@ -27,8 +30,8 @@ public class OrdemServicoAggregateRoot
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
     
-    private readonly List<ItemOrdemServico> _itensServico = new();
-    public IReadOnlyCollection<ItemOrdemServico> ItensServico => _itensServico.AsReadOnly();
+    private readonly List<ItemOrdemServico> _itensOrdemServico = new();
+    public IReadOnlyCollection<ItemOrdemServico> ItensOrdemServico => _itensOrdemServico.AsReadOnly();
 
     public static OrdemServicoAggregateRoot Criar(ClienteOrdemServico cliente, VeiculoOrdemServico veiculo)
     {
@@ -45,14 +48,58 @@ public class OrdemServicoAggregateRoot
 
     public void EnviarParaDiagnostico()
     {
-        this.Status = StatusOrdemServico.EmDiagnostico;
+        if (Status is not StatusOrdemServico.Recebida)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser enviada para diagnístico.");
+        }
+        
+        Status = StatusOrdemServico.EmDiagnostico;
     }
 
     public void Descartar()
     {
-        this.Status = StatusOrdemServico.Descartada;
-        this.DescartadaEm = DateTime.UtcNow;
+        if (Status is StatusOrdemServico.EmExecucao or StatusOrdemServico.Finalizada or StatusOrdemServico.Paga
+            or StatusOrdemServico.Entregue or StatusOrdemServico.Descartada)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser descartada.");
+        }
+        
+        Status = StatusOrdemServico.Descartada;
+        DescartadaEm = DateTime.UtcNow;
 
-        this._itensServico.ForEach(item => item.Descartar());
+        _itensOrdemServico.ForEach(item => item.Descartar());
+    }
+
+
+    public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemEstoqueOrdemServico.ItemNecessario> itensNecessarios)
+    {
+        if (Status is not StatusOrdemServico.EmDiagnostico)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
+        }
+
+        var itemOrdemServico = ItemOrdemServico.Criar(nome, valorCobrado);
+        foreach (var itemNecessario in itensNecessarios)
+        {
+            itemOrdemServico.AdicionarItemNecessario(itemNecessario);
+        }
+        
+        _itensOrdemServico.Add(itemOrdemServico);
+        ValorTotal = _itensOrdemServico.Sum(ios => ios.ValorCobrado);
+    }
+
+    public void FinalizarDiagnostico()
+    {
+        if (Status is not StatusOrdemServico.EmDiagnostico)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter diagnóstico finalizado.");
+        }
+
+        if (_itensOrdemServico.Count == 0)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} não possui itens de serviço para serem realiazdos.");
+        }
+        
+        Status = StatusOrdemServico.AguardandoAprovacao;
     }
 }

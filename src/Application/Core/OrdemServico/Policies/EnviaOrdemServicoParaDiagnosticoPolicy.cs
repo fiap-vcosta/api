@@ -5,7 +5,8 @@ using MediatR;
 namespace Application.Core.OrdemServico.Policies;
 
 public class EnviaOrdemServicoParaDiagnosticoPolicy(
-    IOrdemServicoRepository ordemServicoRepository
+    IOrdemServicoRepository ordemServicoRepository,
+    IMediator mediator
 ) : INotificationHandler<OrdemServicoCriadaEvent>
 {
     public async Task Handle(OrdemServicoCriadaEvent notification, CancellationToken cancellationToken)
@@ -19,5 +20,6 @@ public class EnviaOrdemServicoParaDiagnosticoPolicy(
         ordemServico.EnviarParaDiagnostico();
 
         await ordemServicoRepository.UpdateAsync(ordemServico);
+        await mediator.Publish(new OrdemServicoRecebidaDiagnosticoEvent(ordemServico.Id), cancellationToken);
     }
 }

@@ -49,7 +49,7 @@ public class CriarOrdemServicoCommandHandler(
         return new CriarOrdemServicoCommandResponse
         {
             Id = ordemServico.Id,
-            StatusOrdemServico = StatusOrdemServico.Recebida,
+            Status = StatusOrdemServico.Recebida,
             RecebidaEm = ordemServico.RecebidaEm,
             Cliente = clienteOrdemServico,
             Veiculo = ordemServico.Veiculo,

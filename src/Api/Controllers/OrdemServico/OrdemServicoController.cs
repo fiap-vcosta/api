@@ -1,7 +1,10 @@
 using Api.Contracts.Validation;
+using Api.Controllers.OrdemServico.AdicionarItemServico;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
+using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
+using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +16,8 @@ namespace Api.Controllers.OrdemServico;
 [Authorize(Roles = "Admin")]
 public class OrdemServicoController(
     IMediator mediator,
-    IValidator<CriarOrdemServicoRequest> createOrdemServicoRequestValidator
+    IValidator<CriarOrdemServicoRequest> createOrdemServicoRequestValidator,
+    IValidator<AdicionarItemServicoRequest> adicionarItemServicoRequestValidator
 ) : ControllerBase
 {
     [HttpPost]
@@ -30,7 +34,7 @@ public class OrdemServicoController(
             var command = new CriarOrdemServicoCommand { IdVeiculo = request.IdVeiculo };
 
             var response = await mediator.Send(command);
-            return Ok(response);
+            return Created("", response);
         }
         catch (Exception ex)
         {
@@ -50,6 +54,54 @@ public class OrdemServicoController(
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/adicionar-servico")]
+    public async Task<IActionResult> AdicionarItemServico(int id, [FromBody] AdicionarItemServicoRequest request)
+    {
+        var validationResult = adicionarItemServicoRequestValidator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new { validationResult.Errors });
+        }
+        
+        try
+        {
+            var command = new AdicionarItemOrdemServicoCommand
+            {
+                IdOrdemServico = id,
+                IdServico = request.IdServico,
+                ValorCobrado = request.ValorCobrado,
+                ItensNecessarios = request.ItensNecessarios.Select(item =>
+                    new AdicionarItemOrdemServicoCommand.ItemNecessario
+                    {
+                        IdItemEstoque = item.IdItemEstoque,
+                        Quantidade = item.Quantidade
+                    }).ToList()
+            };
+
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/finalizar-diagnostico")]
+    public async Task<IActionResult> AdicionarItemServico(int id)
+    {
+        try
+        {
+            var command = new FinalizarDiagnosticoCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
         }
         catch (Exception ex)
         {

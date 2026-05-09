@@ -6,7 +6,7 @@ namespace Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 public class DescartarOrdemServicoResponse
 {
     public int Id { get; init; }
-    public StatusOrdemServico StatusOrdemServico { get; init; }
+    public StatusOrdemServico Status { get; init; }
     public DateTime RecebidaEm { get; init; }
     public DateTime DescartadaEm { get; init; }
     public required List<ItemOrdemServico> Itens { get; init; }

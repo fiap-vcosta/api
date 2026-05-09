@@ -100,7 +100,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ordensServico.ComplexProperty(os => os.Cliente);
         ordensServico.ComplexProperty(os => os.Veiculo);
         ordensServico
-            .HasMany(os => os.ItensServico)
+            .HasMany(os => os.ItensOrdemServico)
             .WithOne()
             .HasForeignKey(ios => ios.IdOrdemServico)
             .OnDelete(DeleteBehavior.Cascade);

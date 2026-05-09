@@ -14,7 +14,10 @@ public class OrdemServicoRepository(AppDbContext context) : IOrdemServicoReposit
 
     public async Task<OrdemServicoAggregateRoot?> GetByIdAsync(int IdOrdemServico)
     {
-        return await context.OrdensServico.FirstOrDefaultAsync(os => os.Id == IdOrdemServico);
+        return await context.OrdensServico
+            .Include(os => os.ItensOrdemServico)
+            .ThenInclude(ios => ios.ItensNecessarios)
+            .FirstOrDefaultAsync(os => os.Id == IdOrdemServico);
     }
 
     public async Task UpdateAsync(OrdemServicoAggregateRoot ordemServico)

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -17,6 +18,7 @@ public enum StatusOrdemServico
 public class OrdemServicoAggregateRoot
 {
     public int Id { get; private set; }
+    
     public StatusOrdemServico Status { get; private set; }
     public DateTime RecebidaEm { get; private set; }
     public DateTime? EntregueEm { get; private set; }
@@ -39,5 +41,18 @@ public class OrdemServicoAggregateRoot
             EntregueEm = null,
             DescartadaEm = null
         };
+    }
+
+    public void EnviarParaDiagnostico()
+    {
+        this.Status = StatusOrdemServico.EmDiagnostico;
+    }
+
+    public void Descartar()
+    {
+        this.Status = StatusOrdemServico.Descartada;
+        this.DescartadaEm = DateTime.UtcNow;
+
+        this._itensServico.ForEach(item => item.Descartar());
     }
 }

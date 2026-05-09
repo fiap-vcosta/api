@@ -1,6 +1,7 @@
 using Api.Contracts.Validation;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
+using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,25 @@ public class OrdemServicoController(
 
             var response = await mediator.Send(command);
             return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/descartar")]
+    public async Task<IActionResult> DescartarOrdemServico(int id)
+    {
+        try
+        {
+            var command = new DescartarOrdemServicoCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
         }
         catch (Exception ex)
         {

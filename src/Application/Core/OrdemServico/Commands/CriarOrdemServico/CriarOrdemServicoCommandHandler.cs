@@ -1,5 +1,6 @@
 using Domain.Administrativo.Repositories;
 using Domain.OrdemServico.Entities;
+using Domain.OrdemServico.Events;
 using Domain.OrdemServico.Repositories;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
@@ -9,7 +10,8 @@ namespace Application.Core.OrdemServico.Commands.CriarOrdemServico;
 public class CriarOrdemServicoCommandHandler(
     IVeiculoRepository veiculoRepository,
     IClienteRepository clienteRepository,
-    IOrdemServicoRepository ordemServicoRepository
+    IOrdemServicoRepository ordemServicoRepository,
+    IMediator mediator
 ) : IRequestHandler<CriarOrdemServicoCommand, CriarOrdemServicoCommandResponse>
 {
     public async Task<CriarOrdemServicoCommandResponse> Handle(CriarOrdemServicoCommand request, CancellationToken cancellationToken)
@@ -41,6 +43,8 @@ public class CriarOrdemServicoCommandHandler(
 
         var ordemServico = OrdemServicoAggregateRoot.Criar(clienteOrdemServico, veiculoOrdemServico);
         await ordemServicoRepository.CriarAsync(ordemServico);
+
+        await mediator.Publish(new OrdemServicoCriadaEvent(ordemServico.Id), cancellationToken);
         
         return new CriarOrdemServicoCommandResponse
         {

@@ -23,4 +23,9 @@ public class ItemOrdemServico
     
     private readonly List<ItemEstoqueOrdemServico> _itensServico = new();
     public IReadOnlyCollection<ItemEstoqueOrdemServico> ItensNecessarios => _itensServico.AsReadOnly();
+    
+    public void Descartar()
+    {
+        Status = StatusItemOrdemServico.Descartado;
+    }
 }

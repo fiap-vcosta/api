@@ -5,8 +5,8 @@ public enum StatusItemOrdemServico
     Sugerido,
     Aprovado,
     Rejeitado,
-    EmExecucao,
     AguardandoPeca,
+    EmExecucao,
     Concluido,
     Pago,
     Entregue

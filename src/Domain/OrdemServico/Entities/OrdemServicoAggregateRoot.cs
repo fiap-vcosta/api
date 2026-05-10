@@ -31,6 +31,7 @@ public class OrdemServicoAggregateRoot
     public DateTime RecebidaEm { get; private set; }
     public DateTime? EntregueEm { get; private set; }
     public DateTime? DescartadaEm { get; private set; }
+    public DateTime? AprovadaEm { get; private set; }
     
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
@@ -106,16 +107,16 @@ public class OrdemServicoAggregateRoot
 
             return;
         }
-        
-        if (_itensOrdemServico.All(ios => ios.Status is StatusItemOrdemServico.Rejeitado))
-        {
-            Status = StatusOrdemServico.Entregue;
-            EntregueEm = DateTime.UtcNow;
 
+        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Aprovado))
+        {
+            EnviarParaExecucao();
+            
             return;
         }
         
-        Status = StatusOrdemServico.AguardandoExecucao;
+        Status = StatusOrdemServico.Entregue;
+        EntregueEm = DateTime.UtcNow;
     }
     
     public void RejeitarServicosSugeridos()
@@ -133,11 +134,26 @@ public class OrdemServicoAggregateRoot
             .ForEach(item => item.Rejeitar());
     }
 
-    public void AprovarServicosParcialmente(List<int> idsItensServicoAprovados)
+    public void AprovarServicosSugeridos()
     {
         if (Status is not StatusOrdemServico.AguardandoAprovacao)
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados or rejeitados.");
+        }
+        
+        _itensOrdemServico
+            .Where(ios => ios.Status is StatusItemOrdemServico.Sugerido)
+            .ToList()
+            .ForEach(item => item.Aprovar());
+        
+        EnviarParaExecucao();
+    }
+
+    public void AprovarServicosParcialmente(List<int> idsItensServicoAprovados)
+    {
+        if (Status is not StatusOrdemServico.AguardandoAprovacao)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados.");
         }
 
         foreach (var idItemServicoAprovado in idsItensServicoAprovados)
@@ -147,6 +163,18 @@ public class OrdemServicoAggregateRoot
                 .Aprovar();
         }
 
-        RejeitarServicosSugeridos();
+        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
+        {
+            RejeitarServicosSugeridos();
+            return;
+        }
+        
+        EnviarParaExecucao();
+    }
+
+    private void EnviarParaExecucao()
+    {
+        Status = StatusOrdemServico.AguardandoExecucao;
+        AprovadaEm = DateTime.UtcNow;
     }
 }

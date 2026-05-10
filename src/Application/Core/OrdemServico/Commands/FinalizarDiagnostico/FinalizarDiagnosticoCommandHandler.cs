@@ -1,3 +1,4 @@
+using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.Repositories;
 using MediatR;
@@ -18,9 +19,22 @@ public class FinalizarDiagnosticoCommandHandler(
         }
         
         ordemServico.FinalizarDiagnostico();
-        
         await ordemServicoRepository.UpdateAsync(ordemServico);
-        await mediator.Publish(new DiagnosticoPreenchidoEvent(ordemServico.Id), cancellationToken);
+
+        switch (ordemServico.Status)
+        {
+            case StatusOrdemServico.AguardandoAprovacao:
+                await mediator.Publish(new DiagnosticoPreenchidoEvent(ordemServico.Id), cancellationToken);
+                break;
+            case StatusOrdemServico.Entregue:
+                await mediator.Publish(new OrdemServicoRejeitadaEvent(ordemServico.Id), cancellationToken);
+                break;
+            case StatusOrdemServico.AguardandoExecucao:
+                await mediator.Publish(new OrdemServicoAprovadaEvent(ordemServico.Id), cancellationToken);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException($"Status {ordemServico.Status} inválido após finalizar disgnóstico da ordem de serviço {ordemServico.Id}.");
+        }
 
         return new FinalizarDiagnosticoCommandResponse()
         {

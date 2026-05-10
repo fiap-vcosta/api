@@ -128,6 +128,21 @@ public class OrdemServicoController(
         }
     }
     
+    [HttpPost("{id:int}/aprovar")]
+    public async Task<IActionResult> AprovarOdemServico(int id)
+    {
+        try
+        {
+            var command = new AprovarServicosParcialmenteCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
     [HttpPost("{id:int}/aprovar-parcialmente")]
     public async Task<IActionResult> AprovarServicosParcialmente(int id, [FromBody] AprovarServicosParcialmenteRequest request)
     {

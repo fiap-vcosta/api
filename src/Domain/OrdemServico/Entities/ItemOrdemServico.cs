@@ -8,7 +8,6 @@ public enum StatusItemOrdemServico
     EmExecucao,
     AguardandoPeca,
     Concluido,
-    Descartado,
     Pago,
     Entregue
 } 
@@ -18,6 +17,10 @@ public class ItemOrdemServico
     public int Id {  get; private set; }
     public int IdOrdemServico { get; private set; }
     public StatusItemOrdemServico Status { get; private set; }
+    
+    public DateTime AprovadoEm { get; private set; }
+    public DateTime RejeitadoEm { get; private set; }
+    
     public string Nome { get; private set; } = string.Empty;
     public decimal ValorCobrado { get; private set; }
     
@@ -33,10 +36,16 @@ public class ItemOrdemServico
             ValorCobrado = valorCobrado
         };
     }
-    
-    public void Descartar()
+
+    public void Rejeitar()
     {
-        Status = StatusItemOrdemServico.Descartado;
+        if (Status is not StatusItemOrdemServico.Sugerido)
+        {
+            throw new InvalidOperationException($"Item de Serviço {Id} com status {Status} não pode ser rejeitado.");
+        }
+        
+        Status = StatusItemOrdemServico.Rejeitado;
+        RejeitadoEm =  DateTime.UtcNow;
     }
 
     public void AdicionarItemNecessario(ItemEstoqueOrdemServico.ItemNecessario itemNecessario)

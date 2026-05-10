@@ -5,6 +5,7 @@ using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
+using Application.Core.OrdemServico.Commands.RejeitarOrdemServico;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +101,21 @@ public class OrdemServicoController(
         try
         {
             var command = new FinalizarDiagnosticoCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/rejeitar")]
+    public async Task<IActionResult> RejeitarOrdemServico(int id)
+    {
+        try
+        {
+            var command = new RejeitarOrdemServicoCommand() { IdOrdemServico = id };
             var response = await mediator.Send(command);
             return Ok(response);
         }

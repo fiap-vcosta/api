@@ -9,6 +9,7 @@ public enum StatusOrdemServico
     Recebida,
     EmDiagnostico,
     AguardandoAprovacao,
+    Rejeitada,
     EmExecucao,
     Finalizada,
     Paga,
@@ -26,6 +27,7 @@ public class OrdemServicoAggregateRoot
     public DateTime RecebidaEm { get; private set; }
     public DateTime? EntregueEm { get; private set; }
     public DateTime? DescartadaEm { get; private set; }
+    public DateTime? RejeitadaEm { get; private set; }
     
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
@@ -58,18 +60,27 @@ public class OrdemServicoAggregateRoot
 
     public void Descartar()
     {
-        if (Status is StatusOrdemServico.EmExecucao or StatusOrdemServico.Finalizada or StatusOrdemServico.Paga
-            or StatusOrdemServico.Entregue or StatusOrdemServico.Descartada)
+        if (Status is not (StatusOrdemServico.Recebida or StatusOrdemServico.EmDiagnostico))
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser descartada.");
         }
         
         Status = StatusOrdemServico.Descartada;
         DescartadaEm = DateTime.UtcNow;
-
-        _itensOrdemServico.ForEach(item => item.Descartar());
     }
 
+    public void Rejeitar()
+    {
+        if (Status is not StatusOrdemServico.AguardandoAprovacao)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser rejeitada.");
+        }
+
+        Status = StatusOrdemServico.Rejeitada;
+        RejeitadaEm = DateTime.UtcNow;
+        
+        _itensOrdemServico.ForEach(item => item.Rejeitar());
+    }
 
     public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemEstoqueOrdemServico.ItemNecessario> itensNecessarios)
     {

@@ -30,6 +30,7 @@ public class CriarOrdemServicoCommandHandler(
 
         var clienteOrdemServico = new ClienteOrdemServico
         {
+            Id = dono.Id,
             Nome = dono.Nome,
             Email = dono.Email,
         };

@@ -9,12 +9,12 @@ public enum StatusOrdemServico
     Recebida,
     EmDiagnostico,
     AguardandoAprovacao,
-    Rejeitada,
+    AguardandoExecucao,
     EmExecucao,
     Finalizada,
     Paga,
+    Descartada,
     Entregue,
-    Descartada
 }
 
 public class OrdemServicoAggregateRoot
@@ -22,12 +22,15 @@ public class OrdemServicoAggregateRoot
     public int Id { get; private set; }
     
     public StatusOrdemServico Status { get; private set; }
-    public decimal ValorTotal { get; private set; }
-    
+
+    public decimal ValorTotal =>
+        _itensOrdemServico
+            .Where(ios => ios.Status is not StatusItemOrdemServico.Rejeitado)
+            .Sum(ios => ios.ValorCobrado);
+
     public DateTime RecebidaEm { get; private set; }
     public DateTime? EntregueEm { get; private set; }
     public DateTime? DescartadaEm { get; private set; }
-    public DateTime? RejeitadaEm { get; private set; }
     
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
@@ -69,19 +72,6 @@ public class OrdemServicoAggregateRoot
         DescartadaEm = DateTime.UtcNow;
     }
 
-    public void Rejeitar()
-    {
-        if (Status is not StatusOrdemServico.AguardandoAprovacao)
-        {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser rejeitada.");
-        }
-
-        Status = StatusOrdemServico.Rejeitada;
-        RejeitadaEm = DateTime.UtcNow;
-        
-        _itensOrdemServico.ForEach(item => item.Rejeitar());
-    }
-
     public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemEstoqueOrdemServico.ItemNecessario> itensNecessarios)
     {
         if (Status is not StatusOrdemServico.EmDiagnostico)
@@ -96,7 +86,6 @@ public class OrdemServicoAggregateRoot
         }
         
         _itensOrdemServico.Add(itemOrdemServico);
-        ValorTotal = _itensOrdemServico.Sum(ios => ios.ValorCobrado);
     }
 
     public void FinalizarDiagnostico()
@@ -105,12 +94,59 @@ public class OrdemServicoAggregateRoot
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter diagnóstico finalizado.");
         }
-
+        
         if (_itensOrdemServico.Count == 0)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} não possui itens de serviço para serem realiazdos.");
+            throw new InvalidOperationException($"Ordem de Serviço {Id} não teve nenhum serviços adicionado.");
         }
         
-        Status = StatusOrdemServico.AguardandoAprovacao;
+        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
+        {
+            Status = StatusOrdemServico.AguardandoAprovacao;
+
+            return;
+        }
+        
+        if (_itensOrdemServico.All(ios => ios.Status is StatusItemOrdemServico.Rejeitado))
+        {
+            Status = StatusOrdemServico.Entregue;
+            EntregueEm = DateTime.UtcNow;
+
+            return;
+        }
+        
+        Status = StatusOrdemServico.AguardandoExecucao;
+    }
+    
+    public void RejeitarServicosSugeridos()
+    {
+        if (Status is not StatusOrdemServico.AguardandoAprovacao)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços rejeitados.");
+        }
+
+        Status = StatusOrdemServico.EmDiagnostico;
+        
+        _itensOrdemServico
+            .Where(ios => ios.Status is StatusItemOrdemServico.Sugerido)
+            .ToList()
+            .ForEach(item => item.Rejeitar());
+    }
+
+    public void AprovarServicosParcialmente(List<int> idsItensServicoAprovados)
+    {
+        if (Status is not StatusOrdemServico.AguardandoAprovacao)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados or rejeitados.");
+        }
+
+        foreach (var idItemServicoAprovado in idsItensServicoAprovados)
+        {
+            _itensOrdemServico
+                .First(ios => ios.Id == idItemServicoAprovado)
+                .Aprovar();
+        }
+
+        RejeitarServicosSugeridos();
     }
 }

@@ -48,6 +48,17 @@ public class ItemOrdemServico
         RejeitadoEm =  DateTime.UtcNow;
     }
 
+    public void Aprovar()
+    {
+        if (Status is not StatusItemOrdemServico.Sugerido)
+        {
+            throw new InvalidOperationException($"Item de Serviço {Id} com status {Status} não pode ser aprovado.");
+        }
+        
+        Status = StatusItemOrdemServico.Aprovado;
+        AprovadoEm =  DateTime.UtcNow;
+    }
+
     public void AdicionarItemNecessario(ItemEstoqueOrdemServico.ItemNecessario itemNecessario)
     {
         var itemEstoqueOrdemServico = ItemEstoqueOrdemServico.Criar(itemNecessario);

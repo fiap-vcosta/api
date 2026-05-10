@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Core.OrdemServico.Policies;
 
-public class EnviarOrdemServicoParaAprovacao(
+public class EnviarOrdemServicoParaAprovacaoPolicy(
     IOrdemServicoRepository ordemServicoRepository,
     IClienteRepository clienteRepository,
     ISMTPService smtpService

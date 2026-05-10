@@ -29,7 +29,7 @@ public class FinalizarDiagnosticoCommandHandler(
             RecebidaEm = ordemServico.RecebidaEm,
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Itens = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.ItensOrdemServico.ToList()
         };
     }
 }

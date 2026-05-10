@@ -1,7 +1,9 @@
 using Api.Contracts.Validation;
 using Api.Controllers.OrdemServico.AdicionarItemServico;
+using Api.Controllers.OrdemServico.AprovarServicosParcialmente;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
+using Application.Core.OrdemServico.Commands.AprovarServicosParcialmente;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
@@ -18,7 +20,8 @@ namespace Api.Controllers.OrdemServico;
 public class OrdemServicoController(
     IMediator mediator,
     IValidator<CriarOrdemServicoRequest> createOrdemServicoRequestValidator,
-    IValidator<AdicionarItemServicoRequest> adicionarItemServicoRequestValidator
+    IValidator<AdicionarItemServicoRequest> adicionarItemServicoRequestValidator,
+    IValidator<AprovarServicosParcialmenteRequest> aprovarServicosParcialmenteRequestValidator
 ) : ControllerBase
 {
     [HttpPost]
@@ -116,6 +119,32 @@ public class OrdemServicoController(
         try
         {
             var command = new RejeitarOrdemServicoCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/aprovar-parcialmente")]
+    public async Task<IActionResult> AprovarServicosParcialmente(int id, [FromBody] AprovarServicosParcialmenteRequest request)
+    {
+        var validationResult = aprovarServicosParcialmenteRequestValidator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new { validationResult.Errors });
+        }
+        
+        try
+        {
+            var command = new AprovarServicosParcialmenteCommand()
+            {
+                IdOrdemServico = id,
+                IdServicosAprovados = request.IdsServicosAprovados
+            };
+            
             var response = await mediator.Send(command);
             return Ok(response);
         }

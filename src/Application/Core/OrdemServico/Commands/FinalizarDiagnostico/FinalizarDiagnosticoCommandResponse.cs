@@ -11,5 +11,5 @@ public class FinalizarDiagnosticoCommandResponse
     public DateTime RecebidaEm { get; init; }
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
-    public required List<ItemOrdemServico> Itens { get; init; }
+    public required List<ItemOrdemServico> Servicos { get; init; }
 }

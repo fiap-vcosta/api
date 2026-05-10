@@ -15,7 +15,7 @@ public class RejeitarOrdemServicoCommandHandler(
             throw new KeyNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
         
-        ordemServico.Rejeitar();
+        ordemServico.RejeitarServicosSugeridos();
         
         await ordemServicoRepository.UpdateAsync(ordemServico);
 
@@ -23,11 +23,12 @@ public class RejeitarOrdemServicoCommandHandler(
         {
             Id = ordemServico.Id,
             Status = ordemServico.Status,
+            ValorTotal = ordemServico.ValorTotal,
             RecebidaEm = ordemServico.RecebidaEm,
-            RejeitadaEm = ordemServico.RejeitadaEm ?? throw new InvalidOperationException("Data de rejeição precisa estar preenchida ao rejeitar ordem de serviço"),
+            EntregueEm = ordemServico.EntregueEm ?? throw new InvalidOperationException("Data de entrega precisa estar preenchida ao rejeitar ordem de serviço"),
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Itens = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.ItensOrdemServico.ToList()
         };
     }
 }

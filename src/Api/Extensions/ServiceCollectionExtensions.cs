@@ -13,6 +13,7 @@ using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
 using Api.Controllers.OrdemServico.AdicionarItemServico;
 using Api.Controllers.OrdemServico.AprovarServicosParcialmente;
+using Api.Controllers.OrdemServico.ConfirmarExecucao;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Api.Controllers.Servico.CreateServico;
 using Api.Controllers.Servico.UpdateServico;
@@ -100,6 +101,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IValidator<CriarOrdemServicoRequest>, CriarOrdemServicoRequestValidator>();
         services.AddSingleton<IValidator<AdicionarItemServicoRequest>, AdicionarItemServicoRequestValidator>();
         services.AddSingleton<IValidator<AprovarServicosParcialmenteRequest>, AprovarServicosParcialmenteRequestValidator>();
+        services.AddSingleton<IValidator<ConfirmarExecucaoRequest>, ConfirmarExecucaoRequestValidator>();
     }
 
     private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)

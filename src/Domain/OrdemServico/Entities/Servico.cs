@@ -62,4 +62,21 @@ public class Servico
         Status = StatusItemOrdemServico.Aprovado;
         AprovadoEm =  DateTime.UtcNow;
     }
+
+    public void ConfirmarConclusao(DateTime iniciadoEm, DateTime finalizadoEm)
+    {
+        if (Status is not StatusItemOrdemServico.Aprovado)
+        {
+            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser concluido.");
+        }
+
+        foreach (var itemNecessario in _itensNecessarios)
+        {
+            itemNecessario.ConfirmarUtilizacao();
+        }
+
+        Status = StatusItemOrdemServico.Concluido;
+        ExecucaoIniciadaEm = iniciadoEm;
+        ExecucaoFinalizadaEm = finalizadoEm;
+    }
 }

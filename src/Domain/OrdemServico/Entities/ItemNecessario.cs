@@ -8,7 +8,7 @@ public enum StatusItemEstoque
     EstoqueEmFalta,
     EstoqueDisponivel,
     EstoqueTravado,
-    Concluido
+    Utilizado
 }
 
 public class ItemNecessario
@@ -43,5 +43,25 @@ public class ItemNecessario
         }
 
         Status = StatusItemEstoque.EstoqueDisponivel;
+    }
+
+    public void TravarEstoque()
+    {
+        if (Status is not (StatusItemEstoque.EstoqueNaoChecado or StatusItemEstoque.EstoqueEmFalta or StatusItemEstoque.EstoqueDisponivel))
+        {
+            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ter estoque travado.");
+        }
+
+        Status = StatusItemEstoque.EstoqueTravado;
+    }
+
+    public void ConfirmarUtilizacao()
+    {
+        if (Status is not StatusItemEstoque.EstoqueTravado)
+        {
+            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ser utilizado.");
+        }
+
+        Status = StatusItemEstoque.Utilizado;
     }
 }

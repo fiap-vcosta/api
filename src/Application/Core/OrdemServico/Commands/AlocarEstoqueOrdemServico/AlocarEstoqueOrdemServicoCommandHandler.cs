@@ -31,6 +31,8 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
 
             await mediator.Send(command);
         }
+        
+        ordemServico.TravarItensNecessarios();
     }
 
     private async Task SolicitarPecasEmFaltaOrdemServico(OrdemServicoAggregateRoot ordemServico, Dictionary<int, decimal> saldosDisponiveis)

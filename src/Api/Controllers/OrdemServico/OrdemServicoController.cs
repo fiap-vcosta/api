@@ -1,10 +1,12 @@
 using Api.Contracts.Validation;
 using Api.Controllers.OrdemServico.AdicionarItemServico;
 using Api.Controllers.OrdemServico.AprovarServicosParcialmente;
+using Api.Controllers.OrdemServico.ConfirmarExecucao;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.Core.OrdemServico.Commands.AprovarOrdemServico;
 using Application.Core.OrdemServico.Commands.AprovarServicosParcialmente;
+using Application.Core.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
@@ -23,7 +25,8 @@ public class OrdemServicoController(
     IMediator mediator,
     IValidator<CriarOrdemServicoRequest> createOrdemServicoRequestValidator,
     IValidator<AdicionarItemServicoRequest> adicionarItemServicoRequestValidator,
-    IValidator<AprovarServicosParcialmenteRequest> aprovarServicosParcialmenteRequestValidator
+    IValidator<AprovarServicosParcialmenteRequest> aprovarServicosParcialmenteRequestValidator,
+    IValidator<ConfirmarExecucaoRequest> confirmarExecucaoRequestValidator
 ) : ControllerBase
 {
     [HttpGet]
@@ -175,6 +178,32 @@ public class OrdemServicoController(
             {
                 IdOrdemServico = id,
                 IdServicosAprovados = request.IdsServicosAprovados
+            };
+            
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/confirmar-execucao")]
+    public async Task<IActionResult> ConfirmarExecucao(int id, [FromBody] ConfirmarExecucaoRequest request)
+    {
+        var validationResult = confirmarExecucaoRequestValidator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new { validationResult.Errors });
+        }
+        
+        try
+        {
+            var command = new ConfirmarExecucaoOrdemServicoCommand()
+            {
+                IdOrdemServico = id,
+                ServicoExecutados = request.ServicosExecutados
             };
             
             var response = await mediator.Send(command);

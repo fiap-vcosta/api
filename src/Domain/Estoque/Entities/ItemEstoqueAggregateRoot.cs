@@ -38,4 +38,10 @@ public class ItemEstoqueAggregateRoot
     {
         SaldoReservado += quantidade;
     }
+
+    public void ConfirmarUtilizacao(Decimal quantidade)
+    {
+        SaldoReservado -= quantidade;
+        Saldo -= quantidade;
+    }
 }

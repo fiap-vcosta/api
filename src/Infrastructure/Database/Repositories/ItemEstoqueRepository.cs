@@ -41,6 +41,20 @@ public class ItemEstoqueRepository(AppDbContext context) : IItemEstoqueRepositor
         return itensBloqueados;
     }
 
+    public async Task<IEnumerable<ItemEstoqueAggregateRoot>> GetUtilizadosByOrdemServico(int idOrdemServico)
+    {
+        var itensEstoque = await context.ItensEstoque
+            .Where(estoque => context.OrdensServico
+                .Where(os => os.Id == idOrdemServico)
+                .SelectMany(os => os.Servicos)
+                .SelectMany(servico => servico.ItensNecessarios)
+                .Select(item => item.ItemEstoque.Id)
+                .Contains(estoque.Id))
+            .ToListAsync();
+
+        return itensEstoque;
+    }
+
     public async Task CreateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot)
     {
         context.ItensEstoque.Add(itemEstoqueAggregateRoot);

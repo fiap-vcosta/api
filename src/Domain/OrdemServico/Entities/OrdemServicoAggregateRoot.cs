@@ -210,4 +210,31 @@ public class OrdemServicoAggregateRoot
             ? StatusOrdemServico.LiberadaParaExecucao
             : StatusOrdemServico.AguardandoPeca;
     }
+
+    public void TravarItensNecessarios()
+    {
+        foreach (var item in ItensNecessariosParaExecucao)
+        {
+            item.TravarEstoque();
+        }
+    }
+
+    public void ConfirmarExecucao(List<ServicoExecutado> servicosExecutados)
+    {
+        if (Status is not StatusOrdemServico.LiberadaParaExecucao)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter execução confirmada.");
+        }
+
+        foreach (var servicoExecutado in servicosExecutados)
+        {
+            var servico = _servicos.First(s => s.Id == servicoExecutado.IdServico);
+            servico.ConfirmarConclusao(servicoExecutado.IniciadoEm, servicoExecutado.FinalizadoEm);
+        }
+
+        if (_servicos.All(servico => servico.Status == StatusItemOrdemServico.Concluido))
+        {
+            Status = StatusOrdemServico.Finalizada;
+        }
+    }
 }

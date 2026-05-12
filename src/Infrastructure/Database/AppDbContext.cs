@@ -100,32 +100,32 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ordensServico.ComplexProperty(os => os.Cliente);
         ordensServico.ComplexProperty(os => os.Veiculo);
         ordensServico
-            .HasMany(os => os.ItensOrdemServico)
+            .HasMany(os => os.Servicos)
             .WithOne()
             .HasForeignKey(ios => ios.IdOrdemServico)
             .OnDelete(DeleteBehavior.Cascade);
         
         // Itens de Serviço Ordem de Serviço
-        var itensOrdemServico = modelBuilder.Entity<ItemOrdemServico>();
-        itensOrdemServico.HasKey(ios => ios.Id);
-        itensOrdemServico.HasIndex(ios => ios.Status);
-        itensOrdemServico.Property(ios => ios.Status).HasConversion<string>().IsRequired();
-        itensOrdemServico.Property(ios => ios.Nome).IsRequired();
-        itensOrdemServico.Property(ios => ios.ValorCobrado).HasPrecision(10, 2).IsRequired();
-        itensOrdemServico
+        var servicosOrdemServico = modelBuilder.Entity<Servico>();
+        servicosOrdemServico.HasKey(ios => ios.Id);
+        servicosOrdemServico.HasIndex(ios => ios.Status);
+        servicosOrdemServico.Property(ios => ios.Status).HasConversion<string>().IsRequired();
+        servicosOrdemServico.Property(ios => ios.Nome).IsRequired();
+        servicosOrdemServico.Property(ios => ios.ValorCobrado).HasPrecision(10, 2).IsRequired();
+        servicosOrdemServico
             .HasMany(ios => ios.ItensNecessarios)
             .WithOne()
             .HasForeignKey(ieos => ieos.IdItemOrdemServico)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Itens de Estoque Ordem de Serviço
-        var itensEstoqueOrdemServico = modelBuilder.Entity<ItemEstoqueOrdemServico>();
-        itensEstoqueOrdemServico.HasKey(ieos => ieos.Id);
-        itensEstoqueOrdemServico.Property(ieos => ieos.Codigo).IsRequired();
-        itensEstoqueOrdemServico.Property(ieos => ieos.Nome).IsRequired();
-        itensEstoqueOrdemServico.Property(ieos => ieos.UnidadeMedida).HasConversion<string>().IsRequired();
-        itensEstoqueOrdemServico.Property(ieos => ieos.Quantidade).HasPrecision(10, 3).IsRequired();
-        itensEstoqueOrdemServico
+        var itensNecessariosOrdemServico = modelBuilder.Entity<ItemNecessario>();
+        itensNecessariosOrdemServico.HasKey(inos => inos.Id);
+        itensNecessariosOrdemServico.HasIndex(inos => inos.Status);
+        itensNecessariosOrdemServico.Property(inos => inos.Status).HasConversion<string>().IsRequired();
+        itensNecessariosOrdemServico.Property(inos => inos.Quantidade).HasPrecision(10, 3).IsRequired();
+        itensNecessariosOrdemServico.ComplexProperty(inos => inos.ItemEstoque);
+        itensNecessariosOrdemServico
             .HasOne<OrdemServicoAggregateRoot>()
             .WithMany()
             .HasForeignKey(ie => ie.IdOrdemServico)

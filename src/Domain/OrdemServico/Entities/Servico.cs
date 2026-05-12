@@ -5,14 +5,10 @@ public enum StatusItemOrdemServico
     Sugerido,
     Aprovado,
     Rejeitado,
-    AguardandoPeca,
-    EmExecucao,
     Concluido,
-    Pago,
-    Entregue
-} 
+}
 
-public class ItemOrdemServico
+public class Servico
 {
     public int Id {  get; private set; }
     public int IdOrdemServico { get; private set; }
@@ -20,28 +16,36 @@ public class ItemOrdemServico
     
     public DateTime AprovadoEm { get; private set; }
     public DateTime RejeitadoEm { get; private set; }
+    public DateTime ExecucaoIniciadaEm { get; private set; }
+    public DateTime ExecucaoFinalizadaEm { get; private set; }
     
     public string Nome { get; private set; } = string.Empty;
     public decimal ValorCobrado { get; private set; }
     
-    private readonly List<ItemEstoqueOrdemServico> _itensNecessarios = new();
-    public IReadOnlyCollection<ItemEstoqueOrdemServico> ItensNecessarios => _itensNecessarios.AsReadOnly();
+    private readonly List<ItemNecessario> _itensNecessarios = new();
+    public IReadOnlyCollection<ItemNecessario> ItensNecessarios => _itensNecessarios.AsReadOnly();
 
-    public static ItemOrdemServico Criar(string nome, decimal valorCobrado)
+    public static Servico Criar(string nome, decimal valorCobrado)
     {
-        return new ItemOrdemServico
+        return new Servico
         {
             Status = StatusItemOrdemServico.Sugerido,
             Nome = nome,
             ValorCobrado = valorCobrado
         };
     }
+    
+    public void AdicionarItemNecessario(ItemNecessario.CriarItemNecessarioParams @params)
+    {
+        var itemEstoqueOrdemServico = ItemNecessario.Criar(@params);
+        _itensNecessarios.Add(itemEstoqueOrdemServico);
+    }
 
     public void Rejeitar()
     {
         if (Status is not StatusItemOrdemServico.Sugerido)
         {
-            throw new InvalidOperationException($"Item de Serviço {Id} com status {Status} não pode ser rejeitado.");
+            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser rejeitado.");
         }
         
         Status = StatusItemOrdemServico.Rejeitado;
@@ -52,16 +56,10 @@ public class ItemOrdemServico
     {
         if (Status is not StatusItemOrdemServico.Sugerido)
         {
-            throw new InvalidOperationException($"Item de Serviço {Id} com status {Status} não pode ser aprovado.");
+            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser aprovado.");
         }
         
         Status = StatusItemOrdemServico.Aprovado;
         AprovadoEm =  DateTime.UtcNow;
-    }
-
-    public void AdicionarItemNecessario(ItemEstoqueOrdemServico.ItemNecessario itemNecessario)
-    {
-        var itemEstoqueOrdemServico = ItemEstoqueOrdemServico.Criar(itemNecessario);
-        _itensNecessarios.Add(itemEstoqueOrdemServico);
     }
 }

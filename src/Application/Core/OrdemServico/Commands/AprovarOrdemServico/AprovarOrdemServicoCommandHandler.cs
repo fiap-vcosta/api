@@ -31,7 +31,7 @@ public class AprovarOrdemServicoCommandHandler(
             AprovadaEm = ordemServico.AprovadaEm ?? throw new InvalidOperationException("Data de aprovação precisa estar preenchida ao aprovar ordem de serviço"),
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Servicos = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.Servicos.ToList()
         };
     }
 }

@@ -30,7 +30,7 @@ public class DescartarOrdemServicoCommandHandler(
             DescartadaEm = ordemServico.DescartadaEm ?? throw new InvalidOperationException("Data de descarte precisa estar preenchida ao descartas ordem de serviço"),
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Itens = ordemServico.ItensOrdemServico.ToList()
+            Itens = ordemServico.Servicos.ToList()
         };
     }
 }

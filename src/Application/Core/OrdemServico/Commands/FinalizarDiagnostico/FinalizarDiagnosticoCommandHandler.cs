@@ -29,7 +29,7 @@ public class FinalizarDiagnosticoCommandHandler(
             case StatusOrdemServico.Entregue:
                 await mediator.Publish(new OrdemServicoRejeitadaEvent(ordemServico.Id), cancellationToken);
                 break;
-            case StatusOrdemServico.AguardandoExecucao:
+            case StatusOrdemServico.ChecandoEstoque:
                 await mediator.Publish(new OrdemServicoAprovadaEvent(ordemServico.Id), cancellationToken);
                 break;
             default:
@@ -43,7 +43,7 @@ public class FinalizarDiagnosticoCommandHandler(
             RecebidaEm = ordemServico.RecebidaEm,
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Servicos = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.Servicos.ToList()
         };
     }
 }

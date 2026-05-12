@@ -1,10 +1,9 @@
-using Domain.Estoque.Events;
 using Domain.Estoque.Repositories;
 using MediatR;
 
 namespace Application.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
 
-public class TravarItensNecessariosCommandHandler(IItemEstoqueRepository itemEstoqueRepository, IMediator mediator)
+public class TravarItensNecessariosCommandHandler(IItemEstoqueRepository itemEstoqueRepository)
     : IRequestHandler<TravarItensNecessariosCommand, Unit>
 {
     public async Task<Unit> Handle(TravarItensNecessariosCommand request, CancellationToken cancellationToken)
@@ -16,9 +15,7 @@ public class TravarItensNecessariosCommandHandler(IItemEstoqueRepository itemEst
         }
 
         item.TravarEstoque(request.QuantidadeNecessaria);
-
         await itemEstoqueRepository.UpdateAsync(item);
-        await mediator.Publish(new ItensNecessariosTravadosEvent(item), cancellationToken);
         
         return Unit.Value;
     }

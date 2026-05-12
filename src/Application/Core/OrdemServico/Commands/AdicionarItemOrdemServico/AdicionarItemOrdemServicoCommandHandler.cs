@@ -2,6 +2,7 @@ using Domain.Administrativo.Repositories;
 using Domain.Estoque.Repositories;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Repositories;
+using Domain.OrdemServico.ValueObjects;
 using MediatR;
 
 namespace Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
@@ -26,7 +27,7 @@ public class AdicionarItemOrdemServicoCommandHandler(
             throw new KeyNotFoundException($"Serviço com id {request.IdOrdemServico} não encontrado");
         }
 
-        var itensNecessarios = new List<ItemEstoqueOrdemServico.ItemNecessario>();
+        var itensNecessarios = new List<ItemNecessario.CriarItemNecessarioParams>();
         foreach (var itemNecessario in request.ItensNecessarios)
         {
             var itemEstoque = await itemEstoqueRepository.GetByIdAsync(itemNecessario.IdItemEstoque);
@@ -34,9 +35,16 @@ public class AdicionarItemOrdemServicoCommandHandler(
             {
                 throw new KeyNotFoundException($"Item de estoque com id {request.IdOrdemServico} não encontrado");
             }
-            
-            itensNecessarios.Add(new ItemEstoqueOrdemServico.ItemNecessario(ordemServico.Id,
-                itemEstoque.Codigo, itemEstoque.Nome, itemEstoque.UnidadeMedida, itemNecessario.Quantidade));
+
+            var itemEstoqueOrdemServico = new ItemEstoqueOrdemServico
+            {
+                Id = itemEstoque.Id,
+                Codigo = itemEstoque.Codigo,
+                Nome = itemEstoque.Nome,
+                UnidadeMedida = itemEstoque.UnidadeMedida.ToString()
+            };
+
+            itensNecessarios.Add(new ItemNecessario.CriarItemNecessarioParams(ordemServico.Id, itemNecessario.Quantidade, itemEstoqueOrdemServico));
         }
         
         ordemServico.AdicionarItemServico(servico.Nome, request.ValorCobrado, itensNecessarios);
@@ -50,7 +58,7 @@ public class AdicionarItemOrdemServicoCommandHandler(
             RecebidaEm = ordemServico.RecebidaEm,
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Itens = ordemServico.ItensOrdemServico.ToList()
+            Itens = ordemServico.Servicos.ToList()
         };
     }
 }

@@ -3,11 +3,13 @@ using Api.Controllers.OrdemServico.AdicionarItemServico;
 using Api.Controllers.OrdemServico.AprovarServicosParcialmente;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
+using Application.Core.OrdemServico.Commands.AprovarOrdemServico;
 using Application.Core.OrdemServico.Commands.AprovarServicosParcialmente;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
 using Application.Core.OrdemServico.Commands.RejeitarOrdemServico;
+using Application.Core.OrdemServico.Queries.GetOrdemServicoById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,21 @@ public class OrdemServicoController(
     IValidator<AprovarServicosParcialmenteRequest> aprovarServicosParcialmenteRequestValidator
 ) : ControllerBase
 {
+    [HttpGet]
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var query = new GetOrdemServicoByIdQuery() { Id = id };
+        var response = await mediator.Send(query);
+
+        if (response == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
+    
     [HttpPost]
     public async Task<IActionResult> CriarOrdemServico([FromBody] CriarOrdemServicoRequest request)
     {
@@ -38,7 +55,7 @@ public class OrdemServicoController(
             var command = new CriarOrdemServicoCommand { IdVeiculo = request.IdVeiculo };
 
             var response = await mediator.Send(command);
-            return Created("", response);
+            return Created(nameof(GetById), response);
         }
         catch (Exception ex)
         {
@@ -133,7 +150,7 @@ public class OrdemServicoController(
     {
         try
         {
-            var command = new AprovarServicosParcialmenteCommand() { IdOrdemServico = id };
+            var command = new AprovarOrdemServicoCommand() { IdOrdemServico = id };
             var response = await mediator.Send(command);
             return Ok(response);
         }

@@ -12,5 +12,5 @@ public class RejeitarOrdemServicoCommandResponse
     public DateTime EntregueEm { get; init; }
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
-    public required List<ItemOrdemServico> Servicos { get; init; }
+    public required List<Servico> Servicos { get; init; }
 }

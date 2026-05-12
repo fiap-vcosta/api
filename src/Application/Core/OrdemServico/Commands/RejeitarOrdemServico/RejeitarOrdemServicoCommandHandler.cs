@@ -28,7 +28,7 @@ public class RejeitarOrdemServicoCommandHandler(
             EntregueEm = ordemServico.EntregueEm ?? throw new InvalidOperationException("Data de entrega precisa estar preenchida ao rejeitar ordem de serviço"),
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Servicos = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.Servicos.ToList()
         };
     }
 }

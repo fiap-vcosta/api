@@ -20,6 +20,26 @@ public class ItemEstoqueRepository(AppDbContext context) : IItemEstoqueRepositor
     {
         return await context.ItensEstoque.FirstOrDefaultAsync(i => i.Codigo == codigo);
     }
+    
+    public async Task<IEnumerable<ItemEstoqueAggregateRoot>> GetEBloquearItensAsync(List<int> ids)
+    {
+        if (ids.Count == 0)
+        {
+            return new List<ItemEstoqueAggregateRoot>();
+        }
+        
+        var idsOrdenados = ids.Distinct().OrderBy(id => id).ToList();
+        var tokens = idsOrdenados.Select((_, index) => $"{{{index}}}");
+        var tokensFormatados = string.Join(", ", tokens);
+        
+        var query = $"SELECT * FROM \"ItensEstoque\" WHERE \"Id\" IN ({tokensFormatados}) FOR UPDATE";
+
+        var itensBloqueados = await context.ItensEstoque
+            .FromSqlRaw(query, idsOrdenados.Cast<object>().ToArray())
+            .ToListAsync();
+
+        return itensBloqueados;
+    }
 
     public async Task CreateAsync(ItemEstoqueAggregateRoot itemEstoqueAggregateRoot)
     {

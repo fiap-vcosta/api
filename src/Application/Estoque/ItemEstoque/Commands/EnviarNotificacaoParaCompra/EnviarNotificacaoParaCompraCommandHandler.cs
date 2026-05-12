@@ -9,7 +9,7 @@ public class EnviarNotificacaoParaCompraCommandHandle(INotificacaoService notifi
 {
     public async Task<Unit> Handle(EnviarNotificacaoParaCompraCommand request, CancellationToken cancellationToken)
     {
-        var notificacao = $"Comprar {request.QuatnidadeFaltando} de {request.NomeItem} para OS {request.IdOrdemServico}";
+        var notificacao = $"Comprar {request.QuantidadeFaltando} de {request.NomeItem} para OS {request.IdOrdemServico}";
 
         await notificacaoService.NotificarUsuariosPorTipo(TipoUsuario.Atendente, notificacao);
 

@@ -1,5 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
-using Domain.Estoque.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -9,7 +8,9 @@ public enum StatusOrdemServico
     Recebida,
     EmDiagnostico,
     AguardandoAprovacao,
-    AguardandoExecucao,
+    ChecandoEstoque,
+    AguardandoPeca,
+    LiberadaParaExecucao,
     EmExecucao,
     Finalizada,
     Paga,
@@ -24,7 +25,7 @@ public class OrdemServicoAggregateRoot
     public StatusOrdemServico Status { get; private set; }
 
     public decimal ValorTotal =>
-        _itensOrdemServico
+        _servicos
             .Where(ios => ios.Status is not StatusItemOrdemServico.Rejeitado)
             .Sum(ios => ios.ValorCobrado);
 
@@ -36,8 +37,13 @@ public class OrdemServicoAggregateRoot
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
     
-    private readonly List<ItemOrdemServico> _itensOrdemServico = new();
-    public IReadOnlyCollection<ItemOrdemServico> ItensOrdemServico => _itensOrdemServico.AsReadOnly();
+    private readonly List<Servico> _servicos = new();
+    public IReadOnlyCollection<Servico> Servicos => _servicos.AsReadOnly();
+
+    [NotMapped]
+    public IEnumerable<ItemNecessario> ItensNecessariosParaExecucao => _servicos
+        .Where(s => s.Status is StatusItemOrdemServico.Aprovado or StatusItemOrdemServico.Sugerido)
+        .SelectMany(s => s.ItensNecessarios);
 
     public static OrdemServicoAggregateRoot Criar(ClienteOrdemServico cliente, VeiculoOrdemServico veiculo)
     {
@@ -73,20 +79,20 @@ public class OrdemServicoAggregateRoot
         DescartadaEm = DateTime.UtcNow;
     }
 
-    public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemEstoqueOrdemServico.ItemNecessario> itensNecessarios)
+    public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemNecessario.CriarItemNecessarioParams> itensNecessarios)
     {
         if (Status is not StatusOrdemServico.EmDiagnostico)
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
         }
 
-        var itemOrdemServico = ItemOrdemServico.Criar(nome, valorCobrado);
+        var itemOrdemServico = Servico.Criar(nome, valorCobrado);
         foreach (var itemNecessario in itensNecessarios)
         {
             itemOrdemServico.AdicionarItemNecessario(itemNecessario);
         }
         
-        _itensOrdemServico.Add(itemOrdemServico);
+        _servicos.Add(itemOrdemServico);
     }
 
     public void FinalizarDiagnostico()
@@ -96,21 +102,21 @@ public class OrdemServicoAggregateRoot
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter diagnóstico finalizado.");
         }
         
-        if (_itensOrdemServico.Count == 0)
+        if (_servicos.Count == 0)
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} não teve nenhum serviços adicionado.");
         }
         
-        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
+        if (_servicos.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
         {
             Status = StatusOrdemServico.AguardandoAprovacao;
 
             return;
         }
 
-        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Aprovado))
+        if (_servicos.Any(ios => ios.Status is StatusItemOrdemServico.Aprovado))
         {
-            EnviarParaExecucao();
+            EnviarParaChecagemEstoque();
             
             return;
         }
@@ -128,10 +134,10 @@ public class OrdemServicoAggregateRoot
 
         Status = StatusOrdemServico.EmDiagnostico;
         
-        _itensOrdemServico
-            .Where(ios => ios.Status is StatusItemOrdemServico.Sugerido)
-            .ToList()
-            .ForEach(item => item.Rejeitar());
+        foreach (var servico in _servicos.Where(s => s.Status is StatusItemOrdemServico.Sugerido))
+        {
+            servico.Rejeitar();
+        }
     }
 
     public void AprovarServicosSugeridos()
@@ -141,12 +147,12 @@ public class OrdemServicoAggregateRoot
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados or rejeitados.");
         }
         
-        _itensOrdemServico
-            .Where(ios => ios.Status is StatusItemOrdemServico.Sugerido)
-            .ToList()
-            .ForEach(item => item.Aprovar());
+        foreach (var servico in _servicos.Where(s => s.Status is StatusItemOrdemServico.Sugerido))
+        {
+            servico.Aprovar();
+        }
         
-        EnviarParaExecucao();
+        EnviarParaChecagemEstoque();
     }
 
     public void AprovarServicosParcialmente(List<int> idsItensServicoAprovados)
@@ -158,23 +164,50 @@ public class OrdemServicoAggregateRoot
 
         foreach (var idItemServicoAprovado in idsItensServicoAprovados)
         {
-            _itensOrdemServico
+            _servicos
                 .First(ios => ios.Id == idItemServicoAprovado)
                 .Aprovar();
         }
 
-        if (_itensOrdemServico.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
+        if (_servicos.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
         {
             RejeitarServicosSugeridos();
             return;
         }
         
-        EnviarParaExecucao();
+        EnviarParaChecagemEstoque();
+    }
+    
+    private void EnviarParaChecagemEstoque()
+    {
+        Status = StatusOrdemServico.ChecandoEstoque;
+        AprovadaEm = DateTime.UtcNow;
     }
 
-    private void EnviarParaExecucao()
+    
+    public void ChecarItensNecessarios(Dictionary<int, decimal> saldosDisponiveis)
     {
-        Status = StatusOrdemServico.AguardandoExecucao;
-        AprovadaEm = DateTime.UtcNow;
+        if (Status is not (StatusOrdemServico.ChecandoEstoque or StatusOrdemServico.AguardandoPeca))
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter estoque checado.");
+        }
+
+        var clonedQuantidadesDisponiveis = new Dictionary<int, decimal>(saldosDisponiveis);
+
+        foreach (var item in ItensNecessariosParaExecucao)
+        {
+            var saldoAtual = clonedQuantidadesDisponiveis[item.ItemEstoque.Id];
+            
+            item.ChecarEstoque(saldoAtual);
+
+            if (item.Status == StatusItemEstoque.EstoqueDisponivel)
+            {
+                clonedQuantidadesDisponiveis[item.ItemEstoque.Id] = saldoAtual - item.Quantidade;
+            }
+        }
+
+        Status = ItensNecessariosParaExecucao.All(item => item.Status == StatusItemEstoque.EstoqueDisponivel)
+            ? StatusOrdemServico.LiberadaParaExecucao
+            : StatusOrdemServico.AguardandoPeca;
     }
 }

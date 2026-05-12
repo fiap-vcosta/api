@@ -1,9 +1,9 @@
 namespace Domain.Administrativo.Entities;
 
-public record ItemNecessarioServico(int IdItemEstoque);
-
 public class ServicoAggregateRoot
 {
+    public record ItemNecessarioServico(int IdItemEstoque);
+    
     public int Id { get; set; }
     public string Codigo { get; set; } = string.Empty;
     public string Nome { get; set; } = string.Empty;

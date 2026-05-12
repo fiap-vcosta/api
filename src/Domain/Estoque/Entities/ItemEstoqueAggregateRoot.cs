@@ -27,6 +27,7 @@ public class ItemEstoqueAggregateRoot
     public decimal PrecoVenda { get; set; }
     public decimal Saldo { get; set; }
     public decimal SaldoReservado { get; set; }
+    public decimal SaldoDisponivel => Saldo - SaldoReservado;
 
     public void RegistrarEntradaEstoque(Decimal quantidade)
     {

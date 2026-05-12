@@ -16,7 +16,7 @@ public class AprovarServicosParcialmenteCommandHandler(
         }
 
         var idsInvalidos = request.IdServicosAprovados
-            .Where(idServicoAprovado => ordemServico.ItensOrdemServico.All(ios => ios.Id != idServicoAprovado))
+            .Where(idServicoAprovado => ordemServico.Servicos.All(ios => ios.Id != idServicoAprovado))
             .ToList();
 
         if (idsInvalidos.Count > 0)
@@ -35,7 +35,7 @@ public class AprovarServicosParcialmenteCommandHandler(
             RecebidaEm = ordemServico.RecebidaEm,
             Cliente = ordemServico.Cliente,
             Veiculo = ordemServico.Veiculo,
-            Servicos = ordemServico.ItensOrdemServico.ToList()
+            Servicos = ordemServico.Servicos.ToList()
         };
     }
 }

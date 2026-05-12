@@ -9,7 +9,7 @@ public class DescartarOrdemServicoResponse
     public StatusOrdemServico Status { get; init; }
     public DateTime RecebidaEm { get; init; }
     public DateTime DescartadaEm { get; init; }
-    public required List<ItemOrdemServico> Itens { get; init; }
+    public required List<Servico> Itens { get; init; }
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
 }

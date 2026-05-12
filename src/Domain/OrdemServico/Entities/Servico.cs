@@ -16,10 +16,10 @@ public class Servico
     public int IdOrdemServico { get; private set; }
     public StatusItemOrdemServico Status { get; private set; }
     
-    public DateTime AprovadoEm { get; private set; }
-    public DateTime RejeitadoEm { get; private set; }
-    public DateTime ExecucaoIniciadaEm { get; private set; }
-    public DateTime ExecucaoFinalizadaEm { get; private set; }
+    public DateTime? AprovadoEm { get; private set; }
+    public DateTime? RejeitadoEm { get; private set; }
+    public DateTime? ExecucaoIniciadaEm { get; private set; }
+    public DateTime? ExecucaoFinalizadaEm { get; private set; }
     
     public string Nome { get; private set; } = string.Empty;
     public decimal ValorCobrado { get; private set; }

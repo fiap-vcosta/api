@@ -1,4 +1,3 @@
-using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +8,10 @@ public class ItemServicoRepository(AppDbContext appDbContext) : IItemServicoRepo
     public async Task<List<IItemServicoRepository.TempoMedioExecucaoServico>> GetAllTempoMediaExecucaoAsync()
     {
         return await appDbContext.ItensServicos
-            .Where(servico => servico.Status == StatusItemOrdemServico.Concluido)
+            .Where(servico => servico.ExecucaoIniciadaEm != null && servico.ExecucaoFinalizadaEm != null)
             .GroupBy(s => s.ServicoCatalogo.Id)
-            .Select<IGrouping<int, Servico>, IItemServicoRepository.TempoMedioExecucaoServico>(grupo => new IItemServicoRepository.TempoMedioExecucaoServico(
-                grupo.Key, grupo.Count(), TimeSpan.FromSeconds(grupo.Average(s => (s.ExecucaoFinalizadaEm - s.ExecucaoIniciadaEm).TotalSeconds))
+            .Select(grupo => new IItemServicoRepository.TempoMedioExecucaoServico(
+                grupo.Key, grupo.Count(), TimeSpan.FromSeconds(grupo.Average(s => (s.ExecucaoFinalizadaEm!.Value.Subtract(s.ExecucaoIniciadaEm!.Value)).TotalSeconds))
             )).ToListAsync();
     }
 }

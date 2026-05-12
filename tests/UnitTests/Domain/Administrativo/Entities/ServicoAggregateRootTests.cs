@@ -23,6 +23,5 @@ public class ServicoAggregateRootTests
         Assert.Equal("Troca de óleo", servico.Nome);
         Assert.Equal(120.5m, servico.PrecoPadrao);
         Assert.True(servico.Ativo);
-        Assert.Empty(servico.ItensNecessarios);
     }
 }

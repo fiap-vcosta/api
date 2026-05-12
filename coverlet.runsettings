@@ -5,7 +5,7 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura,json,lcov</Format>
-          <Exclude>[*UnitTests*]*,[*.Tests]*</Exclude>
+          <Exclude>[*UnitTests*]*,[*.Tests]*,[*]*Migrations.*</Exclude>
           <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
           <SingleHit>false</SingleHit>
           <UseSourceLink>true</UseSourceLink>

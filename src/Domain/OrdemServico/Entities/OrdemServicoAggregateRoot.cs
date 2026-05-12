@@ -13,7 +13,6 @@ public enum StatusOrdemServico
     LiberadaParaExecucao,
     EmExecucao,
     Finalizada,
-    Paga,
     Descartada,
     Entregue,
 }
@@ -221,7 +220,7 @@ public class OrdemServicoAggregateRoot
 
     public void ConfirmarExecucao(List<ServicoExecutado> servicosExecutados)
     {
-        if (Status is not StatusOrdemServico.LiberadaParaExecucao)
+        if (Status is not (StatusOrdemServico.LiberadaParaExecucao or StatusOrdemServico.EmExecucao))
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter execução confirmada.");
         }
@@ -236,5 +235,10 @@ public class OrdemServicoAggregateRoot
         {
             Status = StatusOrdemServico.Finalizada;
         }
+    }
+
+    public void ConfirmarPagamento()
+    {
+        Status = StatusOrdemServico.Entregue;
     }
 }

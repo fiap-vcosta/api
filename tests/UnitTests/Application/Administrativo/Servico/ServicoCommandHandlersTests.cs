@@ -2,6 +2,7 @@ using Application.Administrativo.Servico.Commands;
 using Application.Administrativo.Servico.Commands.CreateServico;
 using Application.Administrativo.Servico.Commands.DeleteServico;
 using Application.Administrativo.Servico.Commands.UpdateServico;
+using Domain.Administrativo.Entities;
 using Domain.Administrativo.Repositories;
 using Moq;
 
@@ -30,10 +31,10 @@ public class CreateServicoCommandHandlerTests
         };
 
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync((Domain.Administrativo.Entities.ServicoAggregateRoot?)null);
+            .ReturnsAsync((ServicoAggregateRoot?)null);
 
-        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.ServicoAggregateRoot>()))
-            .Callback<Domain.Administrativo.Entities.ServicoAggregateRoot>(s => s.Id = 1)
+        _mockRepository.Setup(r => r.CreateAsync(It.IsAny<ServicoAggregateRoot>()))
+            .Callback<ServicoAggregateRoot>(s => s.Id = 1)
             .Returns(Task.CompletedTask);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -44,7 +45,7 @@ public class CreateServicoCommandHandlerTests
         Assert.Equal("Serviço de Óleo", result.Nome);
         Assert.Equal(150.00m, result.PrecoPadrao);
         Assert.True(result.Ativo);
-        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<Domain.Administrativo.Entities.ServicoAggregateRoot>()), Times.Once);
+        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<ServicoAggregateRoot>()), Times.Once);
     }
 
     [Fact]
@@ -52,7 +53,7 @@ public class CreateServicoCommandHandlerTests
     {
         var command = new CreateServicoCommand { Codigo = "OLE-001", Nome = "Serviço", PrecoPadrao = 150.00m, Ativo = true };
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync(new Domain.Administrativo.Entities.ServicoAggregateRoot { Id = 2, Codigo = command.Codigo, Nome = "Outro", PrecoPadrao = 100.00m, Ativo = true });
+            .ReturnsAsync(new ServicoAggregateRoot { Id = 2, Codigo = command.Codigo, Nome = "Outro", PrecoPadrao = 100.00m, Ativo = true });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -82,12 +83,12 @@ public class UpdateServicoCommandHandlerTests
         };
 
         _mockRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Administrativo.Entities.ServicoAggregateRoot { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true });
+            .ReturnsAsync(new ServicoAggregateRoot { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true });
 
         _mockRepository.Setup(r => r.GetByCodigoAsync(command.Codigo))
-            .ReturnsAsync((Domain.Administrativo.Entities.ServicoAggregateRoot?)null);
+            .ReturnsAsync((ServicoAggregateRoot?)null);
 
-        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.ServicoAggregateRoot>()))
+        _mockRepository.Setup(r => r.UpdateAsync(It.IsAny<ServicoAggregateRoot>()))
             .Returns(Task.CompletedTask);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -96,14 +97,14 @@ public class UpdateServicoCommandHandlerTests
         Assert.Equal(1, result.Id);
         Assert.Equal("FRE-001", result.Codigo);
         Assert.Equal("Serviço de Freio", result.Nome);
-        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<Domain.Administrativo.Entities.ServicoAggregateRoot>()), Times.Once);
+        _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<ServicoAggregateRoot>()), Times.Once);
     }
 
     [Fact]
     public async Task Handle_ThrowsKeyNotFoundException_WhenServicoDoesNotExist()
     {
         var command = new UpdateServicoCommand { Id = 999, Codigo = "FRE-001", Nome = "Freio", PrecoPadrao = 250.00m, Ativo = true };
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.ServicoAggregateRoot?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((ServicoAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
     }
@@ -124,7 +125,7 @@ public class DeleteServicoCommandHandlerTests
     public async Task Handle_DeletesServico_WhenServicoExists()
     {
         _mockRepository.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new Domain.Administrativo.Entities.ServicoAggregateRoot { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true });
+            .ReturnsAsync(new ServicoAggregateRoot { Id = 1, Codigo = "OLE-001", Nome = "Óleo", PrecoPadrao = 150.00m, Ativo = true });
         _mockRepository.Setup(r => r.DeleteAsync(1)).Returns(Task.CompletedTask);
 
         await _handler.Handle(new DeleteServicoCommand { Id = 1 }, CancellationToken.None);
@@ -135,7 +136,7 @@ public class DeleteServicoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsKeyNotFoundException_WhenServicoDoesNotExist()
     {
-        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Domain.Administrativo.Entities.ServicoAggregateRoot?)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((ServicoAggregateRoot?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(new DeleteServicoCommand { Id = 999 }, CancellationToken.None));
     }

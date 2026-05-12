@@ -5,11 +5,14 @@ namespace UnitTests.Domain.OrdemServico.Entities;
 
 public class ServicoTests
 {
+    private ServicoCatalogo _servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
+    
+    
     [Fact]
     public void CreateServico_SetsSuggestedStatusAndProperties()
     {
         // Arrange & Act
-        var servico = Servico.Criar("Troca de pastilhas", 200m);
+        var servico = Servico.Criar("Troca de pastilhas", 200m, _servicoCatalogo);
 
         // Assert
         Assert.Equal(StatusItemOrdemServico.Sugerido, servico.Status);
@@ -22,7 +25,7 @@ public class ServicoTests
     public void Approve_SetsApprovedStatus()
     {
         // Arrange
-        var servico = Servico.Criar("Troca de pastilhas", 200m);
+        var servico = Servico.Criar("Troca de pastilhas", 200m, _servicoCatalogo);
 
         // Act
         servico.Aprovar();
@@ -36,7 +39,7 @@ public class ServicoTests
     public void Approve_WhenStatusIsNotSuggested_ThrowsInvalidOperationException()
     {
         // Arrange
-        var servico = Servico.Criar("Troca de pastilhas", 200m);
+        var servico = Servico.Criar("Troca de pastilhas", 200m, _servicoCatalogo);
         servico.Aprovar();
 
         // Act & Assert
@@ -47,7 +50,7 @@ public class ServicoTests
     public void Reject_SetsRejectedStatus()
     {
         // Arrange
-        var servico = Servico.Criar("Diagnóstico", 100m);
+        var servico = Servico.Criar("Diagnóstico", 100m, _servicoCatalogo);
 
         // Act
         servico.Rejeitar();
@@ -61,7 +64,7 @@ public class ServicoTests
     public void Reject_WhenStatusIsNotSuggested_ThrowsInvalidOperationException()
     {
         // Arrange
-        var servico = Servico.Criar("Diagnóstico", 100m);
+        var servico = Servico.Criar("Diagnóstico", 100m, _servicoCatalogo);
         servico.Rejeitar();
 
         // Act & Assert
@@ -72,7 +75,7 @@ public class ServicoTests
     public void ConfirmConclusion_WhenApproved_SetsConcludedStatusAndUpdatesItems()
     {
         // Arrange
-        var servico = Servico.Criar("Troca de óleo", 150m);
+        var servico = Servico.Criar("Troca de óleo", 150m, _servicoCatalogo);
         var itemEstoque = new ItemEstoqueOrdemServico { Id = 21, Nome = "Óleo" };
         servico.AdicionarItemNecessario(new ItemNecessario.CriarItemNecessarioParams(1, 2m, itemEstoque));
         servico.Aprovar();
@@ -95,7 +98,7 @@ public class ServicoTests
     public void ConfirmConclusion_WhenNotApproved_ThrowsInvalidOperationException()
     {
         // Arrange
-        var servico = Servico.Criar("Troca de óleo", 150m);
+        var servico = Servico.Criar("Troca de óleo", 150m, _servicoCatalogo);
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => servico.ConfirmarConclusao(DateTime.UtcNow, DateTime.UtcNow));

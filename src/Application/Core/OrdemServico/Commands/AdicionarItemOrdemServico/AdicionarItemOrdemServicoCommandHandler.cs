@@ -46,8 +46,15 @@ public class AdicionarItemOrdemServicoCommandHandler(
 
             itensNecessarios.Add(new ItemNecessario.CriarItemNecessarioParams(ordemServico.Id, itemNecessario.Quantidade, itemEstoqueOrdemServico));
         }
-        
-        ordemServico.AdicionarItemServico(servico.Nome, request.ValorCobrado, itensNecessarios);
+
+        var servicoCatalogo = new ServicoCatalogo
+        {
+            Id = servico.Id,
+            Nome = servico.Nome,
+            Codigo = servico.Codigo
+        };
+
+        ordemServico.AdicionarItemServico(servico.Nome, request.ValorCobrado, servicoCatalogo, itensNecessarios);
         await ordemServicoRepository.UpdateAsync(ordemServico);
 
         return new AdicionarItemOrdemServicoCommandResponse

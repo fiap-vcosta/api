@@ -1,3 +1,5 @@
+using Domain.OrdemServico.ValueObjects;
+
 namespace Domain.OrdemServico.Entities;
 
 public enum StatusItemOrdemServico
@@ -22,13 +24,16 @@ public class Servico
     public string Nome { get; private set; } = string.Empty;
     public decimal ValorCobrado { get; private set; }
     
+    public required ServicoCatalogo ServicoCatalogo { get; init; }
+    
     private readonly List<ItemNecessario> _itensNecessarios = new();
     public IReadOnlyCollection<ItemNecessario> ItensNecessarios => _itensNecessarios.AsReadOnly();
 
-    public static Servico Criar(string nome, decimal valorCobrado)
+    public static Servico Criar(string nome, decimal valorCobrado, ServicoCatalogo servicoCatalogo)
     {
         return new Servico
         {
+            ServicoCatalogo = servicoCatalogo,
             Status = StatusItemOrdemServico.Sugerido,
             Nome = nome,
             ValorCobrado = valorCobrado

@@ -152,9 +152,10 @@ public class ItemEstoqueRepositoryTests : IDisposable
         // Arrange
         var cliente = new ClienteOrdemServico { Id = 1, Nome = "Cliente Teste", Email = "teste@teste.com" };
         var veiculo = new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "Honda", Modelo = "Civic" };
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
         ordem.EnviarParaDiagnostico();
-        ordem.AdicionarItemServico("Troca de óleo", 100m, new List<ItemNecessario.CriarItemNecessarioParams>
+        ordem.AdicionarItemServico("Troca de óleo", 100m, servicoCatalogo, new List<ItemNecessario.CriarItemNecessarioParams>
         {
             new(1, 1m, new ItemEstoqueOrdemServico { Id = 1, Codigo = "ITM-001", Nome = "Filtro de óleo", UnidadeMedida = "Unidade" })
         });

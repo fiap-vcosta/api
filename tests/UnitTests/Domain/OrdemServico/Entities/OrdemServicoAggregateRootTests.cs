@@ -90,19 +90,23 @@ public class OrdemServicoAggregateRootTests
     public void AddServiceItem_WhenNotInDiagnosis_ThrowsInvalidOperationException()
     {
         // Arrange
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.AdicionarItemServico("Troca de pneus", 200m, new List<ItemNecessario.CriarItemNecessarioParams>()));
+        Assert.Throws<InvalidOperationException>(() => ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+            new List<ItemNecessario.CriarItemNecessarioParams>()));
     }
 
     [Fact]
     public void FinalizeDiagnosis_WithSuggestedService_SetsAwaitingApproval()
     {
         // Arrange
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
+
         ordem.EnviarParaDiagnostico();
-        ordem.AdicionarItemServico("Troca de pneus", 200m, new List<ItemNecessario.CriarItemNecessarioParams>
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo, new List<ItemNecessario.CriarItemNecessarioParams>
         {
             new(1, 4m, new ItemEstoqueOrdemServico { Id = 100, Nome = "Pneu" })
         });
@@ -118,9 +122,11 @@ public class OrdemServicoAggregateRootTests
     public void FinalizeDiagnosis_WithApprovedService_GoesToStockCheck()
     {
         // Arrange
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
+
         ordem.EnviarParaDiagnostico();
-        ordem.AdicionarItemServico("Troca de pneus", 200m, new List<ItemNecessario.CriarItemNecessarioParams>
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo, new List<ItemNecessario.CriarItemNecessarioParams>
         {
             new(1, 4m, new ItemEstoqueOrdemServico { Id = 100, Nome = "Pneu" })
         });
@@ -210,9 +216,11 @@ public class OrdemServicoAggregateRootTests
 
     private static OrdemServicoAggregateRoot CriarOrdemComServicoAprovado()
     {
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
+
         ordem.EnviarParaDiagnostico();
-        ordem.AdicionarItemServico("Troca de pneus", 200m, new List<ItemNecessario.CriarItemNecessarioParams>
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,new List<ItemNecessario.CriarItemNecessarioParams>
         {
             new(1, 4m, new ItemEstoqueOrdemServico { Id = 100, Nome = "Pneu" })
         });

@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ServicoAggregateRoot> Servicos { get; set; }
     public DbSet<ItemEstoqueAggregateRoot> ItensEstoque { get; set; }
     public DbSet<OrdemServicoAggregateRoot> OrdensServico { get; set; }
+    public DbSet<Servico> ItensServicos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -112,6 +113,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         servicosOrdemServico.Property(ios => ios.Status).HasConversion<string>().IsRequired();
         servicosOrdemServico.Property(ios => ios.Nome).IsRequired();
         servicosOrdemServico.Property(ios => ios.ValorCobrado).HasPrecision(10, 2).IsRequired();
+        servicosOrdemServico.ComplexProperty(ios => ios.ServicoCatalogo);
         servicosOrdemServico
             .HasMany(ios => ios.ItensNecessarios)
             .WithOne()

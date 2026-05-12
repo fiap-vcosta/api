@@ -78,14 +78,15 @@ public class OrdemServicoAggregateRoot
         DescartadaEm = DateTime.UtcNow;
     }
 
-    public void AdicionarItemServico(string nome, decimal valorCobrado, List<ItemNecessario.CriarItemNecessarioParams> itensNecessarios)
+    public void AdicionarItemServico(string nome, decimal valorCobrado, ServicoCatalogo servicoCatalogo,
+        List<ItemNecessario.CriarItemNecessarioParams> itensNecessarios)
     {
         if (Status is not StatusOrdemServico.EmDiagnostico)
         {
             throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
         }
 
-        var itemOrdemServico = Servico.Criar(nome, valorCobrado);
+        var itemOrdemServico = Servico.Criar(nome, valorCobrado, servicoCatalogo);
         foreach (var itemNecessario in itensNecessarios)
         {
             itemOrdemServico.AdicionarItemNecessario(itemNecessario);
@@ -239,6 +240,11 @@ public class OrdemServicoAggregateRoot
 
     public void ConfirmarPagamento()
     {
+        if (Status is not StatusOrdemServico.Finalizada)
+        {
+            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter pagamento confirmado.");
+        }
+        
         Status = StatusOrdemServico.Entregue;
     }
 }

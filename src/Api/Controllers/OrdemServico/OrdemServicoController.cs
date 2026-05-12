@@ -7,11 +7,13 @@ using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.Core.OrdemServico.Commands.AprovarOrdemServico;
 using Application.Core.OrdemServico.Commands.AprovarServicosParcialmente;
 using Application.Core.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
+using Application.Core.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
 using Application.Core.OrdemServico.Commands.CriarOrdemServico;
 using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
 using Application.Core.OrdemServico.Commands.RejeitarOrdemServico;
 using Application.Core.OrdemServico.Queries.GetOrdemServicoById;
+using Application.Core.OrdemServico.Queries.GetTempoMedioAllServicos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +31,6 @@ public class OrdemServicoController(
     IValidator<ConfirmarExecucaoRequest> confirmarExecucaoRequestValidator
 ) : ControllerBase
 {
-    [HttpGet]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -207,6 +208,36 @@ public class OrdemServicoController(
             };
             
             var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+    
+    [HttpPost("{id:int}/confirmar-pagamento")]
+    public async Task<IActionResult> ConfirmarPagamento(int id)
+    {
+        try
+        {
+            var command = new ConfirmarPagamentoOrdemServicoCommand() { IdOrdemServico = id };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpGet("tempo-medio-execucao")]
+    public async Task<IActionResult> GetTempoMediaExecucao()
+    {
+        try
+        {
+            var query = new GetTempoMedioExecucaoAllServicosQuery();
+            var response = await mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)

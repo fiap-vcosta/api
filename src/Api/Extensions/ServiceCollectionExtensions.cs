@@ -98,6 +98,7 @@ public static class ServiceCollectionExtensions
     private static void AddOrdemServicoServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
+        services.AddScoped<IItemServicoRepository, ItemServicoRepository>();
         services.AddSingleton<IValidator<CriarOrdemServicoRequest>, CriarOrdemServicoRequestValidator>();
         services.AddSingleton<IValidator<AdicionarItemServicoRequest>, AdicionarItemServicoRequestValidator>();
         services.AddSingleton<IValidator<AprovarServicosParcialmenteRequest>, AprovarServicosParcialmenteRequestValidator>();

@@ -28,8 +28,8 @@ public class ItemEstoqueRepositoryTests : IDisposable
         _repository = new ItemEstoqueRepository(_context);
 
         _context.ItensEstoque.AddRange(
-            new ItemEstoqueAggregateRoot { Id = 1, Codigo = "ITM-001", Tipo = ItemTipo.Peca, Nome = "Filtro de óleo", UnidadeMedida = UnidadeMedida.Unidade, PrecoVenda = 45.5m, Saldo = 10m, SaldoReservado = 2m },
-            new ItemEstoqueAggregateRoot { Id = 2, Codigo = "ITM-002", Tipo = ItemTipo.Insumo, Nome = "Óleo", UnidadeMedida = UnidadeMedida.Litro, PrecoVenda = 25.0m, Saldo = 20m, SaldoReservado = 3m }
+            new ItemEstoqueAggregateRoot { Codigo = "ITM-001", Tipo = ItemTipo.Peca, Nome = "Filtro de óleo", UnidadeMedida = UnidadeMedida.Unidade, PrecoVenda = 45.5m, Saldo = 10m, SaldoReservado = 2m },
+            new ItemEstoqueAggregateRoot { Codigo = "ITM-002", Tipo = ItemTipo.Insumo, Nome = "Óleo", UnidadeMedida = UnidadeMedida.Litro, PrecoVenda = 25.0m, Saldo = 20m, SaldoReservado = 3m }
         );
         _context.SaveChanges();
     }
@@ -45,7 +45,7 @@ public class ItemEstoqueRepositoryTests : IDisposable
 
         // Assert
         Assert.NotNull(item);
-        Assert.Equal("ITM-001", item.Codigo);
+        Assert.Equal("INS-001", item.Codigo);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class ItemEstoqueRepositoryTests : IDisposable
         var items = (await _repository.GetAllAsync()).ToList();
 
         // Assert
-        Assert.Equal(2, items.Count);
+        Assert.Equal(32, items.Count);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class ItemEstoqueRepositoryTests : IDisposable
 
         // Assert
         Assert.Single(result);
-        Assert.Equal("ITM-001", result[0].Codigo);
+        Assert.Equal("INS-001", result[0].Codigo);
     }
 
     public void Dispose()

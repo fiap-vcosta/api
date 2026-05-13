@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# Run tests with coverage
-echo "Running tests with code coverage..."
-dotnet test --settings coverlet.runsettings --results-directory ./test-results --logger "console;verbosity=detailed"
+echo "Limpando resultados anteriores..."
+rm -rf ./test-results
+mkdir -p ./test-results/coverage-report
 
-# Generate HTML report
-echo "Generating HTML coverage report..."
-reportgenerator -reports:"./test-results/*/coverage.cobertura.xml" -targetdir:"./test-results/coverage-report" -reporttypes:Html
+echo "Rodando testes com cobertura de código (ignorando Migrations)..."
+# Adicionado o /p:Exclude="[*]*Migrations.*"
+dotnet test /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:Exclude="[*]*Migrations.*" \
+            --logger "console;verbosity=detailed"
 
-echo "Coverage report generated at: ./test-results/coverage-report/index.html"
-echo "Open the HTML file in your browser to view the coverage report."
+echo "Gerando relatório HTML..."
+reportgenerator -reports:"./**/*coverage.cobertura.xml" -targetdir:"./test-results/coverage-report" -reporttypes:Html
+
+echo "Relatório gerado em: ./test-results/coverage-report/index.html"

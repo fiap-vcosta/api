@@ -236,6 +236,10 @@ public class OrdemServicoAggregateRoot
         {
             Status = StatusOrdemServico.Finalizada;
         }
+        else
+        {
+            Status = StatusOrdemServico.EmExecucao;
+        }
     }
 
     public void ConfirmarPagamento()

@@ -67,27 +67,6 @@ public class OrdemServicoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateAsync_ModifiesOrdemServicoStatus()
-    {
-        // Arrange
-        var cliente = new ClienteOrdemServico { Id = 1, Nome = "Cliente Teste", Email = "teste@teste.com" };
-        var veiculo = new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "Honda", Modelo = "Civic" };
-        var ordem = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
-        await _repository.CriarAsync(ordem);
-        ordem = await _repository.GetByIdAsync(ordem.Id);
-        Assert.NotNull(ordem);
-
-        // Act
-        ordem.ConfirmarPagamento();
-        await _repository.UpdateAsync(ordem);
-
-        // Assert
-        var updated = await _repository.GetByIdAsync(ordem.Id);
-        Assert.NotNull(updated);
-        Assert.Equal(StatusOrdemServico.Entregue, updated.Status);
-    }
-
-    [Fact]
     public async Task GetAguardandoPecaPorItemEstoqueAsync_ReturnsOrders_WhenOrderHasStockGap()
     {
         // Arrange

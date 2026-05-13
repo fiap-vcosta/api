@@ -232,7 +232,7 @@ public class OrdemServicoAggregateRoot
             servico.ConfirmarConclusao(servicoExecutado.IniciadoEm, servicoExecutado.FinalizadoEm);
         }
 
-        if (_servicos.All(servico => servico.Status == StatusItemOrdemServico.Concluido))
+        if (_servicos.All(servico => servico.Status is (StatusItemOrdemServico.Concluido or StatusItemOrdemServico.Rejeitado)))
         {
             Status = StatusOrdemServico.Finalizada;
         }

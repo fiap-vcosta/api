@@ -1,0 +1,14 @@
+---
+description: Convenções C# do projeto
+globs: "**/*.cs"
+alwaysApply: false
+---
+
+# C#
+
+- Preferir padrões das pastas vizinhas (MediatR handlers, Request + Validator na Api).
+- Async com `CancellationToken` nos handlers e gateways.
+- Regras de negócio no Domain/Use Case — não em controllers.
+- Preferir `private set` / `init` / `required` / `record` onde o código vizinho já usa.
+- Factories de domínio em português (`Criar`); mapeamentos de response podem usar `From...`.
+- Nomes de domínio em português (linguagem onipresente); keywords técnicas em inglês.

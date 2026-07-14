@@ -1,0 +1,13 @@
+---
+description: Política de testes unitários e de integração
+globs: "tests/**/*"
+alwaysApply: false
+---
+
+# Testes
+
+- Unitários: domínio e handlers isolados (já em `tests/UnitTests/`).
+- Integração: `WebApplicationFactory` para fluxos HTTP críticos.
+- Só cobrir comportamento **já implementado**. Após criar API nova, aí sim adicionar testes dela.
+- Meta de rede de segurança: ~80% nos fluxos críticos existentes antes da refatoração grande.
+- Não escrever testes “verdes futuros” para listagem / endpoint público / create com peças **antes** dessas features existirem.

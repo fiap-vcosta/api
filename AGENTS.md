@@ -1,0 +1,44 @@
+# Tech Challenge — Guia para agentes
+
+Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoque, ordens de serviço). Clean Architecture + DDD/CQRS (MediatR). Banco PostgreSQL + EF Core.
+
+## Antes de mudar código
+
+1. Ler [docs/04_requisitos-fase-02.md](docs/04_requisitos-fase-02.md) (canon da Fase 02)
+2. Ler [docs/01_requisitos.md](docs/01_requisitos.md) e [docs/00_linguagem-onipresente.md](docs/00_linguagem-onipresente.md) quando o domínio for tocado
+3. Seguir a ordem de trabalho em `docs/04` (testes existentes → CI → Clean Arch → APIs novas)
+4. Espelhar padrões das pastas vizinhas; não inventar estrutura paralela
+5. Não escrever testes de feature ainda não implementada; não inventar requisitos fora de `docs/04`
+
+## Layout da solution
+
+| Projeto | Responsabilidade |
+|---------|------------------|
+| `src/Domain` | Entities, VOs, eventos de domínio; ports limpos (alvo: Gateways) — **sem** EF/ASP.NET |
+| `src/Application` | Use cases (Commands/Queries/Handlers; alvo pasta `UseCases/`) |
+| `src/Infrastructure` | EF Core, implementações de Gateway, JWT/SMTP stubs |
+| `src/Api` | Controllers, Requests/Validators; alvo: **Presenters** + ViewModels |
+| `tests/UnitTests` | Testes unitários do comportamento existente |
+
+Dependências apontam para dentro: Api → Application → Domain; Infrastructure implementa ports.
+
+Referência SOAT: https://github.com/proferickmuller/soat-cleanarch-csharp
+
+## Comandos
+
+```bash
+dotnet build TechChallenge.sln
+dotnet test
+dotnet restore
+# Docker (ver README): docker-compose --profile app up -d
+```
+
+Swagger local (Docker): `http://localhost:8080/swagger/index.html`
+
+## Fase 02 — resumo operacional
+
+- CI cedo no GitHub Actions (build + testes) antes de volume grande de refatoração
+- Clean Architecture purista **antes** de criar APIs novas
+- Endpoint público de aprovação/rejeição chama os **mesmos** use cases (sem JWT)
+- Listagem de OS: excluir Finalizada, Entregue, Descartada; ordem evolutiva documentada em `docs/04`
+- Checklist pessoal local: `FASE02-CHECKLIST.md` (gitignored) — canon público é `docs/04`

@@ -119,5 +119,7 @@ start test-results/coverage-report/index.html  # Windows
 ## Documentação Adicional
 
 - [Requisitos do Projeto](docs/01_requisitos.md)
+- [Requisitos e decisões — Fase 02](docs/04_requisitos-fase-02.md)
 - [Linguagem Onipresente](docs/00_linguagem-onipresente.md)
 - [ADR - Escolha do Banco de Dados](docs/adrs/001-escolha-banco-de-dados.md)
+- [Guia para agentes de IA](AGENTS.md)

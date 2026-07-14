@@ -1,0 +1,13 @@
+---
+description: Regras do agregado Ordem de Serviço e listagem
+globs: "src/Domain/OrdemServico/**/*"
+alwaysApply: false
+---
+
+# Domínio Ordem de Serviço
+
+- Máquina de estados centralizada no agregado; adapters só disparam use cases.
+- Status finais fora da listagem da API: `Finalizada`, `Entregue`, `Descartada`.
+- Estoque insuficiente → item `EstoqueEmFalta` e OS `AguardandoPeca` (já implementado).
+- Prioridade de listagem (ver `docs/04`): EmExecucao > LiberadaParaExecucao > AguardandoPeca > ChecandoEstoque > AguardandoAprovacao > EmDiagnostico > Recebida; depois mais antigas.
+- Não aceitar status arbitrário vindo de fora do domínio.

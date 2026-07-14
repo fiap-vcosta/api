@@ -54,3 +54,6 @@ coverage.cobertura.xml
 # Build outputs
 publish/
 build/
+
+# Work-in-progress checklist (fase 02)
+FASE02-CHECKLIST.md

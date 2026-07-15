@@ -7,6 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <ExcludeByFile>**/Program.cs</ExcludeByFile>
+    <Exclude>[Api]System.Text.RegularExpressions*</Exclude>
   </PropertyGroup>
 
   <ItemGroup>

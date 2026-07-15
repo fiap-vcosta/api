@@ -19,18 +19,27 @@ Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoqu
 | `src/Infrastructure` | EF Core, implementações de Gateway, JWT/SMTP stubs |
 | `src/Api` | Controllers, Requests/Validators; alvo: **Presenters** + ViewModels |
 | `tests/UnitTests` | Testes unitários do comportamento existente |
+| `tests/IntegrationTests` | Testes de integração HTTP (`WebApplicationFactory` + Testcontainers) |
 
 Dependências apontam para dentro: Api → Application → Domain; Infrastructure implementa ports.
 
 Referência SOAT: https://github.com/proferickmuller/soat-cleanarch-csharp
 
+## Testes
+
+- Sempre **AAA** (`Arrange` / `Act` / `Assert`) — detalhes em [`.cursor/rules/tests.mdc`](.cursor/rules/tests.mdc).
+- Meta de cobertura unitária: **≥ 80% line e branch** por assembly (`Api`, `Application`, `Infrastructure`, `Domain`).
+- Só cobrir comportamento já implementado (não TDD de feature futura da Fase 02).
+
 ## Comandos
 
 ```bash
 dotnet build TechChallenge.sln
-dotnet test
+dotnet test TechChallenge.sln
 dotnet restore
-# Docker (ver README): docker-compose --profile app up -d
+# Cobertura + HTML: ./run-tests-with-coverage.sh
+# Integração precisa de Docker (Testcontainers Postgres)
+# Docker app (ver README): docker-compose --profile app up -d
 ```
 
 Swagger local (Docker): `http://localhost:8080/swagger/index.html`

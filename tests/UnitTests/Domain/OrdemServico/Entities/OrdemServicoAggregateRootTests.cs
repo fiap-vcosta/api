@@ -486,6 +486,47 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
+    public void ConfirmPayment_WhenFinalized_SetsEntregue()
+    {
+        // Arrange
+        var ordem = CriarOrdemComServicoAprovado();
+        ordem.ChecarItensNecessarios(new Dictionary<int, decimal> { [100] = 5m });
+        ordem.TravarItensNecessarios();
+        var servicoId = ordem.Servicos.First().Id;
+        ordem.ConfirmarExecucao(
+        [
+            new ServicoExecutado { IdServico = servicoId, IniciadoEm = DateTime.UtcNow.AddHours(-1), FinalizadoEm = DateTime.UtcNow }
+        ]);
+
+        // Act
+        ordem.ConfirmarPagamento();
+
+        // Assert
+        Assert.Equal(StatusOrdemServico.Entregue, ordem.Status);
+    }
+
+    [Fact]
+    public void FinalizarDiagnostico_WhenNotEmDiagnostico_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var ordem = CriarOrdem();
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => ordem.FinalizarDiagnostico());
+    }
+
+    [Fact]
+    public void AprovarServicosSugeridos_WhenNotAguardandoAprovacao_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var ordem = CriarOrdem();
+        ordem.EnviarParaDiagnostico();
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => ordem.AprovarServicosSugeridos());
+    }
+
+    [Fact]
     public void ValorTotal_ExcludesRejectedServices()
     {
         // Arrange

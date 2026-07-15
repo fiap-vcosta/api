@@ -7,11 +7,22 @@ public class ItemServicoRepository(AppDbContext appDbContext) : IItemServicoRepo
 {
     public async Task<List<IItemServicoRepository.TempoMedioExecucaoServico>> GetAllTempoMediaExecucaoAsync()
     {
-        return await appDbContext.ItensServicos
+        var conclusoes = await appDbContext.ItensServicos
             .Where(servico => servico.ExecucaoIniciadaEm != null && servico.ExecucaoFinalizadaEm != null)
-            .GroupBy(s => s.ServicoCatalogo.Id)
+            .Select(s => new
+            {
+                ServicoId = s.ServicoCatalogo.Id,
+                Inicio = s.ExecucaoIniciadaEm!.Value,
+                Fim = s.ExecucaoFinalizadaEm!.Value
+            })
+            .ToListAsync();
+
+        return conclusoes
+            .GroupBy(s => s.ServicoId)
             .Select(grupo => new IItemServicoRepository.TempoMedioExecucaoServico(
-                grupo.Key, grupo.Count(), TimeSpan.FromSeconds(grupo.Average(s => (s.ExecucaoFinalizadaEm!.Value.Subtract(s.ExecucaoIniciadaEm!.Value)).TotalSeconds))
-            )).ToListAsync();
+                grupo.Key,
+                grupo.Count(),
+                TimeSpan.FromSeconds(grupo.Average(s => (s.Fim - s.Inicio).TotalSeconds))))
+            .ToList();
     }
 }

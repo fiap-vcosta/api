@@ -18,7 +18,6 @@ public class JwtServiceTests
                 ["Jwt:Audience"] = "test-audience"
             })
             .Build();
-
         var service = new JwtService(config);
 
         // Act
@@ -33,5 +32,40 @@ public class JwtServiceTests
         Assert.Contains(token.Claims, c => c.Type == "role" && c.Value == "Admin");
         Assert.Contains(token.Claims, c => c.Type == "userId" && c.Value == "42");
         Assert.True(token.ValidTo > DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void GenerateToken_UsesDefaultIssuerAndAudience_WhenMissingFromConfig()
+    {
+        // Arrange
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Key"] = "super-secret-key-1234567890-ABCDEFGH"
+            })
+            .Build();
+        var service = new JwtService(config);
+
+        // Act
+        var tokenString = service.GenerateToken("admin", "Admin", 1);
+        var token = new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
+
+        // Assert
+        Assert.Equal("default-issuer", token.Issuer);
+        Assert.Equal("default-audience", token.Audiences.Single());
+    }
+
+    [Fact]
+    public void Constructor_UsesDefaultKeyIssuerAndAudience_WhenJwtConfigMissing()
+    {
+        // Arrange
+        var config = new ConfigurationBuilder().AddInMemoryCollection().Build();
+
+        // Act
+        var service = new JwtService(config);
+
+        // Assert — default-key is too short to mint tokens; branch coverage is the ctor fallbacks
+        Assert.NotNull(service);
+        Assert.ThrowsAny<Exception>(() => service.GenerateToken("admin", "Admin", 1));
     }
 }

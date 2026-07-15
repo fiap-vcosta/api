@@ -106,6 +106,25 @@ public class OrdemServicoRepositoryTests : IDisposable
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task UpdateAsync_PersistsStatusChange()
+    {
+        // Arrange
+        var ordem = OrdemServicoAggregateRoot.Criar(
+            new ClienteOrdemServico { Id = 1, Nome = "Cliente", Email = "c@t.com" },
+            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
+        await _repository.CriarAsync(ordem);
+        ordem.EnviarParaDiagnostico();
+
+        // Act
+        await _repository.UpdateAsync(ordem);
+
+        // Assert
+        var saved = await _repository.GetByIdAsync(ordem.Id);
+        Assert.NotNull(saved);
+        Assert.Equal(StatusOrdemServico.EmDiagnostico, saved.Status);
+    }
+
     public void Dispose()
     {
         GC.SuppressFinalize(this);

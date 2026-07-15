@@ -1,8 +1,9 @@
-using Microsoft.Extensions.Configuration;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Abstractions.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services;
@@ -22,7 +23,7 @@ public class JwtService(IConfiguration configuration) : IJwtService
             Subject = new ClaimsIdentity([
                 new Claim(ClaimTypes.Name, login),
                 new Claim(ClaimTypes.Role, role),
-                new Claim("userId", userId.ToString())
+                new Claim("userId", userId.ToString(CultureInfo.InvariantCulture))
             ]),
             Expires = DateTime.UtcNow.AddMinutes(30),
             Issuer = _issuer,

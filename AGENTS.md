@@ -40,6 +40,7 @@ dotnet restore
 # Cobertura + HTML: ./run-tests-with-coverage.sh
 # Integração precisa de Docker (Testcontainers Postgres)
 # Docker app (ver README): docker-compose --profile app up -d
+# CI: .github/workflows/ci.yml (push → lint + unit + integration em paralelo)
 ```
 
 Swagger local (Docker): `http://localhost:8080/swagger/index.html`

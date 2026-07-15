@@ -47,6 +47,7 @@ tests/UnitTests/TestResults/
 *.trx
 coverage.cobertura.xml
 **/coverage/
+inspectcode.sarif.json
 
 # SonarQube
 .scannerwork/

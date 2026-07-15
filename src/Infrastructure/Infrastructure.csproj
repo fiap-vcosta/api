@@ -19,4 +19,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="Database/Migrations/**/*.cs">
+      <NoWarn>$(NoWarn);CA1861</NoWarn>
+    </Compile>
+  </ItemGroup>
 </Project>

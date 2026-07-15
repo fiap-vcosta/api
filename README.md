@@ -85,7 +85,12 @@ A aplicação estará disponível em `http://localhost:5000`
 
 #### Testes unitários simples:
 ```bash
-dotnet test
+dotnet test tests/UnitTests/UnitTests.csproj
+```
+
+#### Testes de integração (requer Docker):
+```bash
+dotnet test tests/IntegrationTests/IntegrationTests.csproj
 ```
 
 #### Testes com cobertura de código:
@@ -101,6 +106,16 @@ xdg-open test-results/coverage-report/index.html  # Linux
 start test-results/coverage-report/index.html  # Windows
 ```
 
+### CI (GitHub Actions)
+
+A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda em paralelo:
+
+- **Lint** — build + InspectCode (Rider); só **errors** falham o job; warnings deixam o step amarelo
+- **Unit tests** — testes unitários com gate de cobertura **≥ 80%** line e branch (por assembly)
+- **Integration tests** — Testcontainers (Docker)
+
+**Ver cobertura no CI:** abra o run em Actions → artifact **`coverage-report`** → baixe e abra `index.html`. O Job Summary do job *Unit tests* também mostra o resumo percentual.
+
 ## Estrutura do Projeto
 
 ```
@@ -110,7 +125,9 @@ start test-results/coverage-report/index.html  # Windows
 │   ├── Domain/           # Entidades e interfaces de domínio
 │   └── Infrastructure/   # Implementações (Database, Services)
 ├── tests/
-│   └── UnitTests/        # Testes unitários
+│   ├── UnitTests/        # Testes unitários
+│   └── IntegrationTests/ # Testes de integração (HTTP + Testcontainers)
+├── .github/workflows/    # CI (GitHub Actions)
 ├── docs/                 # Documentação (histórias de domínio, requisitos)
 ├── docker-compose.yml    # Orquestração de containers
 └── Dockerfile            # Construção da imagem Docker

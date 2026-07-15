@@ -8,6 +8,6 @@ public class ChecarEstoqueOrdemServicoPolicy(IMediator mediator ) : INotificatio
 {
     public async Task Handle(OrdemServicoAprovadaEvent notification, CancellationToken cancellationToken)
     {
-        await mediator.Send(new AlocarEstoqueOrdemServicoCommand(notification.IdOrdemServico));
+        await mediator.Send(new AlocarEstoqueOrdemServicoCommand(notification.IdOrdemServico), cancellationToken);
     }
 }

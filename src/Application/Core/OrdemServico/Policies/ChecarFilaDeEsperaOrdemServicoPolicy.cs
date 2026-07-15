@@ -18,7 +18,7 @@ public class ChecarFilaDeEsperaOrdemServicoPolicy(
 
         foreach (var ordemServico in filaOrdemServico)
         {
-            await mediator.Send(new AlocarEstoqueOrdemServicoCommand(ordemServico.Id));
+            await mediator.Send(new AlocarEstoqueOrdemServicoCommand(ordemServico.Id), cancellationToken);
         }
     }
 }

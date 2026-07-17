@@ -2,12 +2,14 @@ using Api.Contracts.Validation;
 using Api.Controllers.ItemEstoque.CreateItemEstoque;
 using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
-using Application.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Queries.GetAllItensEstoque;
-using Application.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
+using Api.Presenters.ItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.CreateItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Responses;
+using Application.UseCases.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Queries.GetAllItensEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
 using Domain.Estoque.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +23,7 @@ namespace Api.Controllers.ItemEstoque;
 public class ItemEstoqueController
 (
     IMediator mediator,
+    ItemEstoquePresenter presenter,
     IValidator<CreateItemEstoqueRequest> createValidator,
     IValidator<UpdateItemEstoqueRequest> updateValidator,
     IValidator<RegistrarEntradaEstoqueRequest> registrarEntradaValidator
@@ -35,26 +38,19 @@ public class ItemEstoqueController
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new CreateItemEstoqueCommand
         {
-            var command = new CreateItemEstoqueCommand
-            {
-                Codigo = request.Codigo,
-                Tipo = request.Tipo,
-                Nome = request.Nome,
-                UnidadeMedida = request.UnidadeMedida,
-                PrecoVenda = request.PrecoVenda,
-                Saldo = request.Saldo,
-                SaldoReservado = request.SaldoReservado
-            };
+            Codigo = request.Codigo,
+            Tipo = request.Tipo,
+            Nome = request.Nome,
+            UnidadeMedida = request.UnidadeMedida,
+            PrecoVenda = request.PrecoVenda,
+            Saldo = request.Saldo,
+            SaldoReservado = request.SaldoReservado
+        };
 
-            var response = await mediator.Send(command);
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, presenter.Present(response));
     }
 
     [HttpGet("{id:int}")]
@@ -68,7 +64,7 @@ public class ItemEstoqueController
             return NotFound();
         }
 
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpGet]
@@ -76,7 +72,7 @@ public class ItemEstoqueController
     {
         var query = new GetAllItemEstoqueQuery();
         var response = await mediator.Send(query);
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpPut("{id:int}")]
@@ -88,48 +84,26 @@ public class ItemEstoqueController
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new UpdateItemEstoqueCommand
         {
-            var command = new UpdateItemEstoqueCommand
-            {
-                Id = id,
-                Codigo = request.Codigo,
-                Tipo = (ItemTipo)request.Tipo,
-                Nome = request.Nome,
-                UnidadeMedida = (UnidadeMedida)request.UnidadeMedida,
-                PrecoVenda = request.PrecoVenda,
-            };
+            Id = id,
+            Codigo = request.Codigo,
+            Tipo = (ItemTipo)request.Tipo,
+            Nome = request.Nome,
+            UnidadeMedida = (UnidadeMedida)request.UnidadeMedida,
+            PrecoVenda = request.PrecoVenda,
+        };
 
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var command = new DeleteItemEstoqueCommand { Id = id };
-            await mediator.Send(command);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new DeleteItemEstoqueCommand { Id = id };
+        await mediator.Send(command);
+        return NoContent();
     }
 
     [HttpPost("{id:int}/registrar-entrada")]
@@ -140,21 +114,14 @@ public class ItemEstoqueController
         {
             return BadRequest(new { validationResult.Errors });
         }
-        
-        try
-        {
-            var command = new RegistrarEntradaEstoqueCommand
-            {
-                IdItemEstoque = id,
-                QuantidadeRecebida = request.Quantidade
-            };
 
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
+        var command = new RegistrarEntradaEstoqueCommand
         {
-            return Problem(ex.Message);
-        }
+            IdItemEstoque = id,
+            QuantidadeRecebida = request.Quantidade
+        };
+
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
 }

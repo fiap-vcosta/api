@@ -12,3 +12,4 @@ alwaysApply: false
 - Preferir `private set` / `init` / `required` / `record` onde o código vizinho já usa.
 - Factories de domínio em português (`Criar`); mapeamentos de response podem usar `From...`.
 - Nomes de domínio em português (linguagem onipresente); keywords técnicas em inglês.
+- Não adicionar comentários que narram o código ou a mudança feita. Comentários só devem explicar intenção, restrição ou trade-off não óbvio.

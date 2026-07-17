@@ -1,5 +1,8 @@
 using Api.Controllers.Auth;
 using Api.Controllers.Auth.Login;
+using Api.Presenters.Auth;
+using Api.ViewModels.Auth;
+using Application.UseCases.Administrativo.Usuario.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -8,65 +11,61 @@ namespace UnitTests.Api.Controllers.Auth;
 
 public class AuthControllerTests
 {
+    private readonly Mock<IMediator> _mediatorMock = new();
+    private readonly AuthController _controller;
+
+    public AuthControllerTests()
+    {
+        _controller = new AuthController(
+            _mediatorMock.Object,
+            new AuthPresenter(),
+            new LoginRequestValidator());
+    }
+
     [Fact]
     public async Task Login_ReturnsOk_WhenRequestIsValid()
     {
         // Arrange
-        var mediatorMock = new Mock<IMediator>();
-        mediatorMock
-            .Setup(m => m.Send(It.IsAny<IRequest<string>>(), CancellationToken.None))
-            .ReturnsAsync("token-value");
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<IRequest<LoginResponse>>(), CancellationToken.None))
+            .ReturnsAsync(new LoginResponse { Token = "token-value" });
 
-        var validator = new LoginRequestValidator();
-        var controller = new AuthController(mediatorMock.Object, validator);
         var request = new LoginRequest { Login = "admin", Password = "password" };
 
         // Act
-        var result = await controller.Login(request);
+        var result = await _controller.Login(request);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var value = okResult.Value!;
-        var tokenProperty = value.GetType().GetProperty("Token");
-
-        Assert.NotNull(tokenProperty);
-        Assert.Equal("token-value", tokenProperty.GetValue(value));
+        var viewModel = Assert.IsType<LoginViewModel>(okResult.Value);
+        Assert.Equal("token-value", viewModel.Token);
     }
 
     [Fact]
     public async Task Login_ReturnsBadRequest_WhenLoginOrPasswordIsMissing()
     {
         // Arrange
-        var mediatorMock = new Mock<IMediator>();
-        var validator = new LoginRequestValidator();
-        var controller = new AuthController(mediatorMock.Object, validator);
         var request = new LoginRequest { Login = "", Password = "" };
 
         // Act
-        var result = await controller.Login(request);
+        var result = await _controller.Login(request);
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
-        mediatorMock.Verify(m => m.Send(It.IsAny<IRequest<string>>(), CancellationToken.None), Times.Never);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<IRequest<LoginResponse>>(), CancellationToken.None), Times.Never);
     }
 
     [Fact]
-    public async Task Login_ReturnsUnauthorized_WhenMediatorThrowsUnauthorizedAccessException()
+    public async Task Login_ThrowsUnauthorizedAccessException_WhenCredentialsAreInvalid()
     {
         // Arrange
-        var mediatorMock = new Mock<IMediator>();
-        mediatorMock
-            .Setup(m => m.Send(It.IsAny<IRequest<string>>(), CancellationToken.None))
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<IRequest<LoginResponse>>(), CancellationToken.None))
             .ThrowsAsync(new UnauthorizedAccessException());
 
-        var validator = new LoginRequestValidator();
-        var controller = new AuthController(mediatorMock.Object, validator);
         var request = new LoginRequest { Login = "admin", Password = "password" };
 
-        // Act
-        var result = await controller.Login(request);
-
-        // Assert
-        Assert.IsType<UnauthorizedObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _controller.Login(request));
     }
 }

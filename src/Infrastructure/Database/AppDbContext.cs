@@ -84,6 +84,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         itensEstoque.Property(ie => ie.PrecoVenda).HasPrecision(10, 2).IsRequired();
         itensEstoque.Property(ie => ie.Saldo).HasPrecision(10, 3).IsRequired();
         itensEstoque.Property(ie => ie.SaldoReservado).HasPrecision(10, 3).IsRequired();
+        itensEstoque.Ignore(ie => ie.SaldoDisponivel);
         seedItensEstoque(itensEstoque);
 
         // Ordens de Serviço
@@ -94,6 +95,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ordensServico.Property(os => os.RecebidaEm).IsRequired();
         ordensServico.Property(os => os.EntregueEm);
         ordensServico.Property(os => os.DescartadaEm);
+        ordensServico.Ignore(os => os.ValorTotal);
+        ordensServico.Ignore(os => os.ItensNecessariosParaExecucao);
         ordensServico.ComplexProperty(os => os.Cliente);
         ordensServico.ComplexProperty(os => os.Veiculo);
         ordensServico

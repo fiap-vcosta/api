@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Exceptions;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -39,7 +39,6 @@ public class OrdemServicoAggregateRoot
     private readonly List<Servico> _servicos = new();
     public IReadOnlyCollection<Servico> Servicos => _servicos.AsReadOnly();
 
-    [NotMapped]
     public IEnumerable<ItemNecessario> ItensNecessariosParaExecucao => _servicos
         .Where(s => s.Status is StatusItemOrdemServico.Aprovado or StatusItemOrdemServico.Sugerido)
         .SelectMany(s => s.ItensNecessarios);
@@ -61,7 +60,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.Recebida)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser enviada para diagnístico.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ser enviada para diagnóstico.");
         }
         
         Status = StatusOrdemServico.EmDiagnostico;
@@ -71,7 +70,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not (StatusOrdemServico.Recebida or StatusOrdemServico.EmDiagnostico))
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ser descartada.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ser descartada.");
         }
         
         Status = StatusOrdemServico.Descartada;
@@ -83,7 +82,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.EmDiagnostico)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
         }
 
         var itemOrdemServico = Servico.Criar(nome, valorCobrado, servicoCatalogo);
@@ -99,12 +98,12 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.EmDiagnostico)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter diagnóstico finalizado.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter diagnóstico finalizado.");
         }
         
         if (_servicos.Count == 0)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} não teve nenhum serviços adicionado.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} não teve nenhum serviço adicionado.");
         }
         
         if (_servicos.Any(ios => ios.Status is StatusItemOrdemServico.Sugerido))
@@ -129,7 +128,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.AguardandoAprovacao)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços rejeitados.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços rejeitados.");
         }
 
         Status = StatusOrdemServico.EmDiagnostico;
@@ -144,7 +143,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.AguardandoAprovacao)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados or rejeitados.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados ou rejeitados.");
         }
         
         foreach (var servico in _servicos.Where(s => s.Status is StatusItemOrdemServico.Sugerido))
@@ -159,7 +158,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.AguardandoAprovacao)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter serviços aprovados.");
         }
 
         foreach (var idItemServicoAprovado in idsItensServicoAprovados)
@@ -189,7 +188,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not (StatusOrdemServico.ChecandoEstoque or StatusOrdemServico.AguardandoPeca))
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter estoque checado.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter estoque checado.");
         }
 
         var clonedQuantidadesDisponiveis = new Dictionary<int, decimal>(saldosDisponiveis);
@@ -223,7 +222,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not (StatusOrdemServico.LiberadaParaExecucao or StatusOrdemServico.EmExecucao))
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter execução confirmada.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter execução confirmada.");
         }
 
         foreach (var servicoExecutado in servicosExecutados)
@@ -246,7 +245,7 @@ public class OrdemServicoAggregateRoot
     {
         if (Status is not StatusOrdemServico.Finalizada)
         {
-            throw new InvalidOperationException($"Ordem de Serviço {Id} com status {Status} não pode ter pagamento confirmado.");
+            throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter pagamento confirmado.");
         }
         
         Status = StatusOrdemServico.Entregue;

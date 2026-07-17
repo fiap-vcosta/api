@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -50,7 +51,7 @@ public class Servico
     {
         if (Status is not StatusItemOrdemServico.Sugerido)
         {
-            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser rejeitado.");
+            throw new BusinessRuleException($"Serviço {Id} com status {Status} não pode ser rejeitado.");
         }
         
         Status = StatusItemOrdemServico.Rejeitado;
@@ -61,7 +62,7 @@ public class Servico
     {
         if (Status is not StatusItemOrdemServico.Sugerido)
         {
-            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser aprovado.");
+            throw new BusinessRuleException($"Serviço {Id} com status {Status} não pode ser aprovado.");
         }
         
         Status = StatusItemOrdemServico.Aprovado;
@@ -72,7 +73,7 @@ public class Servico
     {
         if (Status is not StatusItemOrdemServico.Aprovado)
         {
-            throw new InvalidOperationException($"Serviço {Id} com status {Status} não pode ser concluido.");
+            throw new BusinessRuleException($"Serviço {Id} com status {Status} não pode ser concluído.");
         }
 
         foreach (var itemNecessario in _itensNecessarios)

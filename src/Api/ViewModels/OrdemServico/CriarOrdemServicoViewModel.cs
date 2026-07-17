@@ -1,0 +1,12 @@
+using Domain.OrdemServico.Entities;
+
+namespace Api.ViewModels.OrdemServico;
+
+public record CriarOrdemServicoViewModel
+{
+    public required int Id { get; init; }
+    public required StatusOrdemServico Status { get; init; }
+    public required DateTime RecebidaEm { get; init; }
+    public required ClienteOrdemServicoViewModel Cliente { get; init; }
+    public required VeiculoOrdemServicoViewModel Veiculo { get; init; }
+}

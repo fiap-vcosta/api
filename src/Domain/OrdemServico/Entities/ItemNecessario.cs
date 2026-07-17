@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -33,7 +34,7 @@ public class ItemNecessario
     {
         if (Status is not (StatusItemEstoque.EstoqueNaoChecado or StatusItemEstoque.EstoqueEmFalta or StatusItemEstoque.EstoqueDisponivel))
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ser checado no estoque.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ser checado no estoque.");
         }
 
         if (Quantidade > quantidadeDisponivel)
@@ -49,7 +50,7 @@ public class ItemNecessario
     {
         if (Status is not (StatusItemEstoque.EstoqueNaoChecado or StatusItemEstoque.EstoqueEmFalta or StatusItemEstoque.EstoqueDisponivel))
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ter estoque travado.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ter estoque travado.");
         }
 
         Status = StatusItemEstoque.EstoqueTravado;
@@ -59,7 +60,7 @@ public class ItemNecessario
     {
         if (Status is not StatusItemEstoque.EstoqueTravado)
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ser utilizado.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ser utilizado.");
         }
 
         Status = StatusItemEstoque.Utilizado;

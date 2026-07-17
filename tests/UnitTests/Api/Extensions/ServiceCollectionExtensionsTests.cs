@@ -2,9 +2,9 @@ using Api.Contracts.Validation;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Api.Extensions;
 using Application.Abstractions.Services;
-using Domain.Administrativo.Repositories;
-using Domain.Estoque.Repositories;
-using Domain.OrdemServico.Repositories;
+using Application.Abstractions.Gateways;
+using Application.Abstractions.Gateways;
+using Application.Abstractions.Gateways;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,12 +39,12 @@ public class ServiceCollectionExtensionsTests
         Assert.NotNull(provider.GetService<INotificacaoService>());
         Assert.NotNull(provider.GetService<ISMTPService>());
         Assert.NotNull(provider.GetService<IValidator<CriarOrdemServicoRequest>>());
-        Assert.NotNull(scoped.GetRequiredService<IClienteRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IVeiculoRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IServicoRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IItemEstoqueRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IOrdemServicoRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IItemServicoRepository>());
-        Assert.NotNull(scoped.GetRequiredService<IUsuarioRepository>());
+        Assert.NotNull(scoped.GetRequiredService<IClienteGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IVeiculoGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IServicoGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IItemEstoqueGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IOrdemServicoGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IItemServicoGateway>());
+        Assert.NotNull(scoped.GetRequiredService<IUsuarioGateway>());
     }
 }

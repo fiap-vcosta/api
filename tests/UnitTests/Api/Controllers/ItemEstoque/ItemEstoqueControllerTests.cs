@@ -1,14 +1,18 @@
 using Api.Contracts.Validation;
+using Domain.Exceptions;
 using Api.Controllers.ItemEstoque;
 using Api.Controllers.ItemEstoque.CreateItemEstoque;
 using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.CreateItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
-using Application.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
-using Application.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
-using Application.Estoque.ItemEstoque.Queries.GetAllItensEstoque;
-using Application.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
+using Api.Presenters.ItemEstoque;
+using Api.ViewModels.ItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.CreateItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Responses;
+using Application.UseCases.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Commands.UpdateItemEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Queries.GetAllItensEstoque;
+using Application.UseCases.Estoque.ItemEstoque.Queries.GetItemEstoqueById;
 using Domain.Estoque.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +32,7 @@ public class ItemEstoqueControllerTests
     {
         _controller = new ItemEstoqueController(
             _mediatorMock.Object,
+            new ItemEstoquePresenter(),
             _createValidatorMock.Object,
             _updateValidatorMock.Object,
             _registrarValidatorMock.Object);
@@ -57,7 +62,10 @@ public class ItemEstoqueControllerTests
         var result = await _controller.Create(new CreateItemEstoqueRequest { Codigo = "ITM-001", Nome = "Filtro", PrecoVenda = 1m });
 
         // Assert
-        Assert.IsType<CreatedAtActionResult>(result);
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        var viewModel = Assert.IsType<ItemEstoqueViewModel>(createdResult.Value);
+        Assert.Equal(1, viewModel.Id);
+        Assert.Equal("ITM-001", viewModel.Codigo);
     }
 
     [Fact]
@@ -76,19 +84,16 @@ public class ItemEstoqueControllerTests
     }
 
     [Fact]
-    public async Task Create_ReturnsProblem_WhenMediatorThrows()
+    public async Task Create_ThrowsInvalidOperationException_WhenMediatorThrows()
     {
         // Arrange
         _createValidatorMock.Setup(v => v.Validate(It.IsAny<CreateItemEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<CreateItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("falha"));
 
-        // Act
-        var result = await _controller.Create(new CreateItemEstoqueRequest { Codigo = "X", Nome = "Y", PrecoVenda = 1m });
-
-        // Assert
-        Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, ((ObjectResult)result).StatusCode);
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _controller.Create(new CreateItemEstoqueRequest { Codigo = "X", Nome = "Y", PrecoVenda = 1m }));
     }
 
     [Fact]
@@ -116,7 +121,10 @@ public class ItemEstoqueControllerTests
         var result = await _controller.GetById(1);
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var viewModel = Assert.IsType<ItemEstoqueViewModel>(okResult.Value);
+        Assert.Equal(1, viewModel.Id);
+        Assert.Equal("ITM-001", viewModel.Codigo);
     }
 
     [Fact]
@@ -130,7 +138,10 @@ public class ItemEstoqueControllerTests
         var result = await _controller.GetAll();
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var viewModels = Assert.IsAssignableFrom<IEnumerable<ItemEstoqueViewModel>>(okResult.Value).ToList();
+        Assert.Single(viewModels);
+        Assert.Equal(1, viewModels[0].Id);
     }
 
     [Fact]
@@ -160,37 +171,35 @@ public class ItemEstoqueControllerTests
         var result = await _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m });
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var viewModel = Assert.IsType<ItemEstoqueViewModel>(okResult.Value);
+        Assert.Equal("ITM-001", viewModel.Codigo);
     }
 
     [Fact]
-    public async Task Update_ReturnsNotFound_WhenKeyNotFound()
+    public async Task Update_ThrowsDomainNotFoundException_WhenNotFound()
     {
         // Arrange
         _updateValidatorMock.Setup(v => v.Validate(It.IsAny<UpdateItemEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DomainNotFoundException("Item não encontrado"));
 
-        // Act
-        var result = await _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m });
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<DomainNotFoundException>(() =>
+            _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m }));
     }
 
     [Fact]
-    public async Task Update_ReturnsProblem_WhenOtherException()
+    public async Task Update_ThrowsException_WhenOtherException()
     {
         // Arrange
         _updateValidatorMock.Setup(v => v.Validate(It.IsAny<UpdateItemEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("x"));
 
-        // Act
-        var result = await _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m });
-
-        // Assert
-        Assert.IsType<ObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m }));
     }
 
     [Fact]
@@ -208,31 +217,25 @@ public class ItemEstoqueControllerTests
     }
 
     [Fact]
-    public async Task Delete_ReturnsNotFound_WhenKeyNotFound()
+    public async Task Delete_ThrowsDomainNotFoundException_WhenNotFound()
     {
         // Arrange
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DomainNotFoundException("Item não encontrado"));
 
-        // Act
-        var result = await _controller.Delete(999);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<DomainNotFoundException>(() => _controller.Delete(999));
     }
 
     [Fact]
-    public async Task Delete_ReturnsProblem_WhenOtherException()
+    public async Task Delete_ThrowsException_WhenOtherException()
     {
         // Arrange
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("x"));
 
-        // Act
-        var result = await _controller.Delete(1);
-
-        // Assert
-        Assert.IsType<ObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _controller.Delete(1));
     }
 
     [Fact]
@@ -262,21 +265,22 @@ public class ItemEstoqueControllerTests
         var result = await _controller.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest { Quantidade = 5m });
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var viewModel = Assert.IsType<ItemEstoqueViewModel>(okResult.Value);
+        Assert.Equal(1, viewModel.Id);
+        Assert.Equal(10m, viewModel.Saldo);
     }
 
     [Fact]
-    public async Task RegistrarEntrada_ReturnsProblem_WhenMediatorThrows()
+    public async Task RegistrarEntrada_ThrowsException_WhenOtherException()
     {
         // Arrange
         _registrarValidatorMock.Setup(v => v.Validate(It.IsAny<RegistrarEntradaEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<RegistrarEntradaEstoqueCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("x"));
 
-        // Act
-        var result = await _controller.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest { Quantidade = 5m });
-
-        // Assert
-        Assert.IsType<ObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            _controller.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest { Quantidade = 5m }));
     }
 }

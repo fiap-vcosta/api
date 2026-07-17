@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 
@@ -51,7 +52,7 @@ public class ItemNecessarioTests
     }
 
     [Fact]
-    public void CheckStock_WhenStatusIsLocked_ThrowsInvalidOperationException()
+    public void CheckStock_WhenStatusIsLocked_ThrowsBusinessRuleException()
     {
         // Arrange
         var item = ItemNecessario.Criar(new ItemNecessario.CriarItemNecessarioParams(1, 2m, new ItemEstoqueOrdemServico { Id = 12, Nome = "Parafuso" }));
@@ -59,7 +60,7 @@ public class ItemNecessarioTests
         item.TravarEstoque();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => item.ChecarEstoque(1m));
+        Assert.Throws<BusinessRuleException>(() => item.ChecarEstoque(1m));
     }
 
     [Fact]
@@ -77,7 +78,7 @@ public class ItemNecessarioTests
     }
 
     [Fact]
-    public void LockStock_WhenStatusIsUtilized_ThrowsInvalidOperationException()
+    public void LockStock_WhenStatusIsUtilized_ThrowsBusinessRuleException()
     {
         // Arrange
         var item = ItemNecessario.Criar(new ItemNecessario.CriarItemNecessarioParams(1, 2m, new ItemEstoqueOrdemServico { Id = 13, Nome = "Correia" }));
@@ -86,7 +87,7 @@ public class ItemNecessarioTests
         item.ConfirmarUtilizacao();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => item.TravarEstoque());
+        Assert.Throws<BusinessRuleException>(() => item.TravarEstoque());
     }
 
     [Fact]
@@ -105,12 +106,12 @@ public class ItemNecessarioTests
     }
 
     [Fact]
-    public void ConfirmUsage_WhenNotLocked_ThrowsInvalidOperationException()
+    public void ConfirmUsage_WhenNotLocked_ThrowsBusinessRuleException()
     {
         // Arrange
         var item = ItemNecessario.Criar(new ItemNecessario.CriarItemNecessarioParams(1, 1m, new ItemEstoqueOrdemServico { Id = 14, Nome = "Filtro" }));
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => item.ConfirmarUtilizacao());
+        Assert.Throws<BusinessRuleException>(() => item.ConfirmarUtilizacao());
     }
 }

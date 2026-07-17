@@ -1,10 +1,8 @@
-using System.Net.Http.Json;
-using System.Text.Json;
 using IntegrationTests.Infrastructure;
 
 namespace IntegrationTests;
 
-[Collection(nameof(IntegrationCollection))]
+[Collection(nameof(IntegrationFixture))]
 public class SmokeAndAuthTests
 {
     private readonly HttpClient _client;

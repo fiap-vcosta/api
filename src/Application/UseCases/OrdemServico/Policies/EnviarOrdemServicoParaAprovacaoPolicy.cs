@@ -10,7 +10,7 @@ namespace Application.UseCases.OrdemServico.Policies;
 public class EnviarOrdemServicoParaAprovacaoPolicy(
     IOrdemServicoGateway ordemServicoGateway,
     IClienteGateway clienteGateway,
-    ISMTPService smtpService
+    ISmtpService smtpService
 ) : INotificationHandler<DomainEventNotification<DiagnosticoPreenchidoEvent>>
 {
     public async Task Handle(DomainEventNotification<DiagnosticoPreenchidoEvent> notification, CancellationToken cancellationToken)

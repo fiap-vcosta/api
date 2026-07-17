@@ -15,10 +15,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    continue-on-error: true
-    outputs:
-      errors: ${{ steps.inspect_summary.outputs.errors }}
-      warnings: ${{ steps.inspect_summary.outputs.warnings }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -95,15 +91,16 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-          echo "errors=${ERRORS}" >> "$GITHUB_OUTPUT"
-          echo "warnings=${WARNINGS}" >> "$GITHUB_OUTPUT"
-
           if [ "$ERRORS" -gt 0 ]; then
             echo "::error::InspectCode found ${ERRORS} error(s). See Job Summary / artifact."
           fi
 
           if [ "$WARNINGS" -gt 0 ]; then
-            echo "::warning::InspectCode found ${WARNINGS} warning(s). Review the Job Summary / artifact."
+            echo "::error::InspectCode found ${WARNINGS} warning(s). See Job Summary / artifact."
+          fi
+
+          if [ "$ERRORS" -gt 0 ] || [ "$WARNINGS" -gt 0 ]; then
+            exit 1
           fi
 
       - name: Upload InspectCode report
@@ -114,23 +111,6 @@ jobs:
           path: inspectcode.sarif.json
           if-no-files-found: ignore
           retention-days: 1
-
-      - name: Mark Lint as warning (yellow job)
-        if: steps.inspect_summary.outputs.errors != '0' || steps.inspect_summary.outputs.warnings != '0'
-        run: |
-          echo "Failing Lint job so Actions shows it as yellow (continue-on-error on job)."
-          exit 1
-
-  lint-errors:
-    name: Lint errors
-    needs: lint
-    if: always() && needs.lint.outputs.errors != '0' && needs.lint.outputs.errors != ''
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fail workflow on InspectCode errors
-        run: |
-          echo "::error::Lint reported ${{ needs.lint.outputs.errors }} error(s). Fix them before continuing."
-          exit 1
 
   unit-tests:
     name: Unit tests

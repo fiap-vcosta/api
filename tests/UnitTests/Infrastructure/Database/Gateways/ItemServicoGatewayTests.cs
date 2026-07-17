@@ -57,7 +57,7 @@ public class ItemServicoGatewayTests : IDisposable
         var tempos = await _gateway.GetAllTempoMedioExecucaoAsync();
 
         // Assert
-        Assert.Contains(tempos, t => t.idServico == 10 && t.totalExecucoes == 1 && t.execucaoMedia > TimeSpan.Zero);
+        Assert.Contains(tempos, t => t.IdServico == 10 && t.TotalExecucoes == 1 && t.ExecucaoMedia > TimeSpan.Zero);
     }
 
     [Fact]
@@ -70,5 +70,9 @@ public class ItemServicoGatewayTests : IDisposable
         Assert.Empty(tempos);
     }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose()
+    {
+        _context.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

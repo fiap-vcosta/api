@@ -3,7 +3,6 @@ using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
 using Api.Presenters.Cliente;
 using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
-using Application.UseCases.Administrativo.Cliente.Responses;
 using Application.UseCases.Administrativo.Cliente.Commands.DeleteCliente;
 using Application.UseCases.Administrativo.Cliente.Commands.UpdateCliente;
 using Application.UseCases.Administrativo.Cliente.Queries.GetAllClientes;

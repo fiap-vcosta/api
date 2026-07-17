@@ -21,13 +21,13 @@ public class ItemNecessario
     public decimal Quantidade { get; init; }
     public required ItemEstoqueOrdemServico ItemEstoque { get; init; }
     
-    public record CriarItemNecessarioParams(int idOrdemServico, decimal quantidade, ItemEstoqueOrdemServico itemEstoque);
+    public record CriarItemNecessarioParams(int IdOrdemServico, decimal Quantidade, ItemEstoqueOrdemServico ItemEstoque);
     public static ItemNecessario Criar(CriarItemNecessarioParams @params) => new()
     {
-        IdOrdemServico = @params.idOrdemServico,
+        IdOrdemServico = @params.IdOrdemServico,
         Status = StatusItemEstoque.EstoqueNaoChecado,
-        Quantidade = @params.quantidade,
-        ItemEstoque = @params.itemEstoque
+        Quantidade = @params.Quantidade,
+        ItemEstoque = @params.ItemEstoque
     };
 
     public void ChecarEstoque(decimal quantidadeDisponivel)

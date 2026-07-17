@@ -4,7 +4,7 @@ using IntegrationTests.Infrastructure;
 
 namespace IntegrationTests.OrdemServico;
 
-[Collection(nameof(IntegrationCollection))]
+[Collection(nameof(IntegrationFixture))]
 public class OrdemServicoFlowTests
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -173,8 +173,5 @@ public class OrdemServicoFlowTests
         return servicos[0].GetProperty("id").GetInt32();
     }
 
-    private sealed class IdResponse
-    {
-        public int Id { get; init; }
-    }
+    private sealed record IdResponse(int Id);
 }

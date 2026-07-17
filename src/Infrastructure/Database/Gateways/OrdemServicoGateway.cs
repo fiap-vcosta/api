@@ -23,12 +23,12 @@ public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
         await context.SaveChangesAsync();
     }
 
-    public async Task<OrdemServicoAggregateRoot?> GetByIdAsync(int IdOrdemServico)
+    public async Task<OrdemServicoAggregateRoot?> GetByIdAsync(int idOrdemServico)
     {
         return await context.OrdensServico
             .Include(os => os.Servicos)
             .ThenInclude(ios => ios.ItensNecessarios)
-            .FirstOrDefaultAsync(os => os.Id == IdOrdemServico);
+            .FirstOrDefaultAsync(os => os.Id == idOrdemServico);
     }
 
     public async Task UpdateAsync(OrdemServicoAggregateRoot ordemServico)

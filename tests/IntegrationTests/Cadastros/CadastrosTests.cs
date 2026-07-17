@@ -4,7 +4,7 @@ using IntegrationTests.Infrastructure;
 
 namespace IntegrationTests.Cadastros;
 
-[Collection(nameof(IntegrationCollection))]
+[Collection(nameof(IntegrationFixture))]
 public class CadastrosTests
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -95,8 +95,5 @@ public class CadastrosTests
         entrada.EnsureSuccessStatusCode();
     }
 
-    private sealed class IdResponse
-    {
-        public int Id { get; init; }
-    }
+    private sealed record IdResponse(int Id);
 }

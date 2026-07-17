@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.UseCases.Pagamento.Commands.NotificarClienteSobreConclusao;
 
-public class NotificarClienteSobreConclusaoCommandHandler(IClienteGateway clienteGateway, ISMTPService smtpService)
+public class NotificarClienteSobreConclusaoCommandHandler(IClienteGateway clienteGateway, ISmtpService smtpService)
     :IRequestHandler<NotificarClienteSobreConclusaoCommand, Unit>
 {
     public async Task<Unit> Handle(NotificarClienteSobreConclusaoCommand request, CancellationToken cancellationToken)

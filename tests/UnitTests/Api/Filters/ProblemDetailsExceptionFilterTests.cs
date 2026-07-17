@@ -107,7 +107,7 @@ public class ProblemDetailsExceptionFilterTests
     public void OnException_Returns500ProblemDetails_WhenUnhandledException()
     {
         // Arrange
-        var context = CreateExceptionContext(new Exception("detalhe interno"));
+        var context = CreateExceptionContext(new NotSupportedException("detalhe interno"));
 
         // Act
         _filter.OnException(context);

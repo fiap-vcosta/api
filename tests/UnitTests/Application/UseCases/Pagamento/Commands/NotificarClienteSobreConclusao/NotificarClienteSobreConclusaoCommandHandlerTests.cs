@@ -17,7 +17,7 @@ public class NotificarClienteSobreConclusaoCommandHandlerTests
         mockClienteGateway.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((ClienteAggregateRoot?)null);
         var handler = new NotificarClienteSobreConclusaoCommandHandler(
             mockClienteGateway.Object,
-            new Mock<ISMTPService>().Object);
+            new Mock<ISmtpService>().Object);
 
         // Act / Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>
@@ -29,7 +29,7 @@ public class NotificarClienteSobreConclusaoCommandHandlerTests
     {
         // Arrange
         var mockClienteGateway = new Mock<IClienteGateway>();
-        var mockSmtp = new Mock<ISMTPService>();
+        var mockSmtp = new Mock<ISmtpService>();
         mockClienteGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new ClienteAggregateRoot
         {
             Id = 1,

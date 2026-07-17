@@ -66,7 +66,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<INotificacaoService, NotificacaoService>();
-        services.AddSingleton<ISMTPService, SMTPService>();
+        services.AddSingleton<ISmtpService, SmtpService>();
     }
 
     private static void AddUsuarioServices(this IServiceCollection services)

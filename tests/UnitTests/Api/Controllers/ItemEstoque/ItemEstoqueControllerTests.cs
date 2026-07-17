@@ -195,10 +195,10 @@ public class ItemEstoqueControllerTests
         // Arrange
         _updateValidatorMock.Setup(v => v.Validate(It.IsAny<UpdateItemEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _controller.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "B", PrecoVenda = 1m }));
     }
 
@@ -207,7 +207,7 @@ public class ItemEstoqueControllerTests
     {
         // Arrange
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MediatR.Unit.Value);
+            .ReturnsAsync(Unit.Value);
 
         // Act
         var result = await _controller.Delete(1);
@@ -232,10 +232,10 @@ public class ItemEstoqueControllerTests
     {
         // Arrange
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteItemEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _controller.Delete(1));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Delete(1));
     }
 
     [Fact]
@@ -277,10 +277,10 @@ public class ItemEstoqueControllerTests
         // Arrange
         _registrarValidatorMock.Setup(v => v.Validate(It.IsAny<RegistrarEntradaEstoqueRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<RegistrarEntradaEstoqueCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _controller.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest { Quantidade = 5m }));
     }
 }

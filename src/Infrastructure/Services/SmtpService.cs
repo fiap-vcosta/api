@@ -2,7 +2,7 @@ using Application.Abstractions.Services;
 
 namespace Infrastructure.Services;
 
-public class SMTPService : ISMTPService
+public class SmtpService : ISmtpService
 {
     public Task EnviarEmail(string email, string conteudo)
     {

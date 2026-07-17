@@ -1,5 +1,3 @@
-using Domain.OrdemServico.Entities;
-using Domain.OrdemServico.ValueObjects;
 using MediatR;
 
 namespace Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;

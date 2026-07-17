@@ -19,7 +19,7 @@ public class EnviarOrdemServicoParaAprovacaoPolicyTests
         // Arrange
         var mockOrdemServicoGateway = new Mock<IOrdemServicoGateway>();
         var mockClienteGateway = new Mock<IClienteGateway>();
-        var mockSmtpService = new Mock<ISMTPService>();
+        var mockSmtpService = new Mock<ISmtpService>();
 
         var ordem = CriarOrdemBasica();
         ReflectSetId(ordem, 15);
@@ -65,7 +65,7 @@ public class EnviarOrdemServicoParaAprovacaoPolicyTests
         var policy = new EnviarOrdemServicoParaAprovacaoPolicy(
             mockOrdemServicoGateway.Object,
             mockClienteGateway.Object,
-            new Mock<ISMTPService>().Object);
+            new Mock<ISmtpService>().Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>

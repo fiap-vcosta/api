@@ -1,6 +1,5 @@
 using Application.UseCases.Administrativo.Veiculo.Commands.CreateVeiculo;
 using Domain.Exceptions;
-using Application.UseCases.Administrativo.Veiculo.Responses;
 using Domain.Administrativo.Entities;
 using Application.Abstractions.Gateways;
 using Moq;

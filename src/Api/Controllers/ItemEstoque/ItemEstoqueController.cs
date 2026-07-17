@@ -4,7 +4,6 @@ using Api.Controllers.ItemEstoque.RegistrarEntradaEstoque;
 using Api.Controllers.ItemEstoque.UpdateItemEstoque;
 using Api.Presenters.ItemEstoque;
 using Application.UseCases.Estoque.ItemEstoque.Commands.CreateItemEstoque;
-using Application.UseCases.Estoque.ItemEstoque.Responses;
 using Application.UseCases.Estoque.ItemEstoque.Commands.DeleteItemEstoque;
 using Application.UseCases.Estoque.ItemEstoque.Commands.RegistrarEntradaEstoque;
 using Application.UseCases.Estoque.ItemEstoque.Commands.UpdateItemEstoque;

@@ -1,6 +1,5 @@
 using Application.UseCases.Estoque.ItemEstoque.Commands.CreateItemEstoque;
 using Domain.Exceptions;
-using Application.UseCases.Estoque.ItemEstoque.Responses;
 using Domain.Estoque.Entities;
 using Application.Abstractions.Gateways;
 using Moq;

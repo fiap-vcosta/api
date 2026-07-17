@@ -3,8 +3,6 @@ using Api.Controllers.OrdemServico.CriarOrdemServico;
 using Api.Extensions;
 using Application.Abstractions.Services;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Gateways;
-using Application.Abstractions.Gateways;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,7 +35,7 @@ public class ServiceCollectionExtensionsTests
         // Assert
         Assert.NotNull(provider.GetService<IJwtService>());
         Assert.NotNull(provider.GetService<INotificacaoService>());
-        Assert.NotNull(provider.GetService<ISMTPService>());
+        Assert.NotNull(provider.GetService<ISmtpService>());
         Assert.NotNull(provider.GetService<IValidator<CriarOrdemServicoRequest>>());
         Assert.NotNull(scoped.GetRequiredService<IClienteGateway>());
         Assert.NotNull(scoped.GetRequiredService<IVeiculoGateway>());

@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Testcontainers.PostgreSql;
 
-namespace IntegrationTests;
+namespace IntegrationTests.Infrastructure;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -58,5 +57,5 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
     }
 }
 
-[CollectionDefinition(nameof(IntegrationCollection))]
-public class IntegrationCollection : ICollectionFixture<CustomWebApplicationFactory>;
+[CollectionDefinition(nameof(IntegrationFixture))]
+public class IntegrationFixture : ICollectionFixture<CustomWebApplicationFactory>;

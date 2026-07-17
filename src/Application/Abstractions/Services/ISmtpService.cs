@@ -1,6 +1,6 @@
 namespace Application.Abstractions.Services;
 
-public interface ISMTPService
+public interface ISmtpService
 {
     public Task EnviarEmail(string email, string conteudo);
 }

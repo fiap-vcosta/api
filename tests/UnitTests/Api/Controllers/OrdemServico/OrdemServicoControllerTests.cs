@@ -366,10 +366,10 @@ public class OrdemServicoControllerTests
         _aprovarParcialValidatorMock.Setup(v => v.Validate(It.IsAny<AprovarServicosParcialmenteRequest>())).Returns(new ValidationResult());
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<AprovarServicosParcialmenteCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _controller.AprovarServicosParcialmente(1, new AprovarServicosParcialmenteRequest { IdsServicosAprovados = [1] }));
     }
 
@@ -428,10 +428,10 @@ public class OrdemServicoControllerTests
         _confirmarExecucaoValidatorMock.Setup(v => v.Validate(It.IsAny<ConfirmarExecucaoRequest>())).Returns(new ValidationResult());
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<ConfirmarExecucaoOrdemServicoCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _controller.ConfirmarExecucao(1, new ConfirmarExecucaoRequest
             {
                 ServicosExecutados = [new ServicoExecutado { IdServico = 1, IniciadoEm = DateTime.UtcNow.AddHours(-1), FinalizadoEm = DateTime.UtcNow }]
@@ -468,10 +468,10 @@ public class OrdemServicoControllerTests
         // Arrange
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<FinalizarDiagnosticoCommand>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _controller.FinalizarDiagnostico(1));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.FinalizarDiagnostico(1));
     }
 
     [Fact]
@@ -480,9 +480,9 @@ public class OrdemServicoControllerTests
         // Arrange
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetTempoMedioExecucaoAllServicosQuery>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("x"));
+            .ThrowsAsync(new InvalidOperationException("x"));
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _controller.GetTempoMedioExecucao());
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.GetTempoMedioExecucao());
     }
 }

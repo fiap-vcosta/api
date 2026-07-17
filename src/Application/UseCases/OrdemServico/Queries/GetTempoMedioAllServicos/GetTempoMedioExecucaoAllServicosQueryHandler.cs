@@ -11,7 +11,7 @@ public class GetTempoMedioExecucaoAllServicosQueryHandler(IItemServicoGateway it
     {
         var temposMedios = await itemServicoGateway.GetAllTempoMedioExecucaoAsync();
         return temposMedios
-            .Select(t => TempoMedioExecucaoResponse.From(t.idServico, t.totalExecucoes, t.execucaoMedia))
+            .Select(t => TempoMedioExecucaoResponse.From(t.IdServico, t.TotalExecucoes, t.ExecucaoMedia))
             .ToList();
     }
 }

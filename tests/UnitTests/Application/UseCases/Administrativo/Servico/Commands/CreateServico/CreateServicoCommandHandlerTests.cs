@@ -1,6 +1,5 @@
 using Application.UseCases.Administrativo.Servico.Commands.CreateServico;
 using Domain.Exceptions;
-using Application.UseCases.Administrativo.Servico.Responses;
 using Domain.Administrativo.Entities;
 using Application.Abstractions.Gateways;
 using Moq;

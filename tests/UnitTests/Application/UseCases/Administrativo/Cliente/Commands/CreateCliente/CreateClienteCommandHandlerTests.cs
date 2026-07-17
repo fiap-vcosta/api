@@ -1,5 +1,4 @@
 using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
-using Application.UseCases.Administrativo.Cliente.Responses;
 using Domain.Administrativo.Entities;
 using Application.Abstractions.Gateways;
 using Moq;

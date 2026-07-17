@@ -110,7 +110,7 @@ start test-results/coverage-report/index.html  # Windows
 
 A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda em paralelo:
 
-- **Lint** — build + InspectCode (Rider); só **errors** falham o job; warnings deixam o step amarelo
+- **Lint** — build + InspectCode (Rider); **errors** e **warnings** falham o job
 - **Unit tests** — testes unitários com gate de cobertura **≥ 80%** line e branch (por assembly)
 - **Integration tests** — Testcontainers (Docker)
 

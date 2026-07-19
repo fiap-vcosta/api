@@ -125,6 +125,68 @@ public class OrdemServicoGatewayTests : IDisposable
         Assert.Equal(StatusOrdemServico.EmDiagnostico, saved.Status);
     }
 
+    [Fact]
+    public async Task GetByTokenAsync_ReturnsOrdem_WhenTokenExists()
+    {
+        // Arrange
+        var ordem = OrdemServicoAggregateRoot.Criar(
+            new ClienteOrdemServico { Id = 1, Nome = "Cliente", Email = "c@t.com" },
+            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
+        await _gateway.CriarAsync(ordem);
+
+        // Act
+        var saved = await _gateway.GetByTokenAsync(ordem.TokenAprovacao);
+
+        // Assert
+        Assert.NotNull(saved);
+        Assert.Equal(ordem.Id, saved.Id);
+        Assert.Equal(ordem.TokenAprovacao, saved.TokenAprovacao);
+    }
+
+    [Fact]
+    public async Task ListarAtivasAsync_ExcludesFinalStatuses_AndOrdersByPriorityThenAge()
+    {
+        // Arrange
+        var cliente = new ClienteOrdemServico { Id = 1, Nome = "Cliente", Email = "c@t.com" };
+        var veiculo = new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" };
+        var catalogo = new ServicoCatalogo { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
+
+        var antigaEmDiagnostico = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
+        typeof(OrdemServicoAggregateRoot).GetProperty(nameof(OrdemServicoAggregateRoot.RecebidaEm))!
+            .SetValue(antigaEmDiagnostico, DateTime.UtcNow.AddHours(-2));
+        antigaEmDiagnostico.EnviarParaDiagnostico();
+        await _gateway.CriarAsync(antigaEmDiagnostico);
+
+        var recenteEmDiagnostico = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
+        typeof(OrdemServicoAggregateRoot).GetProperty(nameof(OrdemServicoAggregateRoot.RecebidaEm))!
+            .SetValue(recenteEmDiagnostico, DateTime.UtcNow.AddHours(-1));
+        recenteEmDiagnostico.EnviarParaDiagnostico();
+        await _gateway.CriarAsync(recenteEmDiagnostico);
+
+        var liberada = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
+        liberada.EnviarParaDiagnostico();
+        liberada.AdicionarItemServico("svc", 10m, catalogo, []);
+        liberada.FinalizarDiagnostico();
+        liberada.AprovarServicosSugeridos();
+        liberada.ChecarItensNecessarios(new Dictionary<int, decimal>());
+        await _gateway.CriarAsync(liberada);
+
+        var descartada = OrdemServicoAggregateRoot.Criar(cliente, veiculo);
+        descartada.Descartar();
+        await _gateway.CriarAsync(descartada);
+
+        // Act
+        var result = await _gateway.ListarAtivasAsync();
+
+        // Assert
+        Assert.Equal(3, result.Count);
+        Assert.Equal(liberada.Id, result[0].Id);
+        Assert.Equal(StatusOrdemServico.LiberadaParaExecucao, result[0].Status);
+        Assert.Equal(antigaEmDiagnostico.Id, result[1].Id);
+        Assert.Equal(recenteEmDiagnostico.Id, result[2].Id);
+        Assert.DoesNotContain(result, o => o.Status == StatusOrdemServico.Descartada);
+    }
+
     public void Dispose()
     {
         GC.SuppressFinalize(this);

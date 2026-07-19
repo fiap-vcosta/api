@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Domain.Exceptions;
 using Domain.OrdemServico.ValueObjects;
 
@@ -32,6 +33,7 @@ public class OrdemServicoAggregateRoot
     public DateTime? EntregueEm { get; private set; }
     public DateTime? DescartadaEm { get; private set; }
     public DateTime? AprovadaEm { get; private set; }
+    public string TokenAprovacao { get; private set; } = string.Empty;
     
     public required ClienteOrdemServico Cliente { get; init; }
     public required VeiculoOrdemServico Veiculo { get; init; }
@@ -52,8 +54,16 @@ public class OrdemServicoAggregateRoot
             Status = StatusOrdemServico.Recebida,
             RecebidaEm = DateTime.UtcNow,
             EntregueEm = null,
-            DescartadaEm = null
+            DescartadaEm = null,
+            TokenAprovacao = GerarTokenAprovacao()
         };
+    }
+
+    private static string GerarTokenAprovacao()
+    {
+        Span<byte> bytes = stackalloc byte[32];
+        RandomNumberGenerator.Fill(bytes);
+        return Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
     public void EnviarParaDiagnostico()
@@ -80,7 +90,7 @@ public class OrdemServicoAggregateRoot
     public void AdicionarItemServico(string nome, decimal valorCobrado, ServicoCatalogo servicoCatalogo,
         List<ItemNecessario.CriarItemNecessarioParams> itensNecessarios)
     {
-        if (Status is not StatusOrdemServico.EmDiagnostico)
+        if (Status is not (StatusOrdemServico.Recebida or StatusOrdemServico.EmDiagnostico))
         {
             throw new BusinessRuleException($"Ordem de Serviço {Id} com status {Status} não pode ter itens adicionados.");
         }

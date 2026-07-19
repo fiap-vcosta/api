@@ -15,6 +15,7 @@ using Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;
 using Application.UseCases.OrdemServico.Commands.RejeitarOrdemServico;
 using Application.UseCases.OrdemServico.Queries.GetOrdemServicoById;
 using Application.UseCases.OrdemServico.Queries.GetTempoMedioAllServicos;
+using Application.UseCases.OrdemServico.Queries.ListarOrdensServico;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,13 @@ public class OrdemServicoController(
     IValidator<ConfirmarExecucaoRequest> confirmarExecucaoRequestValidator
 ) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> Listar()
+    {
+        var response = await mediator.Send(new ListarOrdensServicoQuery());
+        return Ok(presenter.Present(response));
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -56,7 +64,21 @@ public class OrdemServicoController(
             return BadRequest(new { validationResult.Errors });
         }
 
-        var command = new CriarOrdemServicoCommand { IdVeiculo = request.IdVeiculo };
+        var command = new CriarOrdemServicoCommand
+        {
+            IdVeiculo = request.IdVeiculo,
+            Servicos = request.Servicos.Select(servico => new CriarOrdemServicoCommand.Servico
+            {
+                IdServico = servico.IdServico,
+                ValorCobrado = servico.ValorCobrado,
+                ItensNecessarios = servico.ItensNecessarios.Select(item =>
+                    new CriarOrdemServicoCommand.ItemNecessario
+                    {
+                        IdItemEstoque = item.IdItemEstoque,
+                        Quantidade = item.Quantidade
+                    }).ToList()
+            }).ToList()
+        };
 
         var response = await mediator.Send(command);
         return Created(nameof(GetById), presenter.Present(response));

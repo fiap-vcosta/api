@@ -1,0 +1,11 @@
+---
+description: Nunca assumir contexto; perguntar antes de decisões ambíguas
+alwaysApply: true
+---
+
+# Contexto e perguntas
+
+- Nunca assumir requisitos, escopo, domínio ou trade-offs quando estiverem ambíguos ou incompletos.
+- Antes de implementar decisões que mudem comportamento, contrato de API, domínio ou documentação: explicitar a dúvida e perguntar.
+- Preferir 1–2 perguntas críticas por vez; propor opções concretas quando houver caminhos válidos distintos.
+- Só seguir com um default sensato depois que o usuário confirmar ou quando o canon (`docs/04`, regras do projeto) já fechar a decisão.

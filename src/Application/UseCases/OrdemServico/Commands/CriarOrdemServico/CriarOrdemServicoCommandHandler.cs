@@ -1,5 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.UseCases.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
@@ -47,15 +48,36 @@ public class CriarOrdemServicoCommandHandler(
         var ordemServico = OrdemServicoAggregateRoot.Criar(clienteOrdemServico, veiculoOrdemServico);
         await ordemServicoGateway.CriarAsync(ordemServico);
 
+        foreach (var servicoRequest in request.Servicos)
+        {
+            await mediator.Send(new AdicionarItemOrdemServicoCommand
+            {
+                IdOrdemServico = ordemServico.Id,
+                IdServico = servicoRequest.IdServico,
+                ValorCobrado = servicoRequest.ValorCobrado,
+                ItensNecessarios = servicoRequest.ItensNecessarios.Select(item =>
+                    new AdicionarItemOrdemServicoCommand.ItemNecessario
+                    {
+                        IdItemEstoque = item.IdItemEstoque,
+                        Quantidade = item.Quantidade
+                    }).ToList()
+            }, cancellationToken);
+        }
+
         await mediator.Publish(new DomainEventNotification<OrdemServicoCriadaEvent>(new OrdemServicoCriadaEvent(ordemServico.Id)), cancellationToken);
-        
+
+        var ordemAtualizada = await ordemServicoGateway.GetByIdAsync(ordemServico.Id)
+            ?? throw new DomainNotFoundException($"Ordem de Serviço com id {ordemServico.Id} não encontrada");
+
         return new CriarOrdemServicoCommandResponse
         {
-            Id = ordemServico.Id,
-            Status = StatusOrdemServico.Recebida,
-            RecebidaEm = ordemServico.RecebidaEm,
-            Cliente = ClienteOrdemServicoResponse.From(clienteOrdemServico),
-            Veiculo = VeiculoOrdemServicoResponse.From(ordemServico.Veiculo),
+            Id = ordemAtualizada.Id,
+            Status = ordemAtualizada.Status,
+            ValorTotal = ordemAtualizada.ValorTotal,
+            RecebidaEm = ordemAtualizada.RecebidaEm,
+            Cliente = ClienteOrdemServicoResponse.From(ordemAtualizada.Cliente),
+            Veiculo = VeiculoOrdemServicoResponse.From(ordemAtualizada.Veiculo),
+            Servicos = ServicoOrdemServicoResponse.FromMany(ordemAtualizada.Servicos),
         };
     }
 }

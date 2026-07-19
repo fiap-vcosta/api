@@ -25,9 +25,11 @@ Evoluir a aplicação da Fase 1 para qualidade, resiliência e escalabilidade:
 |------|---------|
 | Cluster | Local (**kind**); cloud = fase 03 |
 | CI/CD | GitHub Actions + **self-hosted runner** → kind; **CI (build/test) cedo**; CD completo depois |
-| Status externo / “via email” | Endpoint **público** (sem JWT) que chama os **mesmos use cases** de aprovar/rejeitar; sem SMTP; adapter externo, não gravar status arbitrário |
+| Status externo / “via email” | Endpoint **público** (sem JWT) localizado por **token opaco**; chama os **mesmos use cases** de aprovar/rejeitar; sem SMTP; token não exposto nas responses |
 | Status OS | Manter status do domínio; listagem exclui **Finalizada, Entregue e Descartada**; ordenação evolutiva + mais antigas primeiro |
 | Criação OS | Veículo amarra o cliente; contrato: **veículo + serviços + peças** (listas podem ser `[]`) |
+| Adição de serviços/peças | Permitido **somente** em `Recebida` e `EmDiagnostico`; qualquer outro status é rejeitado pelo domínio |
+| Aprovação externa | Endpoint público localiza a OS por **token opaco** (não exposto nas responses); chama os mesmos use cases de aprovar/rejeitar |
 | Estoque insuficiente | Domínio já envia OS para `AguardandoPeca` / item `EstoqueEmFalta` — não criar ItemEstoque “sem saldo” como contorno |
 | Guid | Fora do escopo desta fase |
 | Clean Arch | Visão **purista antes das APIs novas**: Presenters, Gateways, UseCases explícitos, Domain limpo de ORM |
@@ -56,6 +58,8 @@ Não pular etapas:
 
 **Prioridade evolutiva** (maior primeiro), depois data mais antiga (`RecebidaEm`):
 
+A ordem do enum `StatusOrdemServico` já é evolutiva (`Recebida` → `EmExecucao`); a listagem usa `OrderByDescending(Status)`.
+
 1. `EmExecucao`
 2. `LiberadaParaExecucao`
 3. `AguardandoPeca`
@@ -66,13 +70,19 @@ Não pular etapas:
 
 ---
 
+## Criação de OS e adição de serviços (Fase 02)
+
+- Contrato de abertura: `veículo` + `serviços` + `peças` (listas podem ser ausentes ou `[]`).
+- Serviços/peças informados na criação são adicionados enquanto a OS ainda está `Recebida`; o evento de criação segue levando a OS para `EmDiagnostico` (diagnóstico **não** é finalizado automaticamente).
+- `AdicionarItemServico` no domínio aceita **apenas** `Recebida` e `EmDiagnostico`. Qualquer outro status (`AguardandoAprovacao`, `ChecandoEstoque`, etc.) lança regra de negócio.
+
 ## APIs obrigatórias
 
 | API | Estado atual | Gap |
 |-----|--------------|-----|
 | Abertura de OS | `POST` com `IdVeiculo` | Incluir serviços e peças (podem ser `[]`); cliente via veículo |
 | Consulta de status | `GET /api/OrdemServico/{id}` | Garantir status claro na response |
-| Aprovação de orçamento (ator externo) | Aprovar/rejeitar com JWT Admin | Adapter **público** → mesmos use cases |
+| Aprovação de orçamento (ator externo) | Aprovar/rejeitar com JWT Admin | Adapter **público por token** → mesmos use cases (token não retornado na API) |
 | Listagem de OS | Não existe | Ordenação + exclusões acima |
 | Atualização “externa” de status | — | Coberto pelo endpoint público + demo Swagger/Postman |
 

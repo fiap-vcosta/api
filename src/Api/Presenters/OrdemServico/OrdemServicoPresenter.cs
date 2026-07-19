@@ -31,15 +31,22 @@ public class OrdemServicoPresenter
         };
     }
 
+    public IReadOnlyList<OrdemServicoViewModel> Present(IReadOnlyList<OrdemServicoResponse> responses)
+    {
+        return responses.Select(Present).ToList();
+    }
+
     public CriarOrdemServicoViewModel Present(CriarOrdemServicoCommandResponse response)
     {
         return new CriarOrdemServicoViewModel
         {
             Id = response.Id,
             Status = response.Status,
+            ValorTotal = response.ValorTotal,
             RecebidaEm = response.RecebidaEm,
             Cliente = ClienteOrdemServicoViewModel.From(response.Cliente),
-            Veiculo = VeiculoOrdemServicoViewModel.From(response.Veiculo)
+            Veiculo = VeiculoOrdemServicoViewModel.From(response.Veiculo),
+            Servicos = ServicoOrdemServicoViewModel.FromMany(response.Servicos)
         };
     }
 

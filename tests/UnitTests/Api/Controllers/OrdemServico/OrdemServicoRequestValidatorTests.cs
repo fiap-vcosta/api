@@ -38,6 +38,50 @@ public class OrdemServicoRequestValidatorTests
     }
 
     [Fact]
+    public void Criar_IsValid_WhenServicosListIsEmpty()
+    {
+        // Arrange
+        var validator = new CriarOrdemServicoRequestValidator();
+        var request = new CriarOrdemServicoRequest { IdVeiculo = 1, Servicos = [] };
+
+        // Act
+        var result = validator.Validate(request);
+
+        // Assert
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Criar_HasErrors_WhenServicoFieldsAreInvalid()
+    {
+        // Arrange
+        var validator = new CriarOrdemServicoRequestValidator();
+        var request = new CriarOrdemServicoRequest
+        {
+            IdVeiculo = 1,
+            Servicos =
+            [
+                new CriarOrdemServicoRequest.Servico
+                {
+                    IdServico = 0,
+                    ValorCobrado = 0m,
+                    ItensNecessarios =
+                    [
+                        new CriarOrdemServicoRequest.ItemNecessario { IdItemEstoque = 0, Quantidade = 0m }
+                    ]
+                }
+            ]
+        };
+
+        // Act
+        var result = validator.Validate(request);
+
+        // Assert
+        Assert.False(result.IsValid);
+        Assert.True(result.Errors.Count >= 4);
+    }
+
+    [Fact]
     public void AdicionarItem_IsValid_WhenRequestIsComplete()
     {
         // Arrange

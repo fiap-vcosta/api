@@ -94,6 +94,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ordensServico.Property(os => os.RecebidaEm).IsRequired();
         ordensServico.Property(os => os.EntregueEm);
         ordensServico.Property(os => os.DescartadaEm);
+        ordensServico.HasIndex(os => os.TokenAprovacao).IsUnique();
+        ordensServico.Property(os => os.TokenAprovacao).IsRequired();
         ordensServico.Ignore(os => os.ValorTotal);
         ordensServico.Ignore(os => os.ItensNecessariosParaExecucao);
         ordensServico.ComplexProperty(os => os.Cliente);

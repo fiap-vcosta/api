@@ -118,9 +118,11 @@ public class OrdemServicoControllerTests
         {
             Id = 1,
             Status = StatusOrdemServico.Recebida,
+            ValorTotal = 0m,
             RecebidaEm = DateTime.UtcNow,
             Cliente = new ClienteOrdemServicoResponse { Id = 1, Nome = "Maria", Email = "maria@teste.com" },
-            Veiculo = new VeiculoOrdemServicoResponse { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" }
+            Veiculo = new VeiculoOrdemServicoResponse { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" },
+            Servicos = []
         };
 
         _mediatorMock

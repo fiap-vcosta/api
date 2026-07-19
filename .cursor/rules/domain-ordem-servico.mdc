@@ -8,6 +8,8 @@ alwaysApply: false
 
 - Máquina de estados centralizada no agregado; adapters só disparam use cases.
 - Status finais fora da listagem da API: `Finalizada`, `Entregue`, `Descartada`.
+- Adicionar serviços/peças (`AdicionarItemServico`) **somente** em `Recebida` e `EmDiagnostico`; qualquer outro status é proibido.
 - Estoque insuficiente → item `EstoqueEmFalta` e OS `AguardandoPeca` (já implementado).
-- Prioridade de listagem (ver `docs/04`): EmExecucao > LiberadaParaExecucao > AguardandoPeca > ChecandoEstoque > AguardandoAprovacao > EmDiagnostico > Recebida; depois mais antigas.
+- Prioridade de listagem: usa a ordem evolutiva do próprio enum `StatusOrdemServico` (`OrderByDescending`); depois mais antigas. Excluir Finalizada/Entregue/Descartada.
 - Não aceitar status arbitrário vindo de fora do domínio.
+- Aprovação externa: localizar OS por token opaco; não expor o token nas responses.

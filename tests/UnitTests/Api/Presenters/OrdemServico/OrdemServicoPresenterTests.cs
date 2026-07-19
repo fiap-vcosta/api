@@ -48,9 +48,11 @@ public class OrdemServicoPresenterTests
         {
             Id = 5,
             Status = StatusOrdemServico.Recebida,
+            ValorTotal = 0m,
             RecebidaEm = DateTime.UtcNow,
             Cliente = new ClienteOrdemServicoResponse { Id = 1, Nome = "João", Email = "joao@teste.com" },
-            Veiculo = new VeiculoOrdemServicoResponse { Placa = "XYZ-9876", Marca = "Fiat", Modelo = "Uno" }
+            Veiculo = new VeiculoOrdemServicoResponse { Placa = "XYZ-9876", Marca = "Fiat", Modelo = "Uno" },
+            Servicos = []
         };
 
         // Act

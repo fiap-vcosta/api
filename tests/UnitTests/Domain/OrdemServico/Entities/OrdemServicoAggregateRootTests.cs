@@ -20,6 +20,7 @@ public class OrdemServicoAggregateRootTests
         Assert.Equal(StatusOrdemServico.Recebida, ordem.Status);
         Assert.Equal(cliente, ordem.Cliente);
         Assert.Equal(veiculo, ordem.Veiculo);
+        Assert.False(string.IsNullOrWhiteSpace(ordem.TokenAprovacao));
         Assert.True((DateTime.UtcNow - ordem.RecebidaEm).TotalSeconds < 5);
     }
 
@@ -88,14 +89,34 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void AddServiceItem_WhenNotInDiagnosis_ThrowsBusinessRuleException()
+    public void AddServiceItem_WhenRecebida_AddsServiceSuccessfully()
     {
         // Arrange
         var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
 
+        // Act
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+            new List<ItemNecessario.CriarItemNecessarioParams>());
+
+        // Assert
+        Assert.Single(ordem.Servicos);
+        Assert.Equal(StatusOrdemServico.Recebida, ordem.Status);
+    }
+
+    [Fact]
+    public void AddServiceItem_WhenAguardandoAprovacao_ThrowsBusinessRuleException()
+    {
+        // Arrange
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
+        var ordem = CriarOrdem();
+        ordem.EnviarParaDiagnostico();
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+            new List<ItemNecessario.CriarItemNecessarioParams>());
+        ordem.FinalizarDiagnostico();
+
         // Act & Assert
-        Assert.Throws<BusinessRuleException>(() => ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+        Assert.Throws<BusinessRuleException>(() => ordem.AdicionarItemServico("Alinhamento", 150m, servicoCatalogo,
             new List<ItemNecessario.CriarItemNecessarioParams>()));
     }
 

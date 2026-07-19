@@ -27,16 +27,21 @@ Aplicação desenvolvida em .NET 8 para gerenciamento de serviços, estoque, cli
 
 ### 1️⃣ Com Docker
 
+A imagem da API roda como usuário **não-root** (`app`). Connection string e JWT vêm de variáveis de ambiente **obrigatórias** (sem defaults no compose — o deploy falha se faltarem). Em Kubernetes, esses valores devem vir de Secret/ConfigMap.
+
 ```bash
-# Na raiz do projeto, execute:
-docker-compose --profile app up -d
+# Obrigatório: criar .env a partir do exemplo
+cp .env.example .env
+
+# Na raiz do projeto:
+docker compose --profile app up -d --build
 ```
 
 Isso vai iniciar:
 - **PostgreSQL** na porta `5432`
 - **SonarQube** na porta `9001`
 - **PgAdmin** na porta `5050`
-- **Aplicação** será construída e disponibilizada
+- **Aplicação** (profile `app`) na porta `8080`
 
 Aguarde alguns segundos até a aplicação iniciar completamente.
 
@@ -53,6 +58,7 @@ Aguarde alguns segundos até a aplicação iniciar completamente.
   - Usuário: `admin`
   - Senha: `admin`
 
+Variáveis obrigatórias: ver [`.env.example`](.env.example) (`POSTGRES_*`, `JWT_*`, `ASPNETCORE_ENVIRONMENT`, `PGADMIN_*`).
 ### 2️⃣ Executar Localmente
 
 #### 2.1. Preparar a infraestrutura
@@ -132,7 +138,9 @@ A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.githu
 │   ├── api/requestly/    # Collections Requestly (exploratória + e2e)
 │   └── …                 # Requisitos, histórias de domínio, ADRs
 ├── docker-compose.yml    # Orquestração de containers
-└── Dockerfile            # Construção da imagem Docker
+├── Dockerfile            # Imagem da API (não-root, K8s-ready)
+├── .dockerignore         # Contexto de build enxuto
+└── .env.example          # Variáveis obrigatórias (copiar para .env)
 ```
 
 ## Collections Requestly (demo / e2e HTTP)

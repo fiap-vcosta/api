@@ -50,6 +50,8 @@ dotnet restore
 
 Swagger local (Docker): `http://localhost:8080/swagger/index.html`
 
+Collections Requestly: [`docs/api/requestly/`](docs/api/requestly/) (ver [`docs/api/README.md`](docs/api/README.md))
+
 ## Fase 02 — resumo operacional
 
 - CI cedo no GitHub Actions (build + testes) antes de volume grande de refatoração

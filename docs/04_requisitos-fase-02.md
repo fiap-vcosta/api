@@ -84,7 +84,7 @@ A ordem do enum `StatusOrdemServico` já é evolutiva (`Recebida` → `EmExecuca
 | Consulta de status | `GET /api/OrdemServico/{id}` | Garantir status claro na response |
 | Aprovação de orçamento (ator externo) | Aprovar/rejeitar com JWT Admin | Adapter **público por token** → mesmos use cases (token não retornado na API) |
 | Listagem de OS | Não existe | Ordenação + exclusões acima |
-| Atualização “externa” de status | — | Coberto pelo endpoint público + demo Swagger/Postman |
+| Atualização “externa” de status | — | Coberto pelo endpoint público + demo Swagger / Requestly ([`docs/api/`](api/README.md)) |
 
 Implementar **depois** da refatoração Clean Arch.
 

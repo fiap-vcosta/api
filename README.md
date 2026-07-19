@@ -128,15 +128,28 @@ A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.githu
 │   ├── UnitTests/        # Testes unitários
 │   └── IntegrationTests/ # Testes de integração (HTTP + Testcontainers)
 ├── .github/workflows/    # CI (GitHub Actions)
-├── docs/                 # Documentação (histórias de domínio, requisitos)
+├── docs/
+│   ├── api/requestly/    # Collections Requestly (exploratória + e2e)
+│   └── …                 # Requisitos, histórias de domínio, ADRs
 ├── docker-compose.yml    # Orquestração de containers
 └── Dockerfile            # Construção da imagem Docker
 ```
+
+## Collections Requestly (demo / e2e HTTP)
+
+Importar no [Requestly API Client](https://requestly.com/) — detalhes em [docs/api/README.md](docs/api/README.md):
+
+- Exploratória: [`docs/api/requestly/tech-challenge.requestly.json`](docs/api/requestly/tech-challenge.requestly.json)
+- Suites e2e (Collection Runner): [`docs/api/requestly/tech-challenge-e2e-tests.requestly.json`](docs/api/requestly/tech-challenge-e2e-tests.requestly.json)
+- Environments: [`docs/api/requestly/environments/`](docs/api/requestly/environments/) — **Docker** (`http://localhost:8080`) e **Local** (`http://localhost:5225`)
+
+Login seed: `admin` / `admin`.
 
 ## Documentação Adicional
 
 - [Requisitos do Projeto](docs/01_requisitos.md)
 - [Requisitos e decisões — Fase 02](docs/04_requisitos-fase-02.md)
+- [Collections / exploração da API](docs/api/README.md)
 - [Linguagem Onipresente](docs/00_linguagem-onipresente.md)
 - [ADR - Escolha do Banco de Dados](docs/adrs/001-escolha-banco-de-dados.md)
 - [Guia para agentes de IA](AGENTS.md)

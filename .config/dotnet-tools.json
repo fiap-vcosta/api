@@ -8,6 +8,18 @@
         "dotnet-ef"
       ],
       "rollForward": false
+    },
+    "jetbrains.resharper.globaltools": {
+      "version": "2024.3.7",
+      "commands": [
+        "jb"
+      ]
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.3.8",
+      "commands": [
+        "reportgenerator"
+      ]
     }
   }
 }

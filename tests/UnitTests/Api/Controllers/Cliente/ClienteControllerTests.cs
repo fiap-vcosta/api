@@ -1,12 +1,16 @@
 using Api.Contracts.Validation;
+using Domain.Exceptions;
 using Api.Controllers.Cliente;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
-using Application.Administrativo.Cliente.Commands.CreateCliente;
-using Application.Administrativo.Cliente.Commands.DeleteCliente;
-using Application.Administrativo.Cliente.Commands.UpdateCliente;
-using Application.Administrativo.Cliente.Queries.GetAllClientes;
-using Application.Administrativo.Cliente.Queries.GetClienteById;
+using Api.Presenters.Cliente;
+using Api.ViewModels.Cliente;
+using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
+using Application.UseCases.Administrativo.Cliente.Responses;
+using Application.UseCases.Administrativo.Cliente.Commands.DeleteCliente;
+using Application.UseCases.Administrativo.Cliente.Commands.UpdateCliente;
+using Application.UseCases.Administrativo.Cliente.Queries.GetAllClientes;
+using Application.UseCases.Administrativo.Cliente.Queries.GetClienteById;
 using Domain.Administrativo.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +30,11 @@ public class ClienteControllerTests
         _mediatorMock = new Mock<IMediator>();
         _createValidatorMock = new Mock<IValidator<CreateClienteRequest>>();
         _updateValidatorMock = new Mock<IValidator<UpdateClienteRequest>>();
-        _controller = new ClienteController(_mediatorMock.Object, _createValidatorMock.Object, _updateValidatorMock.Object);
+        _controller = new ClienteController(
+            _mediatorMock.Object,
+            new ClientePresenter(),
+            _createValidatorMock.Object,
+            _updateValidatorMock.Object);
     }
 
     [Fact]
@@ -66,7 +74,9 @@ public class ClienteControllerTests
         // Assert
         var createdResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(nameof(ClienteController.GetById), createdResult.ActionName);
-        Assert.Equal(response, createdResult.Value);
+        var viewModel = Assert.IsType<ClienteViewModel>(createdResult.Value);
+        Assert.Equal(response.Id, viewModel.Id);
+        Assert.Equal(response.Nome, viewModel.Nome);
     }
 
     [Fact]
@@ -83,7 +93,9 @@ public class ClienteControllerTests
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(response, okResult.Value);
+        var viewModel = Assert.IsType<ClienteViewModel>(okResult.Value);
+        Assert.Equal(response.Id, viewModel.Id);
+        Assert.Equal(response.Documento, viewModel.Documento);
     }
 
     [Fact]
@@ -118,7 +130,10 @@ public class ClienteControllerTests
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(clientes, okResult.Value);
+        var viewModels = Assert.IsAssignableFrom<IEnumerable<ClienteViewModel>>(okResult.Value).ToList();
+        Assert.Equal(2, viewModels.Count);
+        Assert.Equal(clientes[0].Id, viewModels[0].Id);
+        Assert.Equal(clientes[1].Documento, viewModels[1].Documento);
     }
 
     [Fact]
@@ -142,7 +157,8 @@ public class ClienteControllerTests
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(response, okResult.Value);
+        var viewModel = Assert.IsType<ClienteViewModel>(okResult.Value);
+        Assert.Equal(response.Nome, viewModel.Nome);
     }
 
     [Fact]
@@ -167,7 +183,8 @@ public class ClienteControllerTests
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(updateResponse, okResult.Value);
+        var viewModel = Assert.IsType<ClienteViewModel>(okResult.Value);
+        Assert.Equal(updateResponse.Nome, viewModel.Nome);
     }
 
     [Fact]
@@ -185,16 +202,13 @@ public class ClienteControllerTests
     }
 
     [Fact]
-    public async Task Delete_ReturnsNotFound_WhenClienteDoesNotExist()
+    public async Task Delete_ThrowsDomainNotFoundException_WhenClienteDoesNotExist()
     {
         // Arrange
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteClienteCommand>(), CancellationToken.None))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DomainNotFoundException("Cliente não encontrado"));
 
-        // Act
-        var result = await _controller.Delete(999);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<DomainNotFoundException>(() => _controller.Delete(999));
     }
 }

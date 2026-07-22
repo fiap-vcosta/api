@@ -1,6 +1,7 @@
 using Api.Contracts.Validation;
 using Api.Controllers.Auth.Login;
-using Application.Administrativo.Usuario.Commands.Login;
+using Api.Presenters.Auth;
+using Application.UseCases.Administrativo.Usuario.Commands.Login;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace Api.Controllers.Auth;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IMediator mediator, IValidator<LoginRequest> validator) : ControllerBase
+public class AuthController(IMediator mediator, AuthPresenter presenter, IValidator<LoginRequest> validator) : ControllerBase
 {
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -19,14 +20,7 @@ public class AuthController(IMediator mediator, IValidator<LoginRequest> validat
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
-        {
-            var token = await mediator.Send(new LoginCommand { Login = request.Login, Password = request.Password });
-            return Ok(new { Token = token });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Unauthorized("Invalid credentials");
-        }
+        var response = await mediator.Send(new LoginCommand { Login = request.Login, Password = request.Password });
+        return Ok(presenter.Present(response));
     }
 }

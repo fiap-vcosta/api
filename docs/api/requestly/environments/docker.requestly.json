@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "version": "1.1.0",
+    "exportedAt": "2026-07-19T05:38:27.102Z",
+    "exportedUsing": "Requestly API Client"
+  },
+  "records": [],
+  "environments": [
+    {
+      "id": "d228b119-d919-476b-beee-351d0c595795",
+      "name": "Docker",
+      "variables": {
+        "baseUrl": {
+          "id": 1,
+          "type": "string",
+          "syncValue": "http://localhost:8080"
+        },
+        "token": {
+          "id": 2,
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "id": 3,
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "id": 4,
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "id": 5,
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "id": 6,
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "id": 7,
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "id": 8,
+          "type": "string",
+          "syncValue": ""
+        }
+      }
+    }
+  ],
+  "packages": []
+}

@@ -1,5 +1,4 @@
-using MediatR;
 
 namespace Domain.OrdemServico.Events;
 
-public record OrdemServicoCriadaEvent(int IdOrdemServico) : INotification;
+public record OrdemServicoCriadaEvent(int IdOrdemServico);

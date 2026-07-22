@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api
+  namespace: techchallenge
+data:
+  ASPNETCORE_ENVIRONMENT: "Development"
+  ASPNETCORE_URLS: "http://+:8080"
+  Jwt__Issuer: "dummy-issuer"
+  Jwt__Audience: "dummy-audience"

@@ -1,0 +1,4 @@
+<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<!-- CA1707: underscores are intentional in Given_When_Then test names; production has none. -->
+	<s:Boolean x:Key="/Default/CodeInspection/Roslyn/RoslynIdsToSkip/=CA1707/@EntryIndexedValue">True</s:Boolean>
+</wpf:ResourceDictionary>

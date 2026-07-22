@@ -1,13 +1,12 @@
 using Api.Contracts.Validation;
 using Api.Controllers.Servico.CreateServico;
 using Api.Controllers.Servico.UpdateServico;
-using Application.Administrativo.Servico.Commands;
-using Application.Administrativo.Servico.Commands.CreateServico;
-using Application.Administrativo.Servico.Commands.DeleteServico;
-using Application.Administrativo.Servico.Commands.UpdateServico;
-using Application.Administrativo.Servico.Queries;
-using Application.Administrativo.Servico.Queries.GetAllServicos;
-using Application.Administrativo.Servico.Queries.GetServicoById;
+using Api.Presenters.Servico;
+using Application.UseCases.Administrativo.Servico.Commands.CreateServico;
+using Application.UseCases.Administrativo.Servico.Commands.DeleteServico;
+using Application.UseCases.Administrativo.Servico.Commands.UpdateServico;
+using Application.UseCases.Administrativo.Servico.Queries.GetAllServicos;
+using Application.UseCases.Administrativo.Servico.Queries.GetServicoById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +18,7 @@ namespace Api.Controllers.Servico;
 [Authorize(Roles = "Admin")]
 public class ServicoController(
     IMediator mediator,
+    ServicoPresenter presenter,
     IValidator<CreateServicoRequest> createValidator,
     IValidator<UpdateServicoRequest> updateValidator) : ControllerBase
 {
@@ -31,23 +31,16 @@ public class ServicoController(
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new CreateServicoCommand
         {
-            var command = new CreateServicoCommand
-            {
-                Codigo = request.Codigo,
-                Nome = request.Nome,
-                PrecoPadrao = request.PrecoPadrao,
-                Ativo = request.Ativo
-            };
+            Codigo = request.Codigo,
+            Nome = request.Nome,
+            PrecoPadrao = request.PrecoPadrao,
+            Ativo = request.Ativo
+        };
 
-            var response = await mediator.Send(command);
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, presenter.Present(response));
     }
 
     [HttpGet("{id:int}")]
@@ -61,7 +54,7 @@ public class ServicoController(
             return NotFound();
         }
 
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpGet]
@@ -69,7 +62,7 @@ public class ServicoController(
     {
         var query = new GetAllServicosQuery();
         var response = await mediator.Send(query);
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpPut("{id:int}")]
@@ -81,46 +74,24 @@ public class ServicoController(
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new UpdateServicoCommand
         {
-            var command = new UpdateServicoCommand
-            {
-                Id = id,
-                Codigo = request.Codigo,
-                Nome = request.Nome,
-                PrecoPadrao = request.PrecoPadrao,
-                Ativo = request.Ativo
-            };
+            Id = id,
+            Codigo = request.Codigo,
+            Nome = request.Nome,
+            PrecoPadrao = request.PrecoPadrao,
+            Ativo = request.Ativo
+        };
 
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var command = new DeleteServicoCommand { Id = id };
-            await mediator.Send(command);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new DeleteServicoCommand { Id = id };
+        await mediator.Send(command);
+        return NoContent();
     }
 }

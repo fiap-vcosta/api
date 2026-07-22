@@ -1,7 +1,6 @@
 using Domain.Administrativo.Entities;
 using Domain.Estoque.Entities;
 using Domain.OrdemServico.Entities;
-using Domain.OrdemServico.ValueObjects;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -48,7 +47,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         clientes.Property(c => c.Documento).IsRequired();
         clientes.Property(c => c.Nome).IsRequired();
         clientes.Property(c => c.Email).IsRequired();
-        seedClientes(clientes);
+        SeedClientes(clientes);
 
         // Veiculos
         var veiculos = modelBuilder.Entity<VeiculoAggregateRoot>();
@@ -62,7 +61,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .HasForeignKey(v => v.IdDono)
             .OnDelete(DeleteBehavior.Restrict);
-        seedVeiculos(veiculos);
+        SeedVeiculos(veiculos);
 
         // Serviços
         var servicos = modelBuilder.Entity<ServicoAggregateRoot>();
@@ -71,7 +70,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         servicos.Property(s => s.Codigo).IsRequired();
         servicos.Property(s => s.Nome).IsRequired();
         servicos.Property(s => s.PrecoPadrao).HasPrecision(10, 2).IsRequired();
-        seedServicos(servicos);
+        SeedServicos(servicos);
 
         // Itens Estoque
         var itensEstoque = modelBuilder.Entity<ItemEstoqueAggregateRoot>();
@@ -84,7 +83,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         itensEstoque.Property(ie => ie.PrecoVenda).HasPrecision(10, 2).IsRequired();
         itensEstoque.Property(ie => ie.Saldo).HasPrecision(10, 3).IsRequired();
         itensEstoque.Property(ie => ie.SaldoReservado).HasPrecision(10, 3).IsRequired();
-        seedItensEstoque(itensEstoque);
+        itensEstoque.Ignore(ie => ie.SaldoDisponivel);
+        SeedItensEstoque(itensEstoque);
 
         // Ordens de Serviço
         var ordensServico = modelBuilder.Entity<OrdemServicoAggregateRoot>();
@@ -94,6 +94,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ordensServico.Property(os => os.RecebidaEm).IsRequired();
         ordensServico.Property(os => os.EntregueEm);
         ordensServico.Property(os => os.DescartadaEm);
+        ordensServico.HasIndex(os => os.TokenAprovacao).IsUnique();
+        ordensServico.Property(os => os.TokenAprovacao).IsRequired();
+        ordensServico.Ignore(os => os.ValorTotal);
+        ordensServico.Ignore(os => os.ItensNecessariosParaExecucao);
         ordensServico.ComplexProperty(os => os.Cliente);
         ordensServico.ComplexProperty(os => os.Veiculo);
         ordensServico
@@ -130,7 +134,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private void seedClientes(EntityTypeBuilder<ClienteAggregateRoot> clientes)
+    private static void SeedClientes(EntityTypeBuilder<ClienteAggregateRoot> clientes)
     {
         clientes.HasData(
             new ClienteAggregateRoot 
@@ -216,7 +220,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
     }
 
-    private void seedVeiculos(EntityTypeBuilder<VeiculoAggregateRoot> veiculos)
+    private static void SeedVeiculos(EntityTypeBuilder<VeiculoAggregateRoot> veiculos)
     {
         veiculos.HasData(
             new VeiculoAggregateRoot { Id = 1, IdDono = 1, Placa = "ABC1234", Marca = "Chevrolet", Modelo = "Onix" },
@@ -242,7 +246,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
     }
 
-    private void seedServicos(EntityTypeBuilder<ServicoAggregateRoot> servicos)
+    private static void SeedServicos(EntityTypeBuilder<ServicoAggregateRoot> servicos)
     {
         servicos.HasData(
             new ServicoAggregateRoot { Id = 1, Codigo = "MTR-001", Nome = "Troca de Óleo do Motor", PrecoPadrao = 150.00m, Ativo = true },
@@ -258,7 +262,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
     }
 
-    private void seedItensEstoque(EntityTypeBuilder<ItemEstoqueAggregateRoot> itensEstoque)
+    private static void SeedItensEstoque(EntityTypeBuilder<ItemEstoqueAggregateRoot> itensEstoque)
     {
         itensEstoque.HasData(
             new ItemEstoqueAggregateRoot { Id = 1, Codigo = "INS-001", Tipo = ItemTipo.Insumo, Nome = "Óleo Motor Sintético 5W30", UnidadeMedida = UnidadeMedida.Litro, PrecoVenda = 45.90m, Saldo = 50.000m, SaldoReservado = 0m },

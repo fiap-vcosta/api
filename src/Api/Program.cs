@@ -1,5 +1,4 @@
 using Api.Extensions;
-using Application.Abstractions.Services;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiServices(builder.Configuration);
 
-builder.Services.AddEndpointsApiExplorer(); 
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
+});
 
 var app = builder.Build();
 app.UseApiConfiguration();
@@ -26,3 +28,5 @@ app.MapGet("/health", async (AppDbContext appDbContext) =>
 });
 
 app.Run();
+
+public partial class Program;

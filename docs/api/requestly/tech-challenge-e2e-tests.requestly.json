@@ -1,0 +1,4095 @@
+{
+  "meta": {
+    "version": "1.1.0",
+    "exportedAt": "2026-07-19T05:38:27.109Z",
+    "exportedUsing": "Requestly API Client"
+  },
+  "records": [
+    {
+      "id": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "name": "tech-challenge-e2e-tests",
+      "type": "collection",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        }
+      },
+      "rank": "a0",
+      "description": "Suites e2e dos fluxos de Ordem de Serviço (espelham IntegrationTests). Pré-requisito: API em {{baseUrl}} (default http://localhost:8080 via script de login). Rodar: pasta do fluxo → ⋯ → Run. Cada pasta começa com login. Collection exploratória: docs/api/requestly/tech-challenge.requestly.json"
+    },
+    {
+      "id": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "name": "01-criar-com-servicos-ate-entregue",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "Espelha CriarComServicosAteEntregueIntegrationTests (aprovação interna)."
+    },
+    {
+      "id": "42f0a25f-03a0-4bc2-a963-6b407d6a40a3",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "7eeeaeba-1928-4306-9ff4-bf39674c8b60",
+      "name": "01-criar-os-com-servicos",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 2,\n  \"Servicos\": [\n    {\n      \"IdServico\": 1,\n      \"ValorCobrado\": 150,\n      \"ItensNecessarios\": [\n        {\n          \"IdItemEstoque\": 1,\n          \"Quantidade\": 1\n        }\n      ]\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "c6b5e573-cb28-4ca5-8841-aea64118b36f",
+      "name": "02-assert-em-diagnostico",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});\n\nrq.test(\"OS criada já tem pelo menos 1 serviço\", function () {\n  rq.expect((jsonData.servicos || []).length).to.be.at.least(1);\n});\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "ae18167c-5422-4f49-beac-130b6c18f8df",
+      "name": "03-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "fbdcaec7-0283-4335-9249-75e5f50b925a",
+      "name": "04-assert-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoAprovacao\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoAprovacao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "5436f156-7bb4-4009-9705-02530561f661",
+      "name": "05-aprovar",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "87bf2fc9-10de-4afd-b65c-838cf1b5d7da",
+      "name": "06-assert-liberada",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é LiberadaParaExecucao\", function () {\n  rq.expect(jsonData.status).to.equal(\"LiberadaParaExecucao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "8bdd6498-91ae-44ba-bb0a-912a362dab38",
+      "name": "07-preparar-confirmar-execucao",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS para execução retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar aprovados = (jsonData.servicos || []).filter(function (s) {\n  return s.status === \"Aprovado\";\n}).map(function (s) { return s.id; });\nrq.test(\"Há serviços aprovados para executar\", function () {\n  rq.expect(aprovados.length).to.be.above(0);\n});\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nvar body = {\n  ServicosExecutados: aprovados.map(function (id) {\n    return {\n      IdServico: id,\n      IniciadoEm: iniciado.toISOString(),\n      FinalizadoEm: agora.toISOString()\n    };\n  })\n};\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify(body));\nif (aprovados.length > 0) {\n  rq.environment.set(\"servicoIdAprovado\", aprovados[0]);\n}"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "4cf52ee2-a9c8-4283-873d-2ccf4011f4e4",
+      "name": "08-confirmar-execucao",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "5185f4d2-b609-44d9-a390-8330fb27f856",
+      "name": "09-assert-finalizada",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Finalizada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Finalizada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "84bff59e-a214-419f-a2e3-19bf877de8d0",
+      "name": "10-confirmar-pagamento",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "c0030618-2009-453d-81b0-afa8af14c7a3",
+      "name": "11-assert-entregue",
+      "type": "api",
+      "parentId": "d2e99374-c469-4833-87cd-ac9ebef2875c",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "name": "02-criar-sem-servicos-ate-entregue",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1",
+      "description": "Espelha CriarSemServicosAteEntregueIntegrationTests."
+    },
+    {
+      "id": "5e15fcc8-40c7-41b5-8de3-d539b223ce19",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "132444bb-e0da-4c60-8ada-ddaf6024199d",
+      "name": "01-criar-os-sem-servicos",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 1,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "8b90f493-1d9d-4e9b-ab8f-fc8a70ff1ce0",
+      "name": "02-assert-em-diagnostico-sem-servicos",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});\n\nrq.test(\"OS sem serviços na abertura\", function () {\n  rq.expect((jsonData.servicos || []).length).to.equal(0);\n});\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "90b163c9-e2ff-4a1e-bbd4-bf8b3d0ed10f",
+      "name": "03-adicionar-servico",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 1,\n  \"ValorCobrado\": 150,\n  \"ItensNecessarios\": [\n    {\n      \"IdItemEstoque\": 1,\n      \"Quantidade\": 1\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "d3d65cfc-579b-434c-b75d-dbd59284933d",
+      "name": "04-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "4c35e457-d9df-4b75-b296-ff6d9fe23f95",
+      "name": "05-assert-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoAprovacao\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoAprovacao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "4d60b65e-788f-45b4-85e9-ed823e0d0f8a",
+      "name": "06-aprovar",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "44d6d187-1437-4207-963d-22883c42aa1e",
+      "name": "07-assert-liberada",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é LiberadaParaExecucao\", function () {\n  rq.expect(jsonData.status).to.equal(\"LiberadaParaExecucao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "be0eca82-be0d-476d-a628-72fffd261259",
+      "name": "08-preparar-confirmar-execucao",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS para execução retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar aprovados = (jsonData.servicos || []).filter(function (s) {\n  return s.status === \"Aprovado\";\n}).map(function (s) { return s.id; });\nrq.test(\"Há serviços aprovados para executar\", function () {\n  rq.expect(aprovados.length).to.be.above(0);\n});\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nvar body = {\n  ServicosExecutados: aprovados.map(function (id) {\n    return {\n      IdServico: id,\n      IniciadoEm: iniciado.toISOString(),\n      FinalizadoEm: agora.toISOString()\n    };\n  })\n};\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify(body));\nif (aprovados.length > 0) {\n  rq.environment.set(\"servicoIdAprovado\", aprovados[0]);\n}"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "dc936dae-8f62-49e4-992b-bc4015862e24",
+      "name": "09-confirmar-execucao",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "283244e6-5158-4592-8805-a0ce9c37b360",
+      "name": "10-assert-finalizada",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Finalizada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Finalizada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "8884bbcf-d504-418e-8564-782a713bc8cb",
+      "name": "11-confirmar-pagamento",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "74249011-c925-4c10-9a01-d360f6e24715",
+      "name": "12-assert-entregue",
+      "type": "api",
+      "parentId": "121c6c9f-a57b-4450-9554-afe2c1e3a406",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ac"
+    },
+    {
+      "id": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "name": "03-rejeicao-depois-descartar",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2",
+      "description": "Espelha RejeicaoAteDescartadaIntegrationTests (rejeição interna → descartar)."
+    },
+    {
+      "id": "c1c96096-30bc-4cc8-97a7-39c78f8a9c63",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "a0552ee5-6663-4f72-b27a-ee23fd2ed0ea",
+      "name": "01-criar-os",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 3,\n  \"Servicos\": [\n    {\n      \"IdServico\": 2,\n      \"ValorCobrado\": 50,\n      \"ItensNecessarios\": []\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "448b579b-b306-4d94-b8cc-df348c16f837",
+      "name": "02-assert-em-diagnostico",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "d7363e6a-2b6e-4f70-809d-195090bf72da",
+      "name": "03-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "a0689046-eb5e-400d-ab7e-b1af971de0c0",
+      "name": "04-assert-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoAprovacao\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoAprovacao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "e21d948f-92cb-4594-a698-d5f89bff289d",
+      "name": "05-rejeitar",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "6aa1e975-780e-4472-ba78-2e1375eeaea3",
+      "name": "06-assert-volta-em-diagnostico",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "1269d32f-5fce-46f3-bf3e-f0d2cad390b0",
+      "name": "07-descartar",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "b983f436-f0b8-44ae-9772-93be10ec3b4d",
+      "name": "08-assert-descartada",
+      "type": "api",
+      "parentId": "18e14594-be41-4ab0-9bc3-67ef0d046eaa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Descartada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Descartada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "name": "04-rejeicao-depois-finalizar-sem-pendentes",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3",
+      "description": "Espelha Fluxo_RejeicaoInterna_FinalizarSemServicosPendentes_AteEntregue."
+    },
+    {
+      "id": "29d13cce-73e4-4d18-98ac-733f3c94ab00",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "77dd4bb2-5760-4d1a-ac00-9d7f818726f2",
+      "name": "01-criar-os",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 4,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "15592e2a-fcc1-4ca9-8d2f-c9a0dacef958",
+      "name": "02-adicionar-servico",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 2,\n  \"ValorCobrado\": 50,\n  \"ItensNecessarios\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "94d833bd-e128-412f-9124-e656baa9b760",
+      "name": "03-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "05105c71-3535-4cb6-85a6-4d4dc61decbc",
+      "name": "04-rejeitar",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "e8b4b07d-5214-4dd7-abf2-e46f83c2807c",
+      "name": "05-assert-em-diagnostico",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "cd0f6595-e83b-437d-8583-2fe431de3ec0",
+      "name": "06-finalizar-diagnostico-sem-pendentes",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "c13a99b6-13a0-46a4-903c-6998c869d633",
+      "name": "07-assert-entregue",
+      "type": "api",
+      "parentId": "15ec4b08-98b5-40e1-b7cf-8e6c9386af04",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "name": "05-itens-em-falta-ate-entregue",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4",
+      "description": "Espelha ItensEmFaltaAteEntregueIntegrationTests (aprovação interna)."
+    },
+    {
+      "id": "9f2f244e-0ca1-48ab-8f1c-e882940ddfa7",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "d2cf12d2-3c74-490f-9fe5-465eddfb83b1",
+      "name": "01-criar-item-sem-saldo",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarItemBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var codigo = (\"EMF-\" + Date.now().toString(36)).slice(0, 20);\nrq.environment.set(\"itemCodigo\", codigo);\nrq.environment.set(\"criarItemBody\", JSON.stringify({\n  Codigo: codigo, Tipo: \"Peca\", Nome: \"Peca sem saldo \" + codigo,\n  UnidadeMedida: \"Unidade\", PrecoVenda: 10, Saldo: 0, SaldoReservado: 0\n}));",
+          "postResponse": "rq.test(\"Criar item estoque retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nrq.environment.set(\"itemEstoqueId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "5a543c85-fb6a-4bac-bdbc-4d6505138983",
+      "name": "02-criar-os-com-item-em-falta",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarOsItemFaltaBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"criarOsItemFaltaBody\", JSON.stringify({\n  IdVeiculo: 5,\n  Servicos: [{ IdServico: 1, ValorCobrado: 150,\n    ItensNecessarios: [{ IdItemEstoque: Number(rq.environment.get(\"itemEstoqueId\")), Quantidade: 1 }] }]\n}));",
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "a73062b8-b59a-43a7-9d6e-09545914d386",
+      "name": "03-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "7dca6fb3-c2bf-4342-a37f-db154a10a873",
+      "name": "04-aprovar",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "91ebfc2f-2419-4ee4-b0ce-3ab441938b63",
+      "name": "05-assert-aguardando-peca",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoPeca\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoPeca\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "5a13f828-3d11-4b34-ab71-9a99eea55754",
+      "name": "06-registrar-entrada-estoque",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}/registrar-entrada",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Quantidade\": 5\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "5fbfee43-066a-4639-8380-71dccd936a09",
+      "name": "07-assert-liberada",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é LiberadaParaExecucao\", function () {\n  rq.expect(jsonData.status).to.equal(\"LiberadaParaExecucao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "9c26e5ff-f912-4cf0-a24b-360bb366055e",
+      "name": "08-preparar-confirmar-execucao",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS para execução retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar aprovados = (jsonData.servicos || []).filter(function (s) {\n  return s.status === \"Aprovado\";\n}).map(function (s) { return s.id; });\nrq.test(\"Há serviços aprovados para executar\", function () {\n  rq.expect(aprovados.length).to.be.above(0);\n});\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nvar body = {\n  ServicosExecutados: aprovados.map(function (id) {\n    return {\n      IdServico: id,\n      IniciadoEm: iniciado.toISOString(),\n      FinalizadoEm: agora.toISOString()\n    };\n  })\n};\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify(body));\nif (aprovados.length > 0) {\n  rq.environment.set(\"servicoIdAprovado\", aprovados[0]);\n}"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "ea0fd87a-a04f-4843-8e6b-75fb367baa3c",
+      "name": "09-confirmar-execucao",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "226e3703-0891-4eae-8b8d-2908a13cadcc",
+      "name": "10-assert-finalizada",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Finalizada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Finalizada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "b62f109e-2e68-4036-96b5-6e55d7daa10a",
+      "name": "11-confirmar-pagamento",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "d8c7f801-d837-4781-8f1c-82b502ea36db",
+      "name": "12-assert-entregue",
+      "type": "api",
+      "parentId": "d0c07e78-8e12-4611-851d-64a642ebe1ab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ac"
+    },
+    {
+      "id": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "name": "06-aprovacao-parcial-ate-entregue",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a5",
+      "description": "Espelha AprovacaoParcialAteEntregueIntegrationTests."
+    },
+    {
+      "id": "2ebc8c84-43a5-4b56-9aa0-1b89c1091948",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "7c91799e-7feb-4aaa-a7fc-77e542ceceef",
+      "name": "01-criar-os-dois-servicos",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 4,\n  \"Servicos\": [\n    {\n      \"IdServico\": 1,\n      \"ValorCobrado\": 100,\n      \"ItensNecessarios\": []\n    },\n    {\n      \"IdServico\": 2,\n      \"ValorCobrado\": 50,\n      \"ItensNecessarios\": []\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "3d99ce20-371f-4715-bf7c-319fcdf8c628",
+      "name": "02-assert-em-diagnostico",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});\n\nvar ids = (jsonData.servicos || []).map(function (s) { return s.id; });\nrq.test(\"OS possui 2 serviços\", function () {\n  rq.expect(ids.length).to.equal(2);\n});\nrq.environment.set(\"servicoIds\", JSON.stringify(ids));\nrq.environment.set(\"servicoIdAprovado\", ids[0]);\nrq.environment.set(\"servicoIdSegundo\", ids[1]);\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "c469455e-5e27-4aab-a8d3-030303e6e9d6",
+      "name": "03-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "544cbb16-94ea-4e5d-9cc1-e37a9dbeaaa1",
+      "name": "04-assert-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoAprovacao\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoAprovacao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "ba4a2946-4bfd-48a6-aedf-036e135ade5e",
+      "name": "05-aprovar-parcialmente",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{aprovarParcialBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"aprovarParcialBody\", JSON.stringify({\n  IdsServicosAprovados: [Number(rq.environment.get(\"servicoIdAprovado\"))]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "db77baf8-fbea-4610-8b98-860f6d883809",
+      "name": "06-assert-volta-em-diagnostico",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "8beb8263-cd2d-4a54-904a-583cac5fca7d",
+      "name": "07-finalizar-diagnostico-aprovados",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "1bcb8f09-2ac7-4c26-990a-04d990393ce3",
+      "name": "08-assert-liberada",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é LiberadaParaExecucao\", function () {\n  rq.expect(jsonData.status).to.equal(\"LiberadaParaExecucao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "d3cab324-53e3-48f1-9291-be1f4232a57a",
+      "name": "09-confirmar-execucao",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var id = Number(rq.environment.get(\"servicoIdAprovado\"));\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify({\n  ServicosExecutados: [{ IdServico: id, IniciadoEm: iniciado.toISOString(), FinalizadoEm: agora.toISOString() }]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "8113f96c-6b51-46c1-b132-bbade85ca37b",
+      "name": "10-assert-finalizada",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Finalizada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Finalizada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "b75adbeb-2052-4dc6-8254-ed3a9027058a",
+      "name": "11-confirmar-pagamento",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "f8807bc4-5de9-4dd9-b907-0a5dc1270e89",
+      "name": "12-assert-entregue",
+      "type": "api",
+      "parentId": "606087c4-f9f1-4d1d-83bd-52006ae22e39",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ac"
+    },
+    {
+      "id": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "name": "07-aprovacao-parcial-com-itens-em-falta",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a6",
+      "description": "Espelha AprovacaoParcialComItensEmFaltaAteEntregueIntegrationTests."
+    },
+    {
+      "id": "4fcb7657-0eea-4c78-ae4a-e355cf3adfb2",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "c7278ac9-0dc8-4eec-95f2-7a164a7538e8",
+      "name": "01-criar-os-vazia",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 1,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Criar OS retorna id\", function () {\n  rq.expect(jsonData).to.have.property(\"id\");\n});\nrq.environment.set(\"ordemServicoId\", jsonData.id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "d08cf842-0bb9-4c2c-9784-b3fd4ffbf7a2",
+      "name": "02-adicionar-servico-inicial",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 1,\n  \"ValorCobrado\": 100,\n  \"ItensNecessarios\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "1ad474f4-8a5f-4704-b5f7-107c5eb5e0db",
+      "name": "03-adicionar-servico-segundo",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 2,\n  \"ValorCobrado\": 50,\n  \"ItensNecessarios\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "70cfc62a-36f6-4900-b298-cc52dd9d4939",
+      "name": "04-capturar-ids-servicos",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar ids = (jsonData.servicos || []).map(function (s) { return s.id; });\nrq.test(\"Dois serviços adicionados\", function () {\n  rq.expect(ids.length).to.equal(2);\n});\nrq.environment.set(\"servicoIdInicialAprovado\", ids[0]);\nrq.environment.set(\"servicoIdSegundo\", ids[1]);"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "0b69c21b-d20d-4d7a-b13e-2c9dc85750de",
+      "name": "05-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "fdc4f355-e8a1-4dc0-acb6-db0bcbed4f5b",
+      "name": "06-aprovar-parcialmente-primeiro",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{aprovarParcialBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"aprovarParcialBody\", JSON.stringify({\n  IdsServicosAprovados: [Number(rq.environment.get(\"servicoIdInicialAprovado\"))]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "5cee0cde-bade-4546-ab9f-f5feda6a72ec",
+      "name": "07-assert-em-diagnostico",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é EmDiagnostico\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "858e4d44-22d0-4c46-a6e9-b71663911e36",
+      "name": "08-criar-item-em-falta-1",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarItemBody1}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var codigo = (\"PARC1-\" + Date.now().toString(36)).slice(0, 20);\nrq.environment.set(\"criarItemBody1\", JSON.stringify({\n  Codigo: codigo, Tipo: \"Peca\", Nome: \"Peca parcial 1 \" + codigo,\n  UnidadeMedida: \"Unidade\", PrecoVenda: 10, Saldo: 0, SaldoReservado: 0\n}));",
+          "postResponse": "rq.test(\"Criar item 1 retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"itemEmFalta1\", rq.response.json().id);"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "ebd371dd-c88f-49db-94cc-7f2758a13894",
+      "name": "09-criar-item-em-falta-2",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarItemBody2}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var codigo = (\"PARC2-\" + Date.now().toString(36)).slice(0, 20);\nrq.environment.set(\"criarItemBody2\", JSON.stringify({\n  Codigo: codigo, Tipo: \"Peca\", Nome: \"Peca parcial 2 \" + codigo,\n  UnidadeMedida: \"Unidade\", PrecoVenda: 10, Saldo: 0, SaldoReservado: 0\n}));",
+          "postResponse": "rq.test(\"Criar item 2 retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"itemEmFalta2\", rq.response.json().id);"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "95766bb4-32f0-4726-a2b8-6dbfdc791f2a",
+      "name": "10-adicionar-servico-com-falta-1",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{addServicoFalta1}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"addServicoFalta1\", JSON.stringify({\n  IdServico: 1, ValorCobrado: 120,\n  ItensNecessarios: [{ IdItemEstoque: Number(rq.environment.get(\"itemEmFalta1\")), Quantidade: 1 }]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "afcf0aba-6747-4f2c-a188-9b489e83f936",
+      "name": "11-adicionar-servico-com-falta-2",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{addServicoFalta2}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"addServicoFalta2\", JSON.stringify({\n  IdServico: 2, ValorCobrado: 80,\n  ItensNecessarios: [{ IdItemEstoque: Number(rq.environment.get(\"itemEmFalta2\")), Quantidade: 2 }]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "17ec3182-f791-41db-b45b-3ddfae224bcd",
+      "name": "12-adicionar-servico-para-rejeitar",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 1,\n  \"ValorCobrado\": 40,\n  \"ItensNecessarios\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ac"
+    },
+    {
+      "id": "6ca807b0-d686-492e-8190-096593ad0545",
+      "name": "13-capturar-ids-novos-servicos",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200); });\nvar jsonData = rq.response.json();\nvar inicial = Number(rq.environment.get(\"servicoIdInicialAprovado\"));\nvar segundo = Number(rq.environment.get(\"servicoIdSegundo\"));\nvar novos = (jsonData.servicos || []).map(function (s) { return s.id; })\n  .filter(function (id) { return id !== inicial && id !== segundo; });\nrq.test(\"Três serviços novos no segundo diagnóstico\", function () {\n  rq.expect(novos.length).to.equal(3);\n});\nrq.environment.set(\"servicoComFalta1\", novos[0]);\nrq.environment.set(\"servicoComFalta2\", novos[1]);\nrq.environment.set(\"servicoParaRejeitar\", novos[2]);"
+        }
+      },
+      "rank": "ad"
+    },
+    {
+      "id": "3fe0aa38-60f0-4020-adb2-33b21012621c",
+      "name": "14-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ae"
+    },
+    {
+      "id": "080a4ef4-c37a-4fe9-bb64-ece149be3c27",
+      "name": "15-aprovar-parcialmente-com-faltas",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{aprovarParcialBody2}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"aprovarParcialBody2\", JSON.stringify({\n  IdsServicosAprovados: [\n    Number(rq.environment.get(\"servicoComFalta1\")),\n    Number(rq.environment.get(\"servicoComFalta2\"))\n  ]\n}));",
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "af"
+    },
+    {
+      "id": "c0ac144b-6c5c-4fcf-a7b2-36d1c45a4ad2",
+      "name": "16-assert-status-servicos",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200); });\nvar jsonData = rq.response.json();\nrq.test(\"Status OS EmDiagnostico após parcial\", function () {\n  rq.expect(jsonData.status).to.equal(\"EmDiagnostico\");\n});\nfunction idsPorStatus(status) {\n  return (jsonData.servicos || []).filter(function (s) { return s.status === status; }).map(function (s) { return s.id; });\n}\nrq.test(\"Serviços com falta estão Aprovado\", function () {\n  var aprovados = idsPorStatus(\"Aprovado\");\n  rq.expect(aprovados).to.include(Number(rq.environment.get(\"servicoComFalta1\")));\n  rq.expect(aprovados).to.include(Number(rq.environment.get(\"servicoComFalta2\")));\n});\nrq.test(\"Serviço não aprovado está Rejeitado\", function () {\n  rq.expect(idsPorStatus(\"Rejeitado\")).to.include(Number(rq.environment.get(\"servicoParaRejeitar\")));\n});"
+        }
+      },
+      "rank": "ag"
+    },
+    {
+      "id": "ded989df-1063-4214-8c13-45faed8cbbe1",
+      "name": "17-finalizar-diagnostico-aguardando-peca",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ah"
+    },
+    {
+      "id": "ca7afa85-c6bc-476a-ab52-34b53c723972",
+      "name": "18-assert-aguardando-peca",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é AguardandoPeca\", function () {\n  rq.expect(jsonData.status).to.equal(\"AguardandoPeca\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ai"
+    },
+    {
+      "id": "2a1175ee-5010-492c-9965-b189b26a99e9",
+      "name": "19-registrar-entrada-item-1",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEmFalta1}}/registrar-entrada",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Quantidade\": 5\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "aj"
+    },
+    {
+      "id": "cec9a33b-c81e-4830-93e3-ead6ffd584cf",
+      "name": "20-registrar-entrada-item-2",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEmFalta2}}/registrar-entrada",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Quantidade\": 5\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ak"
+    },
+    {
+      "id": "9b4690fc-5bf6-4684-a3c6-8242c8bbd365",
+      "name": "21-assert-liberada",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é LiberadaParaExecucao\", function () {\n  rq.expect(jsonData.status).to.equal(\"LiberadaParaExecucao\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "al"
+    },
+    {
+      "id": "a6e158e9-c8f4-43ec-81d5-c92fd35447c3",
+      "name": "22-preparar-confirmar-execucao",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS para execução retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar aprovados = (jsonData.servicos || []).filter(function (s) {\n  return s.status === \"Aprovado\";\n}).map(function (s) { return s.id; });\nrq.test(\"Há serviços aprovados para executar\", function () {\n  rq.expect(aprovados.length).to.be.above(0);\n});\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nvar body = {\n  ServicosExecutados: aprovados.map(function (id) {\n    return {\n      IdServico: id,\n      IniciadoEm: iniciado.toISOString(),\n      FinalizadoEm: agora.toISOString()\n    };\n  })\n};\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify(body));\nif (aprovados.length > 0) {\n  rq.environment.set(\"servicoIdAprovado\", aprovados[0]);\n}"
+        }
+      },
+      "rank": "am"
+    },
+    {
+      "id": "7f4cab8c-f37c-4778-bee2-57155106f986",
+      "name": "23-confirmar-execucao",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "an"
+    },
+    {
+      "id": "8da29562-f210-40f2-8c54-ad7f906a2d4c",
+      "name": "24-assert-finalizada",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Finalizada\", function () {\n  rq.expect(jsonData.status).to.equal(\"Finalizada\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "ao"
+    },
+    {
+      "id": "569ec055-d8bc-4725-adad-8e5bd1321f88",
+      "name": "25-confirmar-pagamento",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ap"
+    },
+    {
+      "id": "fe32436e-4d28-4826-9c6c-209a14549498",
+      "name": "26-assert-entregue",
+      "type": "api",
+      "parentId": "74e0fefa-0da2-4699-aa7a-b1abec98e7c7",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Status da OS é Entregue\", function () {\n  rq.expect(jsonData.status).to.equal(\"Entregue\");\n});\nrq.test(\"Id da OS confere\", function () {\n  rq.expect(jsonData.id).to.equal(Number(rq.environment.get(\"ordemServicoId\")));\n});"
+        }
+      },
+      "rank": "aq"
+    },
+    {
+      "id": "f2187ab7-e25b-4f34-855e-743e2097ecfb",
+      "name": "08-contratos-api",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a7",
+      "description": "Espelha OrdemServicoApiContratoTests (token inválido + unauthorized)."
+    },
+    {
+      "id": "619e7e2e-00ff-4525-9470-7c6f61726228",
+      "name": "01-aprovar-publico-token-invalido",
+      "type": "api",
+      "parentId": "f2187ab7-e25b-4f34-855e-743e2097ecfb",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar?token=token-inexistente",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Token inválido retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});",
+          "preRequest": "rq.request.headers.delete('Authorization');\nrq.environment.set('token', '');\n"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "2cac0167-6504-4dec-90ee-920c37ec6956",
+      "name": "02-listagem-sem-jwt",
+      "type": "api",
+      "parentId": "f2187ab7-e25b-4f34-855e-743e2097ecfb",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Listagem sem JWT retorna 401\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(401);\n});",
+          "preRequest": "rq.request.headers.delete('Authorization');\nrq.environment.set('token', '');\n"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "name": "09-listagem-multi-status",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a8",
+      "description": "Cria OSs em vários status e valida listagem (exclusões + ordenação evolutiva)."
+    },
+    {
+      "id": "b1816aa5-9f28-4be5-90b8-72b74b9da9e8",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "240a0752-cbfa-48b9-af21-e8d9cd618e20",
+      "name": "01-criar-os-em-diagnostico",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 1,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS EmDiagnostico retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osEmDiagnosticoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "e538860e-e64f-4d34-8343-a0966999c65b",
+      "name": "02-criar-os-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 2,\n  \"Servicos\": [\n    {\n      \"IdServico\": 1,\n      \"ValorCobrado\": 100,\n      \"ItensNecessarios\": []\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS AguardandoAprovacao retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osAguardandoId\", rq.response.json().id);\nrq.environment.set(\"ordemServicoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "43430604-7069-4fed-b756-f2584bd5a2a9",
+      "name": "03-finalizar-diagnostico-aguardando",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "b368e842-00be-4f19-bbc3-c9f8b9c6fa5a",
+      "name": "04-criar-os-liberada",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 6,\n  \"Servicos\": [\n    {\n      \"IdServico\": 1,\n      \"ValorCobrado\": 150,\n      \"ItensNecessarios\": [\n        {\n          \"IdItemEstoque\": 1,\n          \"Quantidade\": 1\n        }\n      ]\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS Liberada retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osLiberadaId\", rq.response.json().id);\nrq.environment.set(\"ordemServicoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "a9469984-29dc-450d-aa2d-7402544a85d6",
+      "name": "05-finalizar-diagnostico-liberada",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "fb0c35eb-b00c-411b-b51c-25963a458030",
+      "name": "06-aprovar-liberada",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "02b78506-8480-4d1d-bced-a78af8d7dd75",
+      "name": "07-criar-item-sem-saldo",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarItemListagemBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var codigo = (\"LST-\" + Date.now().toString(36)).slice(0, 20);\nrq.environment.set(\"criarItemListagemBody\", JSON.stringify({\n  Codigo: codigo, Tipo: \"Peca\", Nome: \"Peca listagem \" + codigo,\n  UnidadeMedida: \"Unidade\", PrecoVenda: 10, Saldo: 0, SaldoReservado: 0\n}));",
+          "postResponse": "rq.test(\"Criar item listagem retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"itemListagemId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "4446e44e-d4f0-4cb4-9239-c6d6d3e7c4a3",
+      "name": "08-criar-os-aguardando-peca",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarOsAguardandoPecaBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"criarOsAguardandoPecaBody\", JSON.stringify({\n  IdVeiculo: 7,\n  Servicos: [{ IdServico: 1, ValorCobrado: 150,\n    ItensNecessarios: [{ IdItemEstoque: Number(rq.environment.get(\"itemListagemId\")), Quantidade: 1 }] }]\n}));",
+          "postResponse": "rq.test(\"Criar OS AguardandoPeca retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osAguardandoPecaId\", rq.response.json().id);\nrq.environment.set(\"ordemServicoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "38e0224d-3588-4257-8bf1-2fdaa65228cc",
+      "name": "09-finalizar-diagnostico-peca",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "fe7a4229-5d26-4a1d-8f93-b8e3f4244cb1",
+      "name": "10-aprovar-peca",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "aa"
+    },
+    {
+      "id": "8972045e-9fba-4f27-89c9-46f27d9f5f0f",
+      "name": "11-criar-os-descartada",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 3,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS Descartada retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osDescartadaId\", rq.response.json().id);\nrq.environment.set(\"ordemServicoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "ab"
+    },
+    {
+      "id": "8518cd4d-b965-4c0a-b010-f91cf903588c",
+      "name": "12-descartar",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ac"
+    },
+    {
+      "id": "4c9f900f-1286-40d8-9896-03593cd72239",
+      "name": "13-criar-os-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 8,\n  \"Servicos\": [\n    {\n      \"IdServico\": 2,\n      \"ValorCobrado\": 50,\n      \"ItensNecessarios\": []\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Criar OS Entregue retorna 201\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201); });\nrq.environment.set(\"osEntregueId\", rq.response.json().id);\nrq.environment.set(\"ordemServicoId\", rq.response.json().id);"
+        }
+      },
+      "rank": "ad"
+    },
+    {
+      "id": "fe2fd506-d2fe-4462-9ce3-2ea2ed041385",
+      "name": "14-finalizar-diagnostico-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ae"
+    },
+    {
+      "id": "8d762a89-a4a4-4868-9e3b-e2174f91ff02",
+      "name": "15-aprovar-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "af"
+    },
+    {
+      "id": "2bbdb7c9-bc8f-4fb2-934a-558096534196",
+      "name": "16-preparar-execucao-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"GET OS para execução retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nvar aprovados = (jsonData.servicos || []).filter(function (s) {\n  return s.status === \"Aprovado\";\n}).map(function (s) { return s.id; });\nrq.test(\"Há serviços aprovados para executar\", function () {\n  rq.expect(aprovados.length).to.be.above(0);\n});\nvar agora = new Date();\nvar iniciado = new Date(agora.getTime() - 60 * 60 * 1000);\nvar body = {\n  ServicosExecutados: aprovados.map(function (id) {\n    return {\n      IdServico: id,\n      IniciadoEm: iniciado.toISOString(),\n      FinalizadoEm: agora.toISOString()\n    };\n  })\n};\nrq.environment.set(\"confirmarExecucaoBody\", JSON.stringify(body));\nif (aprovados.length > 0) {\n  rq.environment.set(\"servicoIdAprovado\", aprovados[0]);\n}"
+        }
+      },
+      "rank": "ag"
+    },
+    {
+      "id": "c5fc380d-40c7-4de1-9086-b75cd3f89aa7",
+      "name": "17-confirmar-execucao-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{confirmarExecucaoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ah"
+    },
+    {
+      "id": "b704faed-7c0a-496d-b0be-2a9cc2cb148d",
+      "name": "18-confirmar-pagamento-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Transição retorna sucesso\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "ai"
+    },
+    {
+      "id": "9447e2a9-3f15-47ff-ae70-1b8fafdcb890",
+      "name": "19-assert-status-preparados",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{osLiberadaId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"OS liberada está LiberadaParaExecucao\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"LiberadaParaExecucao\");\n});"
+        }
+      },
+      "rank": "aj"
+    },
+    {
+      "id": "ec24c46c-1d66-4b89-a31f-3cb7050fb078",
+      "name": "20-assert-aguardando-peca",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{osAguardandoPecaId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"OS peca está AguardandoPeca\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"AguardandoPeca\");\n});"
+        }
+      },
+      "rank": "ak"
+    },
+    {
+      "id": "6946b0ff-342e-42b6-b337-e2d42b7de130",
+      "name": "21-assert-entregue",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{osEntregueId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"OS entregue está Entregue\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"Entregue\");\n});"
+        }
+      },
+      "rank": "al"
+    },
+    {
+      "id": "c81777ff-e1e1-4cda-99fd-fd1a1a82a61f",
+      "name": "22-assert-descartada",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{osDescartadaId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"OS descartada está Descartada\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"Descartada\");\n});"
+        }
+      },
+      "rank": "am"
+    },
+    {
+      "id": "bbff2a3d-f574-4eeb-a1ac-575b36554ee8",
+      "name": "23-listar-e-validar",
+      "type": "api",
+      "parentId": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Listagem retorna 200\", function () { rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200); });\nvar lista = rq.response.json();\nrq.test(\"Listagem é array\", function () { rq.expect(lista).to.be.an(\"array\"); });\nvar ids = lista.map(function (o) { return o.id; });\nvar statuses = lista.map(function (o) { return o.status; });\nvar idDiag = Number(rq.environment.get(\"osEmDiagnosticoId\"));\nvar idAguard = Number(rq.environment.get(\"osAguardandoId\"));\nvar idLib = Number(rq.environment.get(\"osLiberadaId\"));\nvar idPeca = Number(rq.environment.get(\"osAguardandoPecaId\"));\nvar idDesc = Number(rq.environment.get(\"osDescartadaId\"));\nvar idEnt = Number(rq.environment.get(\"osEntregueId\"));\nrq.test(\"Inclui OS EmDiagnostico\", function () { rq.expect(ids).to.include(idDiag); });\nrq.test(\"Inclui OS AguardandoAprovacao\", function () { rq.expect(ids).to.include(idAguard); });\nrq.test(\"Inclui OS LiberadaParaExecucao\", function () { rq.expect(ids).to.include(idLib); });\nrq.test(\"Inclui OS AguardandoPeca\", function () { rq.expect(ids).to.include(idPeca); });\nrq.test(\"Exclui OS Descartada\", function () { rq.expect(ids).to.not.include(idDesc); });\nrq.test(\"Exclui OS Entregue\", function () { rq.expect(ids).to.not.include(idEnt); });\nrq.test(\"Não lista status finais\", function () {\n  rq.expect(statuses).to.not.include(\"Finalizada\");\n  rq.expect(statuses).to.not.include(\"Entregue\");\n  rq.expect(statuses).to.not.include(\"Descartada\");\n});\nvar iLib = ids.indexOf(idLib);\nvar iPeca = ids.indexOf(idPeca);\nvar iAguard = ids.indexOf(idAguard);\nvar iDiag = ids.indexOf(idDiag);\nrq.test(\"Ordenação: Liberada antes de AguardandoPeca\", function () { rq.expect(iLib).to.be.below(iPeca); });\nrq.test(\"Ordenação: AguardandoPeca antes de AguardandoAprovacao\", function () { rq.expect(iPeca).to.be.below(iAguard); });\nrq.test(\"Ordenação: AguardandoAprovacao antes de EmDiagnostico\", function () { rq.expect(iAguard).to.be.below(iDiag); });\nvar byId = {};\nlista.forEach(function (o) { byId[o.id] = o.status; });\nrq.test(\"Status das OSs ativas conferem\", function () {\n  rq.expect(byId[idDiag]).to.equal(\"EmDiagnostico\");\n  rq.expect(byId[idAguard]).to.equal(\"AguardandoAprovacao\");\n  rq.expect(byId[idLib]).to.equal(\"LiberadaParaExecucao\");\n  rq.expect(byId[idPeca]).to.equal(\"AguardandoPeca\");\n});"
+        }
+      },
+      "rank": "an"
+    }
+  ],
+  "environments": [
+    {
+      "id": "d228b119-d919-476b-beee-351d0c595795",
+      "name": "Docker",
+      "variables": {
+        "baseUrl": {
+          "id": 1,
+          "type": "string",
+          "syncValue": "http://localhost:8080"
+        },
+        "token": {
+          "id": 2,
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "id": 3,
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "id": 4,
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "id": 5,
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "id": 6,
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "id": 7,
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "id": 8,
+          "type": "string",
+          "syncValue": ""
+        }
+      }
+    },
+    {
+      "id": "e2fe57e2-3b6e-4f78-9ed0-b94dc964db62",
+      "name": "Local",
+      "variables": {
+        "baseUrl": {
+          "id": 1,
+          "type": "string",
+          "syncValue": "http://localhost:5225"
+        },
+        "token": {
+          "id": 2,
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "id": 3,
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "id": 4,
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "id": 5,
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "id": 6,
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "id": 7,
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "id": 8,
+          "type": "string",
+          "syncValue": ""
+        }
+      }
+    }
+  ],
+  "packages": []
+}

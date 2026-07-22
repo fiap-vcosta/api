@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.ValueObjects;
 
 namespace Domain.OrdemServico.Entities;
@@ -20,20 +21,20 @@ public class ItemNecessario
     public decimal Quantidade { get; init; }
     public required ItemEstoqueOrdemServico ItemEstoque { get; init; }
     
-    public record CriarItemNecessarioParams(int idOrdemServico, decimal quantidade, ItemEstoqueOrdemServico itemEstoque);
+    public record CriarItemNecessarioParams(int IdOrdemServico, decimal Quantidade, ItemEstoqueOrdemServico ItemEstoque);
     public static ItemNecessario Criar(CriarItemNecessarioParams @params) => new()
     {
-        IdOrdemServico = @params.idOrdemServico,
+        IdOrdemServico = @params.IdOrdemServico,
         Status = StatusItemEstoque.EstoqueNaoChecado,
-        Quantidade = @params.quantidade,
-        ItemEstoque = @params.itemEstoque
+        Quantidade = @params.Quantidade,
+        ItemEstoque = @params.ItemEstoque
     };
 
     public void ChecarEstoque(decimal quantidadeDisponivel)
     {
         if (Status is not (StatusItemEstoque.EstoqueNaoChecado or StatusItemEstoque.EstoqueEmFalta or StatusItemEstoque.EstoqueDisponivel))
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ser checado no estoque.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ser checado no estoque.");
         }
 
         if (Quantidade > quantidadeDisponivel)
@@ -49,7 +50,7 @@ public class ItemNecessario
     {
         if (Status is not (StatusItemEstoque.EstoqueNaoChecado or StatusItemEstoque.EstoqueEmFalta or StatusItemEstoque.EstoqueDisponivel))
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ter estoque travado.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ter estoque travado.");
         }
 
         Status = StatusItemEstoque.EstoqueTravado;
@@ -59,7 +60,7 @@ public class ItemNecessario
     {
         if (Status is not StatusItemEstoque.EstoqueTravado)
         {
-            throw new InvalidOperationException($"Item de estoque {Id} com status {Status} não pode ser utilizado.");
+            throw new BusinessRuleException($"Item de estoque {Id} com status {Status} não pode ser utilizado.");
         }
 
         Status = StatusItemEstoque.Utilizado;

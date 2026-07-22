@@ -46,6 +46,8 @@ test-results/
 tests/UnitTests/TestResults/
 *.trx
 coverage.cobertura.xml
+**/coverage/
+inspectcode.sarif.json
 
 # SonarQube
 .scannerwork/
@@ -54,3 +56,14 @@ coverage.cobertura.xml
 # Build outputs
 publish/
 build/
+
+# Work-in-progress checklist (fase 02)
+FASE02-CHECKLIST.md
+
+# Terraform / Kubernetes local
+infra/.terraform/
+infra/terraform.tfvars
+infra/*.tfstate
+infra/*.tfstate.*
+infra/kubeconfig*
+k8s/secret.yaml

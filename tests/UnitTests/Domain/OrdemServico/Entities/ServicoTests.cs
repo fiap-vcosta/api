@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 
@@ -36,14 +37,14 @@ public class ServicoTests
     }
 
     [Fact]
-    public void Approve_WhenStatusIsNotSuggested_ThrowsInvalidOperationException()
+    public void Approve_WhenStatusIsNotSuggested_ThrowsBusinessRuleException()
     {
         // Arrange
         var servico = Servico.Criar("Troca de pastilhas", 200m, _servicoCatalogo);
         servico.Aprovar();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => servico.Aprovar());
+        Assert.Throws<BusinessRuleException>(() => servico.Aprovar());
     }
 
     [Fact]
@@ -61,14 +62,14 @@ public class ServicoTests
     }
 
     [Fact]
-    public void Reject_WhenStatusIsNotSuggested_ThrowsInvalidOperationException()
+    public void Reject_WhenStatusIsNotSuggested_ThrowsBusinessRuleException()
     {
         // Arrange
         var servico = Servico.Criar("Diagnóstico", 100m, _servicoCatalogo);
         servico.Rejeitar();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => servico.Rejeitar());
+        Assert.Throws<BusinessRuleException>(() => servico.Rejeitar());
     }
 
     [Fact]
@@ -95,12 +96,12 @@ public class ServicoTests
     }
 
     [Fact]
-    public void ConfirmConclusion_WhenNotApproved_ThrowsInvalidOperationException()
+    public void ConfirmConclusion_WhenNotApproved_ThrowsBusinessRuleException()
     {
         // Arrange
         var servico = Servico.Criar("Troca de óleo", 150m, _servicoCatalogo);
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => servico.ConfirmarConclusao(DateTime.UtcNow, DateTime.UtcNow));
+        Assert.Throws<BusinessRuleException>(() => servico.ConfirmarConclusao(DateTime.UtcNow, DateTime.UtcNow));
     }
 }

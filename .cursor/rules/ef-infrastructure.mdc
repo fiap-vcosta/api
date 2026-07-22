@@ -1,0 +1,12 @@
+---
+description: EF Core e implementações de Gateway na Infrastructure
+globs: "src/Infrastructure/**/*"
+alwaysApply: false
+---
+
+# Infrastructure
+
+- Fluent API e migrations **somente** aqui (`AppDbContext`); Domain sem anotações ORM.
+- Repositórios/Gateways implementam ports da Application/Domain; não exponha `DbContext` para Application.
+- Modelo EF separado da entidade de domínio só se o ORM vazar (proxies, navegações indevidas).
+- Seeds e configuração sensível via ConfigMap/Secret no K8s — não hardcoded em produção.

@@ -1,11 +1,12 @@
 using Api.Contracts.Validation;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
-using Application.Administrativo.Cliente.Commands.CreateCliente;
-using Application.Administrativo.Cliente.Commands.DeleteCliente;
-using Application.Administrativo.Cliente.Commands.UpdateCliente;
-using Application.Administrativo.Cliente.Queries.GetAllClientes;
-using Application.Administrativo.Cliente.Queries.GetClienteById;
+using Api.Presenters.Cliente;
+using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
+using Application.UseCases.Administrativo.Cliente.Commands.DeleteCliente;
+using Application.UseCases.Administrativo.Cliente.Commands.UpdateCliente;
+using Application.UseCases.Administrativo.Cliente.Queries.GetAllClientes;
+using Application.UseCases.Administrativo.Cliente.Queries.GetClienteById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace Api.Controllers.Cliente;
 [Authorize(Roles = "Admin")]
 public class ClienteController(
     IMediator mediator,
+    ClientePresenter presenter,
     IValidator<CreateClienteRequest> createValidator,
     IValidator<UpdateClienteRequest> updateValidator) : ControllerBase
 {
@@ -29,22 +31,15 @@ public class ClienteController(
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new CreateClienteCommand
         {
-            var command = new CreateClienteCommand
-            {
-                Nome = request.Nome,
-                TipoDocumento = request.TipoDocumento,
-                Documento = request.Documento
-            };
+            Nome = request.Nome,
+            TipoDocumento = request.TipoDocumento,
+            Documento = request.Documento
+        };
 
-            var response = await mediator.Send(command);
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, presenter.Present(response));
     }
 
     [HttpGet("{id:int}")]
@@ -58,7 +53,7 @@ public class ClienteController(
             return NotFound();
         }
 
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpGet]
@@ -66,7 +61,7 @@ public class ClienteController(
     {
         var query = new GetAllClientesQuery();
         var response = await mediator.Send(query);
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
 
     [HttpPut("{id:int}")]
@@ -78,45 +73,23 @@ public class ClienteController(
             return BadRequest(new { validationResult.Errors });
         }
 
-        try
+        var command = new UpdateClienteCommand
         {
-            var command = new UpdateClienteCommand
-            {
-                Id = id,
-                Nome = request.Nome,
-                TipoDocumento = request.TipoDocumento,
-                Documento = request.Documento
-            };
+            Id = id,
+            Nome = request.Nome,
+            TipoDocumento = request.TipoDocumento,
+            Documento = request.Documento
+        };
 
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var command = new DeleteClienteCommand { Id = id };
-            await mediator.Send(command);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new DeleteClienteCommand { Id = id };
+        await mediator.Send(command);
+        return NoContent();
     }
 }

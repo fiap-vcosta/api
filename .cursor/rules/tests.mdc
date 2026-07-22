@@ -1,0 +1,16 @@
+---
+description: Política de testes unitários e de integração
+globs: "tests/**/*"
+alwaysApply: false
+---
+
+# Testes
+
+- **AAA obrigatório**: todo teste unitário/integração deve ter seções explícitas `// Arrange`, `// Act`, `// Assert` (nesta ordem). Não misturar preparação com asserts; um assert principal por comportamento sob teste quando fizer sentido.
+- Unitários: domínio e handlers isolados (já em `tests/UnitTests/`).
+- Unitários novos ou refatorados: um arquivo de teste por tipo de produção, espelhando o caminho relativo de `src/` sob `tests/UnitTests/` (ex.: `src/Application/UseCases/X/YHandler.cs` → `tests/UnitTests/Application/UseCases/X/YHandlerTests.cs`).
+- Não criar novas suites agregadas `*HandlersTests`, `*ControllerTests` ou similares cobrindo várias classes; ao tocar uma suite agregada existente, migrar a cobertura para arquivos espelhados.
+- Integração: `WebApplicationFactory` para fluxos HTTP críticos.
+- Só cobrir comportamento **já implementado**. Após criar API nova, aí sim adicionar testes dela.
+- Meta de rede de segurança: **≥ 80%** line **e** branch em cada assembly (`Api`, `Application`, `Infrastructure`, `Domain`) antes da refatoração grande.
+- Não escrever testes “verdes futuros” para listagem / endpoint público / create com peças **antes** dessas features existirem.

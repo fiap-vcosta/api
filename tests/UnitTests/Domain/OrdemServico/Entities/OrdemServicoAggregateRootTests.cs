@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 
@@ -19,6 +20,7 @@ public class OrdemServicoAggregateRootTests
         Assert.Equal(StatusOrdemServico.Recebida, ordem.Status);
         Assert.Equal(cliente, ordem.Cliente);
         Assert.Equal(veiculo, ordem.Veiculo);
+        Assert.False(string.IsNullOrWhiteSpace(ordem.TokenAprovacao));
         Assert.True((DateTime.UtcNow - ordem.RecebidaEm).TotalSeconds < 5);
     }
 
@@ -36,14 +38,14 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void SendToDiagnostics_WhenNotReceived_ThrowsInvalidOperationException()
+    public void SendToDiagnostics_WhenNotReceived_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
         ordem.EnviarParaDiagnostico();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.EnviarParaDiagnostico());
+        Assert.Throws<BusinessRuleException>(() => ordem.EnviarParaDiagnostico());
     }
 
     [Fact]
@@ -76,25 +78,45 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void Discard_WhenStatusIsNotDiscardable_ThrowsInvalidOperationException()
+    public void Discard_WhenStatusIsNotDiscardable_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
         ordem.Descartar();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.Descartar());
+        Assert.Throws<BusinessRuleException>(() => ordem.Descartar());
     }
 
     [Fact]
-    public void AddServiceItem_WhenNotInDiagnosis_ThrowsInvalidOperationException()
+    public void AddServiceItem_WhenRecebida_AddsServiceSuccessfully()
     {
         // Arrange
         var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
         var ordem = CriarOrdem();
 
+        // Act
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+            new List<ItemNecessario.CriarItemNecessarioParams>());
+
+        // Assert
+        Assert.Single(ordem.Servicos);
+        Assert.Equal(StatusOrdemServico.Recebida, ordem.Status);
+    }
+
+    [Fact]
+    public void AddServiceItem_WhenAguardandoAprovacao_ThrowsBusinessRuleException()
+    {
+        // Arrange
+        var servicoCatalogo = new ServicoCatalogo() { Id = 1, Nome = "Serviço", Codigo = "SVR-001" };
+        var ordem = CriarOrdem();
+        ordem.EnviarParaDiagnostico();
+        ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+            new List<ItemNecessario.CriarItemNecessarioParams>());
+        ordem.FinalizarDiagnostico();
+
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.AdicionarItemServico("Troca de pneus", 200m, servicoCatalogo,
+        Assert.Throws<BusinessRuleException>(() => ordem.AdicionarItemServico("Alinhamento", 150m, servicoCatalogo,
             new List<ItemNecessario.CriarItemNecessarioParams>()));
     }
 
@@ -141,23 +163,23 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void RejectSuggestedServices_WhenNotAwaitingApproval_ThrowsInvalidOperationException()
+    public void RejectSuggestedServices_WhenNotAwaitingApproval_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.RejeitarServicosSugeridos());
+        Assert.Throws<BusinessRuleException>(() => ordem.RejeitarServicosSugeridos());
     }
 
     [Fact]
-    public void ApproveServicesPartially_WhenNotAwaitingApproval_ThrowsInvalidOperationException()
+    public void ApproveServicesPartially_WhenNotAwaitingApproval_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.AprovarServicosParcialmente(new List<int> { 1 }));
+        Assert.Throws<BusinessRuleException>(() => ordem.AprovarServicosParcialmente(new List<int> { 1 }));
     }
 
     [Fact]
@@ -175,23 +197,23 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void CheckRequiredItems_WhenStatusIsInvalid_ThrowsInvalidOperationException()
+    public void CheckRequiredItems_WhenStatusIsInvalid_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.ChecarItensNecessarios(new Dictionary<int, decimal> { [100] = 5m }));
+        Assert.Throws<BusinessRuleException>(() => ordem.ChecarItensNecessarios(new Dictionary<int, decimal> { [100] = 5m }));
     }
 
     [Fact]
-    public void ConfirmExecution_WhenOrderIsNotReady_ThrowsInvalidOperationException()
+    public void ConfirmExecution_WhenOrderIsNotReady_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.ConfirmarExecucao(new List<ServicoExecutado> { new() { IdServico = 1, IniciadoEm = DateTime.UtcNow.AddHours(-1), FinalizadoEm = DateTime.UtcNow } }));
+        Assert.Throws<BusinessRuleException>(() => ordem.ConfirmarExecucao(new List<ServicoExecutado> { new() { IdServico = 1, IniciadoEm = DateTime.UtcNow.AddHours(-1), FinalizadoEm = DateTime.UtcNow } }));
     }
 
     // Additional tests for uncovered branches and lines
@@ -216,14 +238,14 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void FinalizeDiagnosis_WhenNoServicesAdded_ThrowsInvalidOperationException()
+    public void FinalizeDiagnosis_WhenNoServicesAdded_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
         ordem.EnviarParaDiagnostico();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.FinalizarDiagnostico());
+        Assert.Throws<BusinessRuleException>(() => ordem.FinalizarDiagnostico());
     }
 
     [Fact]
@@ -475,14 +497,55 @@ public class OrdemServicoAggregateRootTests
     }
 
     [Fact]
-    public void ConfirmPayment_WhenNotFinalized_ThrowsInvalidOperationException()
+    public void ConfirmPayment_WhenNotFinalized_ThrowsBusinessRuleException()
     {
         // Arrange
         var ordem = CriarOrdem();
         ordem.EnviarParaDiagnostico();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => ordem.ConfirmarPagamento());
+        Assert.Throws<BusinessRuleException>(() => ordem.ConfirmarPagamento());
+    }
+
+    [Fact]
+    public void ConfirmPayment_WhenFinalized_SetsEntregue()
+    {
+        // Arrange
+        var ordem = CriarOrdemComServicoAprovado();
+        ordem.ChecarItensNecessarios(new Dictionary<int, decimal> { [100] = 5m });
+        ordem.TravarItensNecessarios();
+        var servicoId = ordem.Servicos.First().Id;
+        ordem.ConfirmarExecucao(
+        [
+            new ServicoExecutado { IdServico = servicoId, IniciadoEm = DateTime.UtcNow.AddHours(-1), FinalizadoEm = DateTime.UtcNow }
+        ]);
+
+        // Act
+        ordem.ConfirmarPagamento();
+
+        // Assert
+        Assert.Equal(StatusOrdemServico.Entregue, ordem.Status);
+    }
+
+    [Fact]
+    public void FinalizarDiagnostico_WhenNotEmDiagnostico_ThrowsBusinessRuleException()
+    {
+        // Arrange
+        var ordem = CriarOrdem();
+
+        // Act & Assert
+        Assert.Throws<BusinessRuleException>(() => ordem.FinalizarDiagnostico());
+    }
+
+    [Fact]
+    public void AprovarServicosSugeridos_WhenNotAguardandoAprovacao_ThrowsBusinessRuleException()
+    {
+        // Arrange
+        var ordem = CriarOrdem();
+        ordem.EnviarParaDiagnostico();
+
+        // Act & Assert
+        Assert.Throws<BusinessRuleException>(() => ordem.AprovarServicosSugeridos());
     }
 
     [Fact]

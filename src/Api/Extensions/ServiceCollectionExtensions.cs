@@ -1,3 +1,4 @@
+using Api.Filters;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +20,17 @@ using Api.Controllers.Servico.CreateServico;
 using Api.Controllers.Servico.UpdateServico;
 using Api.Controllers.Veiculo.CreateVeiculo;
 using Api.Controllers.Veiculo.UpdateVeiculo;
+using Api.Presenters.Auth;
+using Api.Presenters.Cliente;
+using Api.Presenters.ItemEstoque;
+using Api.Presenters.OrdemServico;
+using Api.Presenters.Servico;
+using Api.Presenters.Veiculo;
 using Application.Abstractions.Services;
-using Application.Administrativo.Usuario.Commands.Login;
-using Domain.Administrativo.Repositories;
-using Domain.Estoque.Repositories;
-using Domain.OrdemServico.Repositories;
+using Application.UseCases.Administrativo.Usuario.Commands.Login;
+using Application.Abstractions.Gateways;
 using Infrastructure.Database;
-using Infrastructure.Database.Repositories;
+using Infrastructure.Database.Gateways;
 
 namespace Api.Extensions;
 
@@ -45,7 +50,11 @@ public static class ServiceCollectionExtensions
         services.AddOrdemServicoServices();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
-        services.AddControllers().AddJsonOptions(options =>
+        services.AddControllers(options =>
+            {
+                options.Filters.Add<ProblemDetailsExceptionFilter>();
+            })
+            .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
@@ -57,39 +66,44 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<INotificacaoService, NotificacaoService>();
-        services.AddSingleton<ISMTPService, SMTPService>();
+        services.AddSingleton<ISmtpService, SmtpService>();
     }
 
     private static void AddUsuarioServices(this IServiceCollection services)
     {
         services.AddSingleton<IValidator<LoginRequest>, LoginRequestValidator>();
-        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IUsuarioGateway, UsuarioGateway>();
+        services.AddScoped<AuthPresenter>();
     }
 
     private static void AddClienteServices(this IServiceCollection services)
     {
-        services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddScoped<IClienteGateway, ClienteGateway>();
+        services.AddScoped<ClientePresenter>();
         services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
         services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
     }
 
     private static void AddVeiculoServices(this IServiceCollection services)
     {
-        services.AddScoped<IVeiculoRepository, VeiculoRepository>();
+        services.AddScoped<IVeiculoGateway, VeiculoGateway>();
+        services.AddScoped<VeiculoPresenter>();
         services.AddSingleton<IValidator<CreateVeiculoRequest>, CreateVeiculoRequestValidator>();
         services.AddSingleton<IValidator<UpdateVeiculoRequest>, UpdateVeiculoRequestValidator>();
     }
 
     private static void AddServicoServices(this IServiceCollection services)
     {
-        services.AddScoped<IServicoRepository, ServicoRepository>();
+        services.AddScoped<IServicoGateway, ServicoGateway>();
+        services.AddScoped<ServicoPresenter>();
         services.AddSingleton<IValidator<CreateServicoRequest>, CreateServicoRequestValidator>();
         services.AddSingleton<IValidator<UpdateServicoRequest>, UpdateServicoRequestValidator>();
     }
 
     private static void AddItemEstoqueServices(this IServiceCollection services)
     {
-        services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
+        services.AddScoped<IItemEstoqueGateway, ItemEstoqueGateway>();
+        services.AddScoped<ItemEstoquePresenter>();
         services.AddSingleton<IValidator<CreateItemEstoqueRequest>, CreateItemEstoqueRequestValidator>();
         services.AddSingleton<IValidator<UpdateItemEstoqueRequest>, UpdateItemEstoqueRequestValidator>();
         services.AddSingleton<IValidator<RegistrarEntradaEstoqueRequest>, RegistrarEntradaEstoqueRequestValidator>();
@@ -97,8 +111,9 @@ public static class ServiceCollectionExtensions
     
     private static void AddOrdemServicoServices(this IServiceCollection services)
     {
-        services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
-        services.AddScoped<IItemServicoRepository, ItemServicoRepository>();
+        services.AddScoped<IOrdemServicoGateway, OrdemServicoGateway>();
+        services.AddScoped<IItemServicoGateway, ItemServicoGateway>();
+        services.AddScoped<OrdemServicoPresenter>();
         services.AddSingleton<IValidator<CriarOrdemServicoRequest>, CriarOrdemServicoRequestValidator>();
         services.AddSingleton<IValidator<AdicionarItemServicoRequest>, AdicionarItemServicoRequestValidator>();
         services.AddSingleton<IValidator<AprovarServicosParcialmenteRequest>, AprovarServicosParcialmenteRequestValidator>();

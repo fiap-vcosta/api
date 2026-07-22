@@ -1,0 +1,1437 @@
+{
+  "meta": {
+    "version": "1.1.0",
+    "exportedAt": "2026-07-19T05:38:27.104Z",
+    "exportedUsing": "Requestly API Client"
+  },
+  "records": [
+    {
+      "id": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "name": "tech-challenge",
+      "type": "collection",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "Collection exploratória da API. Defina baseUrl (ex.: http://localhost:8080) no environment. Rode 00-auth/login antes das rotas Admin. Suites e2e (Collection Runner): docs/api/requestly/tech-challenge-e2e-tests.requestly.json"
+    },
+    {
+      "id": "2d4c3b86-71f3-4ccd-afdb-3df26421aaab",
+      "name": "00-auth",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "Autenticação JWT (Admin)."
+    },
+    {
+      "id": "59fceeea-55ca-4f9f-b533-99f0e8ea110e",
+      "name": "login",
+      "type": "api",
+      "parentId": "2d4c3b86-71f3-4ccd-afdb-3df26421aaab",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "var jsonData = rq.response.json();\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e2c2cb1c-c7a1-4da2-8163-fc58202be8f2",
+      "name": "01-health",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1",
+      "description": "Health check (sem auth)."
+    },
+    {
+      "id": "cf0f5e47-5803-4dae-88ca-235fb06fc285",
+      "name": "health",
+      "type": "api",
+      "parentId": "e2c2cb1c-c7a1-4da2-8163-fc58202be8f2",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/health",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "b97a25fe-f099-4ec8-8996-ec3289b99a07",
+      "name": "02-admin",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        }
+      },
+      "rank": "a2",
+      "description": "CRUDs administrativos (JWT Admin)."
+    },
+    {
+      "id": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "name": "cliente",
+      "type": "collection",
+      "parentId": "b97a25fe-f099-4ec8-8996-ec3289b99a07",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "22d30ba2-ff0f-452f-8a96-b1bc5f9e7dab",
+      "name": "listar",
+      "type": "api",
+      "parentId": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/cliente",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "5226941d-8caa-4b98-98c7-4bed786bfba1",
+      "name": "criar",
+      "type": "api",
+      "parentId": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/cliente",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Nome\": \"{{$randomFullName}}\",\n  \"TipoDocumento\": \"0\",\n  \"Documento\": \"92561324354\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"clienteId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "ff80cab9-bdc0-4b66-a827-b0c2e2730add",
+      "name": "obter-por-id",
+      "type": "api",
+      "parentId": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "dae2f99c-be9d-47a5-9819-ee1d0d5af358",
+      "name": "atualizar",
+      "type": "api",
+      "parentId": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "method": "PUT",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Nome\": \"{{$randomFullName}} [Atualizado]\",\n  \"TipoDocumento\": \"0\",\n  \"Documento\": \"29040653186\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "c2f34a1e-a405-4038-b669-504d11b18092",
+      "name": "excluir",
+      "type": "api",
+      "parentId": "bb031413-fcf5-480a-9b04-bb237d9044fc",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "method": "DELETE",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "name": "veiculo",
+      "type": "collection",
+      "parentId": "b97a25fe-f099-4ec8-8996-ec3289b99a07",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "336fe327-757a-4f03-8939-bd8f533e41be",
+      "name": "listar",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "1429748f-3e26-4a14-9d6a-77f8b8f525f1",
+      "name": "criar",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Placa\": \"ABC-1D23\",\n  \"DonoId\": \"{{clienteId}}\",\n  \"Modelo\": \"Gol\",\n  \"Marca\": \"Volkswagen\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"veiculoId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "4d33ee29-dfc1-4886-8be2-77e21c851149",
+      "name": "obter-por-id",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "e172825f-e2cb-4c80-9d59-3fc5a082aa1c",
+      "name": "listar-por-dono",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo/por-dono/{{clienteId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "be7db412-4daf-423d-953b-57456e63e05c",
+      "name": "atualizar",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "method": "PUT",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Placa\": \"DEF-2G34\",\n  \"DonoId\": \"{{clienteId}}\",\n  \"Modelo\": \"Polo\",\n  \"Marca\": \"Volkswagen\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "64bd30f1-66af-4ccc-bda2-b385b9d741f8",
+      "name": "excluir",
+      "type": "api",
+      "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "method": "DELETE",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "name": "servico",
+      "type": "collection",
+      "parentId": "b97a25fe-f099-4ec8-8996-ec3289b99a07",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "47173050-4480-4d13-8ad8-1796fa1fe63a",
+      "name": "listar",
+      "type": "api",
+      "parentId": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/servico",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "fd853ad3-ed20-4abd-b00c-ef98e25a0c4d",
+      "name": "criar",
+      "type": "api",
+      "parentId": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Codigo\": \"OLE-001\",\n  \"Nome\": \"Troca de Óleo\",\n  \"PrecoPadrao\": 150.0,\n  \"Ativo\": true\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"servicoId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "623c8947-4e88-4f02-a172-819ca96ede39",
+      "name": "obter-por-id",
+      "type": "api",
+      "parentId": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "cdde06ac-9e5e-44b6-a172-ae40549a8e5d",
+      "name": "atualizar",
+      "type": "api",
+      "parentId": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "method": "PUT",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Codigo\": \"FRE-001\",\n  \"Nome\": \"Serviço de Freio\",\n  \"PrecoPadrao\": 250.0,\n  \"Ativo\": true\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "7361f8c8-9a4c-4131-864f-dd91a53a4683",
+      "name": "excluir",
+      "type": "api",
+      "parentId": "7571f5f4-afe2-4920-96d9-5a014fc46966",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "method": "DELETE",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "name": "03-estoque",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        }
+      },
+      "rank": "a3",
+      "description": "Itens de estoque e entrada de saldo."
+    },
+    {
+      "id": "3000e82b-5b50-4a7e-ae56-5aeed1fb9275",
+      "name": "listar",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e6c01230-d1cb-4de4-8d94-2c68e2a5203c",
+      "name": "criar",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Codigo\": \"FLT-001\",\n  \"Tipo\": 0,\n  \"Nome\": \"Filtro de Óleo\",\n  \"UnidadeMedida\": 0,\n  \"PrecoVenda\": 55.5,\n  \"Saldo\": 10.0,\n  \"SaldoReservado\": 0.0\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"itemEstoqueId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "188ac5b9-2e61-4fba-aca1-ef8f5764ad6e",
+      "name": "obter-por-id",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "2957b6f1-2bd2-42eb-9f9c-9a92d4473b6f",
+      "name": "atualizar",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "method": "PUT",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Codigo\": \"ITM-002\",\n  \"Tipo\": 1,\n  \"Nome\": \"Óleo de Motor\",\n  \"UnidadeMedida\": 3,\n  \"PrecoVenda\": 25.0\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "005133d2-626d-4545-83c4-ae9c5fb0a35a",
+      "name": "excluir",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "method": "DELETE",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "05915f21-deb8-4972-b3b3-e7391b62b62f",
+      "name": "registrar-entrada",
+      "type": "api",
+      "parentId": "503d9d45-ae4a-4b07-b570-e7134071e596",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}/registrar-entrada",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Quantidade\": 50\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "214195d9-24b2-4a8b-9f70-cfe4e997256b",
+      "name": "04-ordem-servico",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        }
+      },
+      "rank": "a4",
+      "description": "Ordens de serviço: consultas e ciclo de vida (JWT Admin)."
+    },
+    {
+      "id": "51382fc9-e72d-4da6-9101-215b6831a523",
+      "name": "consultas",
+      "type": "collection",
+      "parentId": "214195d9-24b2-4a8b-9f70-cfe4e997256b",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "Listagem, detalhe e métricas."
+    },
+    {
+      "id": "ae738160-b4b6-47a0-9df0-cc8fedcd0fda",
+      "name": "listar",
+      "type": "api",
+      "parentId": "51382fc9-e72d-4da6-9101-215b6831a523",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 200 || rq.response.code == 200) {\n  var lista = rq.response.json();\n  if (Array.isArray(lista) && lista.length > 0) {\n    rq.environment.set(\"ordemServicoId\", lista[0].id);\n  }\n}"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e7f6c964-750b-4a3b-a699-fbfc0ad461dd",
+      "name": "obter-por-id",
+      "type": "api",
+      "parentId": "51382fc9-e72d-4da6-9101-215b6831a523",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "4367c673-8c16-4098-b228-ddb785503aeb",
+      "name": "tempo-medio-execucao",
+      "type": "api",
+      "parentId": "51382fc9-e72d-4da6-9101-215b6831a523",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/tempo-medio-execucao",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "name": "ciclo-de-vida",
+      "type": "collection",
+      "parentId": "214195d9-24b2-4a8b-9f70-cfe4e997256b",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1",
+      "description": "Transições de status da OS."
+    },
+    {
+      "id": "38ed5d05-3c15-440f-a7f3-1bd51bb2e9fa",
+      "name": "criar-com-servicos",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 1,\n  \"Servicos\": [\n    {\n      \"IdServico\": 1,\n      \"ValorCobrado\": 150,\n      \"ItensNecessarios\": [\n        {\n          \"IdItemEstoque\": 1,\n          \"Quantidade\": 1\n        }\n      ]\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"ordemServicoId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "c84f1e8f-5786-4d10-aafd-fcfaf5afb0f0",
+      "name": "criar-sem-servicos",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdVeiculo\": 1,\n  \"Servicos\": []\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "if (rq.response.status == 201 || rq.response.code == 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"ordemServicoId\", jsonData.id);\n}"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "b43ffc19-17e1-4f6f-ac21-399492a116dc",
+      "name": "adicionar-servico",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdServico\": 1,\n  \"ValorCobrado\": 1000,\n  \"ItensNecessarios\": [\n    {\n      \"IdItemEstoque\": 1,\n      \"Quantidade\": 2\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "b2b21893-a1e3-403a-bb1e-852e98109526",
+      "name": "finalizar-diagnostico",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "57be88a0-7237-460d-9958-94d56e37fd70",
+      "name": "aprovar",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "d1f32e5c-6edc-402a-905a-f1f44edcf3aa",
+      "name": "rejeitar",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "810a4af6-cd32-43de-a05f-e24a98f39fec",
+      "name": "aprovar-parcialmente",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"IdsServicosAprovados\": [\n    1\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "6deecbce-6da5-41b1-8cbc-008325807977",
+      "name": "confirmar-execucao",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"ServicosExecutados\": [\n    {\n      \"IdServico\": 11,\n      \"IniciadoEm\": \"2026-01-01T10:00:00Z\",\n      \"FinalizadoEm\": \"2026-01-01T11:50:00Z\"\n    }\n  ]\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "ddf88540-dab0-4333-958e-b41760c66ce3",
+      "name": "confirmar-pagamento",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "d82d8c35-a936-4802-826b-9dddb341bc99",
+      "name": "descartar",
+      "type": "api",
+      "parentId": "7d3d1803-5fbd-4feb-b588-e91c8585e9e4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a9"
+    },
+    {
+      "id": "ed4e71a3-7f26-4894-a19e-adae60111ed4",
+      "name": "05-public",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a5",
+      "description": "Aprovação/rejeição externa sem JWT (token opaco). Obtenha tokenAprovacao no banco (coluna TokenAprovacao) — não é exposto na API."
+    },
+    {
+      "id": "ae4c7ae5-274f-4512-9633-de8e6e921fbd",
+      "name": "aprovar-por-token",
+      "type": "api",
+      "parentId": "ed4e71a3-7f26-4894-a19e-adae60111ed4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [
+            {
+              "id": 1,
+              "key": "token",
+              "value": "{{tokenAprovacao}}",
+              "isEnabled": true,
+              "description": "Token opaco da OS (AguardandoAprovacao)"
+            }
+          ],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "b243da31-b2ab-4928-bc7b-716337b813a4",
+      "name": "rejeitar-por-token",
+      "type": "api",
+      "parentId": "ed4e71a3-7f26-4894-a19e-adae60111ed4",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/rejeitar",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [
+            {
+              "id": 1,
+              "key": "token",
+              "value": "{{tokenAprovacao}}",
+              "isEnabled": true,
+              "description": "Token opaco da OS (AguardandoAprovacao)"
+            }
+          ],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1"
+    }
+  ],
+  "environments": [
+    {
+      "id": "d228b119-d919-476b-beee-351d0c595795",
+      "name": "Docker",
+      "variables": {
+        "baseUrl": {
+          "id": 1,
+          "type": "string",
+          "syncValue": "http://localhost:8080"
+        },
+        "token": {
+          "id": 2,
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "id": 3,
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "id": 4,
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "id": 5,
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "id": 6,
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "id": 7,
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "id": 8,
+          "type": "string",
+          "syncValue": ""
+        }
+      }
+    },
+    {
+      "id": "e2fe57e2-3b6e-4f78-9ed0-b94dc964db62",
+      "name": "Local",
+      "variables": {
+        "baseUrl": {
+          "id": 1,
+          "type": "string",
+          "syncValue": "http://localhost:5225"
+        },
+        "token": {
+          "id": 2,
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "id": 3,
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "id": 4,
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "id": 5,
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "id": 6,
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "id": 7,
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "id": 8,
+          "type": "string",
+          "syncValue": ""
+        }
+      }
+    }
+  ],
+  "packages": []
+}

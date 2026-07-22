@@ -1,0 +1,15 @@
+---
+description: Restrições e ordem de trabalho da Fase 02
+alwaysApply: true
+---
+
+# Fase 02
+
+Canon: [docs/04_requisitos-fase-02.md](docs/04_requisitos-fase-02.md).
+
+Ordem: docs → testes do **já existente** → **CI (build/test)** → **Clean Arch purista** → APIs novas → testes das APIs novas → Docker/K8s/Terraform/CD → entregáveis.
+
+- Não TDD de feature futura; não implementar APIs novas antes da refatoração Clean Arch.
+- Aprovação externa: endpoint público (sem JWT) localiza OS por **token opaco** → **mesmos** use cases de aprovar/rejeitar; sem status arbitrário na borda.
+- Listagem OS: excluir Finalizada, Entregue, Descartada; ordenação evolutiva em `docs/04`.
+- Fora de escopo: Guid, cloud, SMTP/parser de e-mail, ItemEstoque saldo 0 como contorno.

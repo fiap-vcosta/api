@@ -1,0 +1,101 @@
+name: CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to kind
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
+    env:
+      CLUSTER_NAME: techchallenge
+      IMAGE: techchallenge-api:local
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check required tools
+        run: |
+          set -euo pipefail
+          docker version
+          kubectl version --client
+          kind version
+          terraform version
+          helm version
+
+      - name: Terraform apply (kind + Postgres + metrics-server via Helm)
+        working-directory: infra
+        run: |
+          set -euo pipefail
+          : "${POSTGRES_DB:?POSTGRES_DB secret is required}"
+          : "${POSTGRES_USER:?POSTGRES_USER secret is required}"
+          : "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD secret is required}"
+          terraform init -input=false
+          terraform apply -input=false -auto-approve \
+            -var="cluster_name=${CLUSTER_NAME}" \
+            -var="kubeconfig_path=./kubeconfig" \
+            -var="postgres_db=${POSTGRES_DB}" \
+            -var="postgres_user=${POSTGRES_USER}" \
+            -var="postgres_password=${POSTGRES_PASSWORD}"
+          echo "KUBECONFIG=$(pwd)/kubeconfig" >> "$GITHUB_ENV"
+
+      - name: Build API image
+        run: docker build -t "${IMAGE}" .
+
+      - name: Load image into kind
+        run: kind load docker-image "${IMAGE}" --name "${CLUSTER_NAME}"
+
+      - name: Apply API ConfigMap and Secret
+        run: |
+          set -euo pipefail
+          : "${JWT_KEY:?JWT_KEY secret is required}"
+          : "${JWT_ISSUER:?JWT_ISSUER secret is required}"
+          : "${JWT_AUDIENCE:?JWT_AUDIENCE secret is required}"
+          kubectl get namespace techchallenge
+          kubectl apply -f k8s/configmap.yaml
+          kubectl -n techchallenge create secret generic api \
+            --from-literal="ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}" \
+            --from-literal="Jwt__Key=${JWT_KEY}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+          kubectl -n techchallenge patch configmap api --type merge -p \
+            "{\"data\":{\"Jwt__Issuer\":\"${JWT_ISSUER}\",\"Jwt__Audience\":\"${JWT_AUDIENCE}\"}}"
+
+      - name: Apply API Deployment, Service and HPA
+        run: |
+          set -euo pipefail
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/hpa.yaml
+          kubectl -n techchallenge rollout status deployment/api --timeout=180s
+
+      - name: Smoke health check
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsS "http://localhost:8080/health"; then
+              echo
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Health check failed"
+          kubectl -n techchallenge get pods
+          kubectl -n techchallenge describe deployment/api
+          exit 1

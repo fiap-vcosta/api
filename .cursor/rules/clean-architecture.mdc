@@ -1,0 +1,13 @@
+---
+description: Clean Architecture — limites de camada e direção das dependências
+alwaysApply: true
+---
+
+# Clean Architecture
+
+- Dependências apontam **para dentro**: Api → Application → Domain. Infrastructure **implementa** ports; Application/Domain não referenciam EF/ASP.NET.
+- Domain: entities, VOs, eventos; sem `[Key]`, DbContext, controllers ou HTTP.
+- Application: orquestra use cases; fala com mundos externos só via interfaces (Gateway/Repository).
+- Api: Controllers recebendo DTOs; **Presenter** monta ViewModel/Response (`Ok(presenter.Present(result))`). Sem regra de negócio no controller.
+- Alvo de nomenclatura: UseCases, Presenters, Gateways (ver casca SOAT).
+- Referência: https://github.com/proferickmuller/soat-cleanarch-csharp e `docs/04_requisitos-fase-02.md`.

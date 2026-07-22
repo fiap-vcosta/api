@@ -26,7 +26,7 @@ public class CreateClienteRequestValidator : IValidator<CreateClienteRequest>
         }
         else
         {
-            var tipoDocumento = (TipoDocumento)request.TipoDocumento;
+            var tipoDocumento = request.TipoDocumento;
             var documentoClean = request.Documento.Replace(".", "").Replace("-", "").Replace("/", "");
 
             switch (tipoDocumento)

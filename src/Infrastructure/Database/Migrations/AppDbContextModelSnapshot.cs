@@ -937,6 +937,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("TokenAprovacao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.ComplexProperty<Dictionary<string, object>>("Cliente", "Domain.OrdemServico.Entities.OrdemServicoAggregateRoot.Cliente#ClienteOrdemServico", b1 =>
                         {
                             b1.IsRequired();
@@ -973,6 +977,9 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("TokenAprovacao")
+                        .IsUnique();
 
                     b.ToTable("OrdensServico");
                 });

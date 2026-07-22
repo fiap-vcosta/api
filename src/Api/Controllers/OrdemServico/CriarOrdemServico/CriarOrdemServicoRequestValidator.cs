@@ -12,7 +12,33 @@ public class CriarOrdemServicoRequestValidator : IValidator<CriarOrdemServicoReq
         {
             result.Errors.Add("IdVeiculo deve ser um veículo válido.");
         }
-        
+
+        foreach (var servico in request.Servicos)
+        {
+            if (servico.IdServico <= 0)
+            {
+                result.Errors.Add("Servicos.IdServico deve ser um id válido.");
+            }
+
+            if (servico.ValorCobrado <= 0)
+            {
+                result.Errors.Add("Servicos.ValorCobrado deve ser maior que 0.");
+            }
+
+            foreach (var itemNecessario in servico.ItensNecessarios)
+            {
+                if (itemNecessario.IdItemEstoque <= 0)
+                {
+                    result.Errors.Add("Servicos.ItensNecessarios.IdItemEstoque deve ser um id válido.");
+                }
+
+                if (itemNecessario.Quantidade <= 0)
+                {
+                    result.Errors.Add("Servicos.ItensNecessarios.Quantidade deve ser maior que 0.");
+                }
+            }
+        }
+
         return result;
     }
 }

@@ -1,0 +1,69 @@
+using Application.Abstractions.Gateways;
+using Domain.OrdemServico.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Database.Gateways;
+
+public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
+{
+    private static readonly StatusOrdemServico[] StatusExcluidosDaListagem =
+    [
+        StatusOrdemServico.Finalizada,
+        StatusOrdemServico.Entregue,
+        StatusOrdemServico.Descartada
+    ];
+
+    public async Task<IEnumerable<OrdemServicoAggregateRoot>> GetAguardandoPecaPorItemEstoqueAsync(int idItemEstoque)
+    {
+        return await context.OrdensServico
+            .Include(os => os.Servicos)
+            .ThenInclude(s => s.ItensNecessarios)
+            .Where(os => os.Status == StatusOrdemServico.AguardandoPeca &&
+                         os.Servicos.Any(s => s.ItensNecessarios.Any(i => i.ItemEstoque.Id == idItemEstoque && i.Status == StatusItemEstoque.EstoqueEmFalta)))
+            .OrderBy(os => os.AprovadaEm)
+            .ToListAsync();
+    }
+
+    public async Task CriarAsync(OrdemServicoAggregateRoot ordemServico)
+    {
+        context.OrdensServico.Add(ordemServico);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<OrdemServicoAggregateRoot?> GetByIdAsync(int idOrdemServico)
+    {
+        return await QueryCompleta()
+            .FirstOrDefaultAsync(os => os.Id == idOrdemServico);
+    }
+
+    public async Task<OrdemServicoAggregateRoot?> GetByTokenAsync(string tokenAprovacao)
+    {
+        return await QueryCompleta()
+            .FirstOrDefaultAsync(os => os.TokenAprovacao == tokenAprovacao);
+    }
+
+    public async Task<IReadOnlyList<OrdemServicoAggregateRoot>> ListarAtivasAsync()
+    {
+        var ordens = await QueryCompleta()
+            .Where(os => !StatusExcluidosDaListagem.Contains(os.Status))
+            .ToListAsync();
+
+        return ordens
+            .OrderByDescending(os => os.Status)
+            .ThenBy(os => os.RecebidaEm)
+            .ToList();
+    }
+
+    public async Task UpdateAsync(OrdemServicoAggregateRoot ordemServico)
+    {
+        context.OrdensServico.Update(ordemServico);
+        await context.SaveChangesAsync();
+    }
+
+    private IQueryable<OrdemServicoAggregateRoot> QueryCompleta()
+    {
+        return context.OrdensServico
+            .Include(os => os.Servicos)
+            .ThenInclude(ios => ios.ItensNecessarios);
+    }
+}

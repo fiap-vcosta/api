@@ -3,17 +3,19 @@ using Api.Controllers.OrdemServico.AdicionarItemServico;
 using Api.Controllers.OrdemServico.AprovarServicosParcialmente;
 using Api.Controllers.OrdemServico.ConfirmarExecucao;
 using Api.Controllers.OrdemServico.CriarOrdemServico;
-using Application.Core.OrdemServico.Commands.AdicionarItemOrdemServico;
-using Application.Core.OrdemServico.Commands.AprovarOrdemServico;
-using Application.Core.OrdemServico.Commands.AprovarServicosParcialmente;
-using Application.Core.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
-using Application.Core.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
-using Application.Core.OrdemServico.Commands.CriarOrdemServico;
-using Application.Core.OrdemServico.Commands.DescartarOrdemServico;
-using Application.Core.OrdemServico.Commands.FinalizarDiagnostico;
-using Application.Core.OrdemServico.Commands.RejeitarOrdemServico;
-using Application.Core.OrdemServico.Queries.GetOrdemServicoById;
-using Application.Core.OrdemServico.Queries.GetTempoMedioAllServicos;
+using Api.Presenters.OrdemServico;
+using Application.UseCases.OrdemServico.Commands.AdicionarItemOrdemServico;
+using Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
+using Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
+using Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
+using Application.UseCases.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
+using Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
+using Application.UseCases.OrdemServico.Commands.DescartarOrdemServico;
+using Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;
+using Application.UseCases.OrdemServico.Commands.RejeitarOrdemServico;
+using Application.UseCases.OrdemServico.Queries.GetOrdemServicoById;
+using Application.UseCases.OrdemServico.Queries.GetTempoMedioAllServicos;
+using Application.UseCases.OrdemServico.Queries.ListarOrdensServico;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,12 +27,20 @@ namespace Api.Controllers.OrdemServico;
 [Authorize(Roles = "Admin")]
 public class OrdemServicoController(
     IMediator mediator,
+    OrdemServicoPresenter presenter,
     IValidator<CriarOrdemServicoRequest> createOrdemServicoRequestValidator,
     IValidator<AdicionarItemServicoRequest> adicionarItemServicoRequestValidator,
     IValidator<AprovarServicosParcialmenteRequest> aprovarServicosParcialmenteRequestValidator,
     IValidator<ConfirmarExecucaoRequest> confirmarExecucaoRequestValidator
 ) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> Listar()
+    {
+        var response = await mediator.Send(new ListarOrdensServicoQuery());
+        return Ok(presenter.Present(response));
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -42,9 +52,9 @@ public class OrdemServicoController(
             return NotFound();
         }
 
-        return Ok(response);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CriarOrdemServico([FromBody] CriarOrdemServicoRequest request)
     {
@@ -53,39 +63,35 @@ public class OrdemServicoController(
         {
             return BadRequest(new { validationResult.Errors });
         }
-        
-        try
-        {
-            var command = new CriarOrdemServicoCommand { IdVeiculo = request.IdVeiculo };
 
-            var response = await mediator.Send(command);
-            return Created(nameof(GetById), response);
-        }
-        catch (Exception ex)
+        var command = new CriarOrdemServicoCommand
         {
-            return Problem(ex.Message);
-        }
+            IdVeiculo = request.IdVeiculo,
+            Servicos = request.Servicos.Select(servico => new CriarOrdemServicoCommand.Servico
+            {
+                IdServico = servico.IdServico,
+                ValorCobrado = servico.ValorCobrado,
+                ItensNecessarios = servico.ItensNecessarios.Select(item =>
+                    new CriarOrdemServicoCommand.ItemNecessario
+                    {
+                        IdItemEstoque = item.IdItemEstoque,
+                        Quantidade = item.Quantidade
+                    }).ToList()
+            }).ToList()
+        };
+
+        var response = await mediator.Send(command);
+        return Created(nameof(GetById), presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/descartar")]
     public async Task<IActionResult> DescartarOrdemServico(int id)
     {
-        try
-        {
-            var command = new DescartarOrdemServicoCommand() { IdOrdemServico = id };
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new DescartarOrdemServicoCommand() { IdOrdemServico = id };
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/adicionar-servico")]
     public async Task<IActionResult> AdicionarItemServico(int id, [FromBody] AdicionarItemServicoRequest request)
     {
@@ -94,76 +100,48 @@ public class OrdemServicoController(
         {
             return BadRequest(new { validationResult.Errors });
         }
-        
-        try
-        {
-            var command = new AdicionarItemOrdemServicoCommand
-            {
-                IdOrdemServico = id,
-                IdServico = request.IdServico,
-                ValorCobrado = request.ValorCobrado,
-                ItensNecessarios = request.ItensNecessarios.Select(item =>
-                    new AdicionarItemOrdemServicoCommand.ItemNecessario
-                    {
-                        IdItemEstoque = item.IdItemEstoque,
-                        Quantidade = item.Quantidade
-                    }).ToList()
-            };
 
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
+        var command = new AdicionarItemOrdemServicoCommand
         {
-            return Problem(ex.Message);
-        }
+            IdOrdemServico = id,
+            IdServico = request.IdServico,
+            ValorCobrado = request.ValorCobrado,
+            ItensNecessarios = request.ItensNecessarios.Select(item =>
+                new AdicionarItemOrdemServicoCommand.ItemNecessario
+                {
+                    IdItemEstoque = item.IdItemEstoque,
+                    Quantidade = item.Quantidade
+                }).ToList()
+        };
+
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/finalizar-diagnostico")]
-    public async Task<IActionResult> AdicionarItemServico(int id)
+    public async Task<IActionResult> FinalizarDiagnostico(int id)
     {
-        try
-        {
-            var command = new FinalizarDiagnosticoCommand() { IdOrdemServico = id };
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new FinalizarDiagnosticoCommand() { IdOrdemServico = id };
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/rejeitar")]
     public async Task<IActionResult> RejeitarOrdemServico(int id)
     {
-        try
-        {
-            var command = new RejeitarOrdemServicoCommand() { IdOrdemServico = id };
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new RejeitarOrdemServicoCommand() { IdOrdemServico = id };
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/aprovar")]
-    public async Task<IActionResult> AprovarOdemServico(int id)
+    public async Task<IActionResult> AprovarOrdemServico(int id)
     {
-        try
-        {
-            var command = new AprovarOrdemServicoCommand() { IdOrdemServico = id };
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new AprovarOrdemServicoCommand() { IdOrdemServico = id };
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/aprovar-parcialmente")]
     public async Task<IActionResult> AprovarServicosParcialmente(int id, [FromBody] AprovarServicosParcialmenteRequest request)
     {
@@ -172,24 +150,17 @@ public class OrdemServicoController(
         {
             return BadRequest(new { validationResult.Errors });
         }
-        
-        try
+
+        var command = new AprovarServicosParcialmenteCommand()
         {
-            var command = new AprovarServicosParcialmenteCommand()
-            {
-                IdOrdemServico = id,
-                IdServicosAprovados = request.IdsServicosAprovados
-            };
-            
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+            IdOrdemServico = id,
+            IdServicosAprovados = request.IdsServicosAprovados
+        };
+
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/confirmar-execucao")]
     public async Task<IActionResult> ConfirmarExecucao(int id, [FromBody] ConfirmarExecucaoRequest request)
     {
@@ -198,51 +169,30 @@ public class OrdemServicoController(
         {
             return BadRequest(new { validationResult.Errors });
         }
-        
-        try
+
+        var command = new ConfirmarExecucaoOrdemServicoCommand()
         {
-            var command = new ConfirmarExecucaoOrdemServicoCommand()
-            {
-                IdOrdemServico = id,
-                ServicoExecutados = request.ServicosExecutados
-            };
-            
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+            IdOrdemServico = id,
+            ServicosExecutados = request.ServicosExecutados
+        };
+
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
-    
+
     [HttpPost("{id:int}/confirmar-pagamento")]
     public async Task<IActionResult> ConfirmarPagamento(int id)
     {
-        try
-        {
-            var command = new ConfirmarPagamentoOrdemServicoCommand() { IdOrdemServico = id };
-            var response = await mediator.Send(command);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var command = new ConfirmarPagamentoOrdemServicoCommand() { IdOrdemServico = id };
+        var response = await mediator.Send(command);
+        return Ok(presenter.Present(response));
     }
 
     [HttpGet("tempo-medio-execucao")]
-    public async Task<IActionResult> GetTempoMediaExecucao()
+    public async Task<IActionResult> GetTempoMedioExecucao()
     {
-        try
-        {
-            var query = new GetTempoMedioExecucaoAllServicosQuery();
-            var response = await mediator.Send(query);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        var query = new GetTempoMedioExecucaoAllServicosQuery();
+        var response = await mediator.Send(query);
+        return Ok(presenter.Present(response));
     }
 }

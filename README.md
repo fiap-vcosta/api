@@ -8,6 +8,8 @@ Aplicação desenvolvida em .NET 8 para gerenciamento de serviços, estoque, cli
 - **PostgreSQL** - Banco de dados
 - **Entity Framework Core** - ORM
 - **Docker** - Containerização
+- **Kubernetes (kind)** - Cluster local
+- **Terraform** - Provisionamento de kind + Postgres
 - **Swagger** - Documentação da API
 - **SonarQube** - Análise de código
 - **PgAdmin** - Gerenciamento do banco de dados
@@ -27,16 +29,21 @@ Aplicação desenvolvida em .NET 8 para gerenciamento de serviços, estoque, cli
 
 ### 1️⃣ Com Docker
 
+A imagem da API roda como usuário **não-root** (`app`). Connection string e JWT vêm de variáveis de ambiente **obrigatórias** (sem defaults no compose — o deploy falha se faltarem). Em Kubernetes, esses valores devem vir de Secret/ConfigMap.
+
 ```bash
-# Na raiz do projeto, execute:
-docker-compose --profile app up -d
+# Obrigatório: criar .env a partir do exemplo
+cp .env.example .env
+
+# Na raiz do projeto:
+docker compose --profile app up -d --build
 ```
 
 Isso vai iniciar:
 - **PostgreSQL** na porta `5432`
 - **SonarQube** na porta `9001`
 - **PgAdmin** na porta `5050`
-- **Aplicação** será construída e disponibilizada
+- **Aplicação** (profile `app`) na porta `8080`
 
 Aguarde alguns segundos até a aplicação iniciar completamente.
 
@@ -53,6 +60,7 @@ Aguarde alguns segundos até a aplicação iniciar completamente.
   - Usuário: `admin`
   - Senha: `admin`
 
+Variáveis obrigatórias: ver [`.env.example`](.env.example) (`POSTGRES_*`, `JWT_*`, `ASPNETCORE_ENVIRONMENT`, `PGADMIN_*`).
 ### 2️⃣ Executar Localmente
 
 #### 2.1. Preparar a infraestrutura
@@ -85,7 +93,12 @@ A aplicação estará disponível em `http://localhost:5000`
 
 #### Testes unitários simples:
 ```bash
-dotnet test
+dotnet test tests/UnitTests/UnitTests.csproj
+```
+
+#### Testes de integração (requer Docker):
+```bash
+dotnet test tests/IntegrationTests/IntegrationTests.csproj
 ```
 
 #### Testes com cobertura de código:
@@ -101,6 +114,35 @@ xdg-open test-results/coverage-report/index.html  # Linux
 start test-results/coverage-report/index.html  # Windows
 ```
 
+### CI (GitHub Actions)
+
+A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda em paralelo:
+
+- **Lint** — build + InspectCode (Rider); **errors** e **warnings** falham o job
+- **Unit tests** — testes unitários com gate de cobertura **≥ 80%** line e branch (por assembly)
+- **Integration tests** — Testcontainers (Docker)
+
+**Ver cobertura no CI:** abra o run em Actions → artifact **`coverage-report`** → baixe e abra `index.html`. O Job Summary do job *Unit tests* também mostra o resumo percentual.
+
+### Kubernetes + Terraform + CD (Fase 02)
+
+Cluster local **kind**, banco e metrics-server via Terraform; API via manifests; deploy contínuo no **self-hosted runner**.
+
+| Pasta / workflow | Conteúdo |
+|------------------|----------|
+| [`infra/`](infra/) | Terraform (kind + Postgres + metrics-server via Helm) — [doc](docs/05_infraestrutura-kind-terraform.md) |
+| [`k8s/`](k8s/) | Deployment, Service, ConfigMap, Secret, HPA da API — [doc](docs/06_kubernetes-api.md) |
+| [`.github/workflows/cd.yml`](.github/workflows/cd.yml) | Build imagem → `kind load` → `kubectl apply` |
+| [`scripts/up.sh`](scripts/up.sh) / [`restart.sh`](scripts/restart.sh) / [`down.sh`](scripts/down.sh) | Sobe / atualiza API / derruba kind localmente |
+| [`scripts/stress-hpa.sh`](scripts/stress-hpa.sh) | Carga HTTP para validar o HPA |
+
+Fluxo resumido:
+
+1. Instalar ferramentas e (para CD) o self-hosted runner — ver [docs/05](docs/05_infraestrutura-kind-terraform.md)
+2. `cd infra && cp terraform.tfvars.example terraform.tfvars && terraform apply`
+3. Deploy da API — ver [docs/06](docs/06_kubernetes-api.md) — ou dispare o workflow **CD** no Actions
+4. API: http://localhost:8080 — Swagger: `/swagger/index.html`
+
 ## Estrutura do Projeto
 
 ```
@@ -110,14 +152,41 @@ start test-results/coverage-report/index.html  # Windows
 │   ├── Domain/           # Entidades e interfaces de domínio
 │   └── Infrastructure/   # Implementações (Database, Services)
 ├── tests/
-│   └── UnitTests/        # Testes unitários
-├── docs/                 # Documentação (histórias de domínio, requisitos)
+│   ├── UnitTests/        # Testes unitários
+│   └── IntegrationTests/ # Testes de integração (HTTP + Testcontainers)
+├── infra/                # Terraform: kind + Postgres + metrics-server (Helm)
+├── k8s/                  # Manifests da API (Deployment, Service, HPA, …)
+├── scripts/              # Utilitários (ex.: stress do HPA)
+├── .github/workflows/    # CI + CD (GitHub Actions)
+├── docs/
+│   ├── 00_… 01_… 04_…     # Requisitos / domínio
+│   ├── 05_infraestrutura-kind-terraform.md
+│   ├── 06_kubernetes-api.md
+│   ├── api/requestly/    # Collections Requestly (exploratória + e2e)
+│   └── adrs/             # ADRs
 ├── docker-compose.yml    # Orquestração de containers
-└── Dockerfile            # Construção da imagem Docker
+├── Dockerfile            # Imagem da API (não-root, K8s-ready)
+├── .dockerignore         # Contexto de build enxuto
+└── .env.example          # Variáveis obrigatórias (copiar para .env)
 ```
+
+## Collections Requestly (demo / e2e HTTP)
+
+Importar no [Requestly API Client](https://requestly.com/) — detalhes em [docs/api/README.md](docs/api/README.md):
+
+- Exploratória: [`docs/api/requestly/tech-challenge.requestly.json`](docs/api/requestly/tech-challenge.requestly.json)
+- Suites e2e (Collection Runner): [`docs/api/requestly/tech-challenge-e2e-tests.requestly.json`](docs/api/requestly/tech-challenge-e2e-tests.requestly.json)
+- Environments: [`docs/api/requestly/environments/`](docs/api/requestly/environments/) — **Docker** (`http://localhost:8080`) e **Local** (`http://localhost:5225`)
+
+Login seed: `admin` / `admin`.
 
 ## Documentação Adicional
 
-- [Requisitos do Projeto](docs/01_requisitos.md)
 - [Linguagem Onipresente](docs/00_linguagem-onipresente.md)
+- [Requisitos do Projeto](docs/01_requisitos.md)
+- [Requisitos e decisões — Fase 02](docs/04_requisitos-fase-02.md)
+- [Infraestrutura (kind + Terraform)](docs/05_infraestrutura-kind-terraform.md)
+- [Kubernetes — API](docs/06_kubernetes-api.md)
+- [Collections / exploração da API](docs/api/README.md)
 - [ADR - Escolha do Banco de Dados](docs/adrs/001-escolha-banco-de-dados.md)
+- [Guia para agentes de IA](AGENTS.md)

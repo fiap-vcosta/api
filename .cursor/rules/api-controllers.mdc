@@ -1,0 +1,14 @@
+---
+description: Controllers, requests, validators e Presenters na Api
+globs: "src/Api/**/*"
+alwaysApply: false
+---
+
+# Api
+
+- Controller fino: valida request → envia use case → `Presenter` → `IActionResult`.
+- Manter pasta por ação (`CreateCliente/`, validators) como no código atual.
+- Não colocar regra de negócio nem mapeamento rico de ViewModel no controller — use Presenter.
+- Reutilizar ViewModel/Response quando o shape e a semântica forem iguais entre endpoints; não criar DTO por verbo HTTP sem necessidade.
+- Endpoint público de aprovação/rejeição: sem `[Authorize]`; chama os **mesmos** use cases já existentes.
+- Preferir Problem Details / erros de domínio a 500 genéricos quando tratar erros.

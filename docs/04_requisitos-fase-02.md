@@ -4,7 +4,7 @@ Documento **versionado** (canon da equipe) para a Fase 02 do Tech Challenge. O c
 
 Referência Clean Architecture (casca SOAT): https://github.com/proferickmuller/soat-cleanarch-csharp
 
-Relacionados: [Linguagem onipresente](00_linguagem-onipresente.md), [Requisitos fase 1](01_requisitos.md).
+Relacionados: [Linguagem onipresente](00_linguagem-onipresente.md), [Requisitos fase 1](01_requisitos.md), [Requisitos fase 2](04_requisitos-fase-02.md).
 
 ---
 
@@ -108,8 +108,8 @@ Solution .NET:
 ## Infraestrutura (resumo)
 
 - Docker: Dockerfile + docker-compose (já existem; revisar)
-- `/k8s`: Deployments, Services, ConfigMaps, Secrets, HPA
-- `/infra`: Terraform (kind + banco) documentado
+- `/k8s`: Deployments, Services, ConfigMaps, Secrets, HPA — [doc](06_kubernetes-api.md)
+- `/infra`: Terraform (kind + banco + metrics-server via Helm) — [doc](05_infraestrutura-kind-terraform.md)
 - GitHub Actions: CI (build/test) cedo; depois imagem, DB, apply manifests no kind via self-hosted runner
 
 ---

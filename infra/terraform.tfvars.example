@@ -1,0 +1,7 @@
+cluster_name     = "techchallenge"
+kubeconfig_path  = "./kubeconfig"
+postgres_db      = "techchallenge"
+postgres_user    = "postgres"
+postgres_password = "password"
+api_host_port    = 8080
+api_node_port    = 30080

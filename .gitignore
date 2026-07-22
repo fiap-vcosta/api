@@ -59,3 +59,11 @@ build/
 
 # Work-in-progress checklist (fase 02)
 FASE02-CHECKLIST.md
+
+# Terraform / Kubernetes local
+infra/.terraform/
+infra/terraform.tfvars
+infra/*.tfstate
+infra/*.tfstate.*
+infra/kubeconfig*
+k8s/secret.yaml

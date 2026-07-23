@@ -13,7 +13,7 @@ KUBECONFIG_PATH="${ROOT}/infra/kubeconfig"
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
-    echo "Erro: '${1}' não encontrado no PATH. Instale antes de continuar (ver docs/05)."
+    echo "Erro: '${1}' não encontrado no PATH. Instale antes de continuar (ver docs/04)."
     exit 1
   fi
   echo "OK  ${1}: $(command -v "$1")"

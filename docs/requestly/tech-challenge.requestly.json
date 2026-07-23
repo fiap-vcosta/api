@@ -17,7 +17,7 @@
         }
       },
       "rank": "a0",
-      "description": "Collection exploratória da API. Defina baseUrl (ex.: http://localhost:8080) no environment. Rode 00-auth/login antes das rotas Admin. Suites e2e (Collection Runner): docs/api/requestly/tech-challenge-e2e-tests.requestly.json"
+      "description": "Collection exploratória da API. Defina baseUrl (ex.: http://localhost:8080) no environment. Rode 00-auth/login antes das rotas Admin. Suites e2e (Collection Runner): docs/requestly/tech-challenge-e2e-tests.requestly.json"
     },
     {
       "id": "2d4c3b86-71f3-4ccd-afdb-3df26421aaab",

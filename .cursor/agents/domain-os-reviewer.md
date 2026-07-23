@@ -12,7 +12,7 @@ Validar transições de status, listagem, aprovação externa e checagem de esto
 ## Regras canônicas
 
 - Status finais fora da listagem: `Finalizada`, `Entregue`, `Descartada`
-- Ordenação evolutiva: ver `docs/04_requisitos-fase-02.md`
+- Ordenação evolutiva: ver `docs/01_requisitos.md`
 - Estoque insuficiente → `EstoqueEmFalta` / OS `AguardandoPeca` (já no domínio)
 - Ator externo: adapter HTTP público → mesmos use cases de aprovar/rejeitar; **proibido** gravar status arbitrário
 - Criação: veículo (+ cliente via vínculo) + serviços + peças (`[]` permitido)
@@ -20,7 +20,7 @@ Validar transições de status, listagem, aprovação externa e checagem de esto
 ## Como trabalhar
 
 1. Ler o agregado e handlers/policies tocados
-2. Comparar com `docs/00_linguagem-onipresente.md` e `docs/04_requisitos-fase-02.md`
+2. Comparar com `docs/00_linguagem-onipresente.md` e `docs/01_requisitos.md`
 3. Reportar transições inválidas, vazamento de regra na Api, ou listagem inconsistente
 
 Responda em português, com lista objetiva de achados. Não refatore a menos que peçam.

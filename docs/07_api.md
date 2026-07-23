@@ -1,10 +1,8 @@
 # API — collections e exploração
 
 Artefatos para exercitar a API fora da suite .NET (Swagger + Requestly).  
-Camada **e2e HTTP** da estratégia de testes: ver também [`docs/tests/README.md`](../tests/README.md).  
-Entrada da avaliação: [`README.md`](../../README.md) (seção Collection das APIs).
-
-Índice geral: [`docs/README.md`](../README.md).
+Camada **e2e HTTP**: ver também [`06_testes.md`](06_testes.md).  
+Índice: [`docs/README.md`](README.md) · README: [`README.md`](../README.md).
 
 ## Requestly
 

@@ -7,7 +7,7 @@ alwaysApply: false
 # Application / UseCases
 
 - Um caso de uso por pasta (Command ou Query + Handler + Response quando houver).
-- Alvo Fase 02: pasta explícita `UseCases/` (CQRS/MediatR pode permanecer).
+- Pasta explícita `UseCases/` (CQRS/MediatR pode permanecer).
 - Handlers orquestram; não vazam HTTP nem EF.
 - Persistir/consultar via interfaces de Gateway (renomear de Repository quando refatorar).
 - Responses separados dos Commands; evitar retornar aggregate root cru na API (Presenter na Api).

@@ -21,9 +21,8 @@ tests
 **/TestResults
 **/coverage*
 
-# Markdown and local checklist
+# Markdown
 *.md
-FASE02-CHECKLIST.md
 
 # Secrets / local env (keep .env.example in context if present)
 .env

@@ -14,7 +14,7 @@ Novo fluxo de aplicação (criar/atualizar/consultar/transição de OS, etc.).
 
 ## Passos
 
-1. Confirmar em `docs/04_requisitos-fase-02.md` que a feature é permitida **agora** (Clean Arch antes de APIs novas; não inventar requisito).
+1. Confirmar em `docs/01_requisitos.md` que a feature é permitida; não inventar requisito.
 2. Espelhar um use case vizinho no mesmo bounded context (ex.: `Application/Administrativo/Cliente/Commands/CreateCliente/`).
 3. Criar pasta dedicada com:
    - `*Command.cs` ou `*Query.cs` (`IRequest<TResponse>`)

@@ -18,7 +18,7 @@
         }
       },
       "rank": "a0",
-      "description": "Suites e2e dos fluxos de Ordem de Serviço (espelham IntegrationTests). Pré-requisito: API em {{baseUrl}} (default http://localhost:8080 via script de login). Rodar: pasta do fluxo → ⋯ → Run. Cada pasta começa com login. Collection exploratória: docs/api/requestly/tech-challenge.requestly.json"
+      "description": "Suites e2e dos fluxos de Ordem de Serviço (espelham IntegrationTests). Pré-requisito: API em {{baseUrl}} (default http://localhost:8080 via script de login). Rodar: pasta do fluxo → ⋯ → Run. Cada pasta começa com login. Collection exploratória: docs/requestly/tech-challenge.requestly.json"
     },
     {
       "id": "d2e99374-c469-4833-87cd-ac9ebef2875c",

@@ -2,7 +2,7 @@
 name: review-clean-arch
 description: >-
   Revisa alterações quanto a Clean Architecture purista (camadas, Presenter,
-  Gateway, Domain sem ORM). Use após refactors ou PRs de arquitetura da Fase 02.
+  Gateway, Domain sem ORM). Use após refactors ou PRs de arquitetura.
 ---
 
 # Review Clean Arch
@@ -16,7 +16,7 @@ description: >-
 - [ ] Fluent API / migrations só em Infrastructure
 - [ ] Use case único ponto que muta agregado (adapters não gravam status direto)
 - [ ] Dependências apontam para dentro
-- [ ] Alinhado a `docs/04_requisitos-fase-02.md` e casca https://github.com/proferickmuller/soat-cleanarch-csharp
+- [ ] Alinhado a `docs/01_requisitos.md` e casca https://github.com/proferickmuller/soat-cleanarch-csharp
 
 ## Saída
 

@@ -1,0 +1,14 @@
+---
+description: Restrições e regras canônicas do projeto
+alwaysApply: true
+---
+
+# Restrições do projeto
+
+Canon: [docs/01_requisitos.md](docs/01_requisitos.md).
+
+- Não TDD de feature futura; não inventar requisitos fora de `docs/01`.
+- Aprovação externa: endpoint público (sem JWT) localiza OS por **token opaco** → **mesmos** use cases de aprovar/rejeitar; sem status arbitrário na borda.
+- Listagem OS: excluir Finalizada, Entregue, Descartada; ordenação evolutiva em `docs/01`.
+- Fora de escopo: Guid, cloud, SMTP/parser de e-mail, ItemEstoque saldo 0 como contorno.
+- Clean Architecture: Presenters, Gateways, UseCases; Domain limpo de ORM.

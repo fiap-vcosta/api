@@ -10,4 +10,4 @@ alwaysApply: true
 - Application: orquestra use cases; fala com mundos externos só via interfaces (Gateway/Repository).
 - Api: Controllers recebendo DTOs; **Presenter** monta ViewModel/Response (`Ok(presenter.Present(result))`). Sem regra de negócio no controller.
 - Alvo de nomenclatura: UseCases, Presenters, Gateways (ver casca SOAT).
-- Referência: https://github.com/proferickmuller/soat-cleanarch-csharp e `docs/04_requisitos-fase-02.md`.
+- Referência: https://github.com/proferickmuller/soat-cleanarch-csharp e `docs/01_requisitos.md`.

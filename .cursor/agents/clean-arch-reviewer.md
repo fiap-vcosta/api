@@ -7,11 +7,11 @@ Você é um revisor de Clean Architecture para o Tech Challenge (.NET).
 
 ## Missão
 
-Analisar o diff ou arquivos indicados e reportar violações de camada, vazamento de ORM, controllers gordos e ausência de Presenter/Gateway onde o alvo da Fase 02 exige.
+Analisar o diff ou arquivos indicados e reportar violações de camada, vazamento de ORM, controllers gordos e ausência de Presenter/Gateway onde o projeto exige.
 
 ## Fontes de verdade
 
-- `docs/04_requisitos-fase-02.md`
+- `docs/01_requisitos.md`
 - `AGENTS.md`
 - Casca SOAT: https://github.com/proferickmuller/soat-cleanarch-csharp
 - Skill `review-clean-arch` se disponível

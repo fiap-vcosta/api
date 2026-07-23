@@ -4,17 +4,16 @@ Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoqu
 
 ## Antes de mudar código
 
-1. Ler [docs/04_requisitos-fase-02.md](docs/04_requisitos-fase-02.md) (canon da Fase 02)
-2. Ler [docs/01_requisitos.md](docs/01_requisitos.md) e [docs/00_linguagem-onipresente.md](docs/00_linguagem-onipresente.md) quando o domínio for tocado
-3. Seguir a ordem de trabalho em `docs/04` (testes existentes → CI → Clean Arch → APIs novas)
-4. Espelhar padrões das pastas vizinhas; não inventar estrutura paralela
-5. Não escrever testes de feature ainda não implementada; não inventar requisitos fora de `docs/04`
+1. Ler [docs/01_requisitos.md](docs/01_requisitos.md) (canon de requisitos)
+2. Ler [docs/00_linguagem-onipresente.md](docs/00_linguagem-onipresente.md) quando o domínio for tocado
+3. Espelhar padrões das pastas vizinhas; não inventar estrutura paralela
+4. Não escrever testes de feature ainda não implementada; não inventar requisitos fora de `docs/01`
 
 ## Layout da solution
 
 | Projeto | Responsabilidade |
 |---------|------------------|
-| `src/Domain` | Entities, VOs, eventos de domínio e exceções;
+| `src/Domain` | Entities, VOs, eventos de domínio e exceções |
 | `src/Application` | `UseCases/` (Commands/Queries/Handlers/Responses) + ports em `Abstractions/Gateways` e `Abstractions/Services` |
 | `src/Infrastructure` | EF Core, implementações de Gateway, JWT/SMTP stubs |
 | `src/Api` | Controllers, Requests/Validators, **Presenters**, ViewModels e filtro de Problem Details |
@@ -34,7 +33,7 @@ Referência SOAT: https://github.com/proferickmuller/soat-cleanarch-csharp
 - Sempre **AAA** (`Arrange` / `Act` / `Assert`) — detalhes em [`.cursor/rules/tests.mdc`](.cursor/rules/tests.mdc).
 - Testes unitários novos seguem o mesmo caminho relativo do arquivo de produção em `src/` e cobrem um tipo por arquivo.
 - Meta de cobertura unitária: **≥ 80% line e branch** por assembly (`Api`, `Application`, `Infrastructure`, `Domain`).
-- Só cobrir comportamento já implementado (não TDD de feature futura da Fase 02).
+- Só cobrir comportamento já implementado (não TDD de feature futura).
 
 ## Comandos
 
@@ -50,12 +49,11 @@ dotnet restore
 
 Swagger local (Docker): `http://localhost:8080/swagger/index.html`
 
-Collections Requestly: [`docs/api/requestly/`](docs/api/requestly/) (ver [`docs/api/README.md`](docs/api/README.md))
+Collections Requestly: [`docs/requestly/`](docs/requestly/) (ver [`docs/07_api.md`](docs/07_api.md))
 
-## Fase 02 — resumo operacional
+## Regras canônicas (resumo)
 
-- CI cedo no GitHub Actions (build + testes) antes de volume grande de refatoração
-- Clean Architecture purista **antes** de criar APIs novas
-- Endpoint público de aprovação/rejeição chama os **mesmos** use cases (sem JWT)
-- Listagem de OS: excluir Finalizada, Entregue, Descartada; ordem evolutiva documentada em `docs/04`
-- Checklist pessoal local: `FASE02-CHECKLIST.md` (gitignored) — canon público é `docs/04`
+- Clean Architecture: Presenters, Gateways, UseCases; Domain sem ORM
+- Endpoint público de aprovação/rejeição chama os **mesmos** use cases (sem JWT; token opaco)
+- Listagem de OS: excluir Finalizada, Entregue, Descartada; ordem evolutiva em `docs/01`
+- Detalhes: [docs/01_requisitos.md](docs/01_requisitos.md)

@@ -1,7 +1,7 @@
 # Infraestrutura local (kind + Terraform)
 
-Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [06_kubernetes-api.md](06_kubernetes-api.md).  
-Índice: [docs/README.md](README.md) · vitrine: [README.md](../README.md).
+Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [05_kubernetes-api.md](05_kubernetes-api.md).  
+Índice: [docs/README.md](README.md) · [README.md](../README.md).
 
 ## Pré-requisitos
 
@@ -18,7 +18,7 @@ Opcional para stress do HPA: [`scripts/stress-hpa.sh`](../scripts/stress-hpa.sh)
 ./scripts/up.sh
 ```
 
-Equivalente manual: pare o que usa a porta **8080**, depois `terraform apply` em `/infra` e o deploy em [06](06_kubernetes-api.md).
+Equivalente manual: pare o que usa a porta **8080**, depois `terraform apply` em `/infra` e o deploy em [05](05_kubernetes-api.md).
 
 ## Derrubar
 

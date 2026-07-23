@@ -12,7 +12,7 @@
 
 ### 1.1 Status da Ordem de Serviço (OS)
 *   **Recebida:** A OS foi criada com cliente e veículo, aguardando início do diagnóstico.
-*   **Em Diagnóstico:** O veículo está sendo avaliado. Neste momento, serviços e itens necessários podem ser adicionados. É também para este status que a OS retorna caso haja rejeição de itens sugeridos.
+*   **Em Diagnóstico:** O veículo está sendo avaliado. Serviços e itens necessários podem ser adicionados. É também para este status que a OS retorna caso haja rejeição de itens sugeridos.
 *   **Aguardando Aprovação:** O diagnóstico foi finalizado contendo itens sugeridos e aguarda a decisão do cliente.
 *   **Checando Estoque:** A OS possui serviços aprovados e o sistema está validando se as quantidades exigidas pelos Itens Necessários estão disponíveis no inventário físico.
 *   **Aguardando Peça:** A checagem revelou que a quantidade solicitada em algum Item Necessário é maior do que o saldo disponível, bloqueando a execução da OS até o reabastecimento.

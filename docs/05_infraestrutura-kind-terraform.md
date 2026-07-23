@@ -1,6 +1,7 @@
 # Infraestrutura local (kind + Terraform)
 
-Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [06_kubernetes-api.md](06_kubernetes-api.md).
+Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [06_kubernetes-api.md](06_kubernetes-api.md).  
+Índice: [docs/README.md](README.md) · vitrine: [README.md](../README.md).
 
 ## Pré-requisitos
 

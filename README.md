@@ -1,192 +1,305 @@
-# TechChallenge - Aplicação de Gestão de Serviços
+# Tech Challenge — Gestão de Oficina Mecânica (Fase 02)
 
-Aplicação desenvolvida em .NET 8 para gerenciamento de serviços, estoque, clientes e veículos. Utiliza Clean Architecture com camadas bem definidas: Domain, Application, Infrastructure e API.
+Aplicação .NET 8 para gestão de ordens de serviço, clientes, veículos, serviços e estoque. Esta fase evolui a solução da Fase 1 para **qualidade**, **resiliência** e **escalabilidade**, com Clean Architecture, testes automatizados, containerização, Kubernetes (kind), Terraform e CI/CD.
+
+## Problema e objetivos
+
+Após a implantação do sistema inicial, a oficina ganhou eficiência, mas o aumento de demanda e a necessidade de alta disponibilidade pedem evolução. Objetivos desta fase:
+
+- Reduzir riscos operacionais com infraestrutura escalável
+- Automatizar o provisionamento e o deploy do ambiente
+- Melhorar qualidade e organização do código (Clean Code + Clean Architecture)
+- Suportar picos de ordens de serviço com escalabilidade dinâmica (HPA)
 
 ## Tecnologias
 
-- **.NET 8** - Framework principal
-- **PostgreSQL** - Banco de dados
-- **Entity Framework Core** - ORM
-- **Docker** - Containerização
-- **Kubernetes (kind)** - Cluster local
-- **Terraform** - Provisionamento de kind + Postgres
-- **Swagger** - Documentação da API
-- **SonarQube** - Análise de código
-- **PgAdmin** - Gerenciamento do banco de dados
+- .NET 8, PostgreSQL, Entity Framework Core
+- Docker / Docker Compose
+- Kubernetes (**kind**), Terraform, Helm (metrics-server)
+- GitHub Actions (CI + CD com self-hosted runner)
+- Swagger + Requestly (collections HTTP)
+
+---
+
+## Arquitetura proposta
+
+### Componentes da aplicação (C4)
+
+#### Level 1 — System Context
+
+```mermaid
+C4Context
+title Tech Challenge — System Context
+
+Person(admin, "Atendente / Admin", "Opera cadastros e o ciclo da OS via API autenticada (JWT).")
+Person(cliente, "Cliente", "Aprova ou rejeita orçamento via endpoint público (token opaco).")
+
+System(tc, "Gestão de Oficina", "Ordens de serviço, cadastros, estoque e orçamento.")
+
+System_Ext(pg, "PostgreSQL", "Persistência relacional.")
+System_Ext(gha, "GitHub Actions", "CI (build/testes) e CD (deploy no kind).")
+
+Rel(admin, tc, "HTTPS / JWT")
+Rel(cliente, tc, "HTTPS / token de aprovação")
+Rel(tc, pg, "EF Core / SQL")
+Rel(gha, tc, "Build, testes e deploy")
+```
+
+#### Level 2 — Containers
+
+```mermaid
+C4Container
+title Tech Challenge — Containers
+
+Person(admin, "Atendente / Admin", "")
+Person(cliente, "Cliente", "")
+
+System_Boundary(tc, "Gestão de Oficina") {
+    Container(api, "API", ".NET 8 / ASP.NET Core", "REST, JWT, Presenters, health.")
+    ContainerDb(db, "PostgreSQL", "Banco relacional", "Clientes, veículos, OS, estoque.")
+    Container(kind, "Cluster kind", "Kubernetes local", "Pods da API, HPA, Service, Secrets.")
+}
+
+System_Ext(gha, "GitHub Actions", "CI em ubuntu-latest; CD em self-hosted runner.")
+
+Rel(admin, api, "HTTPS + JWT")
+Rel(cliente, api, "HTTPS + token")
+Rel(api, db, "EF Core")
+Rel(kind, api, "Orquestra / escala (HPA)")
+Rel(gha, kind, "terraform apply, kind load, kubectl apply")
+```
+
+#### Level 3 — Components (container API)
+
+```mermaid
+C4Component
+title API — Components (Clean Architecture)
+
+Container_Boundary(api, "API (.NET)") {
+    Component(controllers, "Controllers + Validators", "ASP.NET", "Borda HTTP; DTOs de entrada.")
+    Component(presenters, "Presenters / ViewModels", "Api", "Monta a response HTTP.")
+    Component(usecases, "Use Cases", "Application / MediatR", "Commands, Queries e Handlers.")
+    Component(domain, "Domain", "Domain", "Aggregates, VOs, eventos; sem EF/ASP.NET.")
+    Component(gateways, "Gateways (ports)", "Application", "Contratos de persistência e serviços.")
+    Component(infra, "Infrastructure", "EF Core / JWT", "Implementa Gateways e autenticação.")
+}
+
+ContainerDb(db, "PostgreSQL", "Banco", "")
+
+Rel(controllers, usecases, "IMediator.Send")
+Rel(usecases, domain, "Regras / aggregates")
+Rel(usecases, gateways, "Ports")
+Rel(infra, gateways, "Implementa")
+Rel(infra, db, "SQL")
+Rel(controllers, presenters, "Present(result)")
+```
+
+Fluxo típico de request: `Controller` → `Use Case` → `Gateway` / `Domain` → `Presenter` → HTTP.
+
+### Infraestrutura provisionada
+
+```mermaid
+flowchart TB
+  tf[Terraform /infra] --> kind[kind cluster techchallenge]
+  tf --> pg[Postgres no cluster]
+  tf --> ms[metrics-server via Helm]
+  kind --> ns[namespace techchallenge]
+  ns --> deploy[Deployment api]
+  ns --> svc[Service NodePort :8080]
+  ns --> cm[ConfigMap]
+  ns --> secret[Secret JWT / connection]
+  ns --> hpa[HPA CPU e memória]
+  deploy --> pg
+```
+
+Detalhes: [`docs/05_infraestrutura-kind-terraform.md`](docs/05_infraestrutura-kind-terraform.md) e [`docs/06_kubernetes-api.md`](docs/06_kubernetes-api.md).
+
+### Fluxo de deploy
+
+```mermaid
+sequenceDiagram
+  participant Dev
+  participant CI as GitHub Actions CI
+  participant CD as Self-hosted runner CD
+  participant Kind as kind
+  Dev->>CI: push qualquer branch
+  CI->>CI: Lint + Unit ≥80% + Integration
+  Dev->>CD: push main ou workflow_dispatch
+  CD->>Kind: terraform apply kind Postgres metrics-server
+  CD->>Kind: docker build e kind load
+  CD->>Kind: kubectl apply manifests k8s
+  Note over Kind: API aplica migrations no startup
+  Kind-->>Dev: http://localhost:8080
+```
+
+Workflows: [`.github/workflows/ci.yml`](.github/workflows/ci.yml), [`.github/workflows/cd.yml`](.github/workflows/cd.yml).
+
+---
+
+## APIs da Fase 02 (resumo)
+
+| Capacidade | Endpoint | Auth |
+|------------|----------|------|
+| Abertura de OS (veículo + serviços + peças) | `POST /api/OrdemServico` | JWT Admin |
+| Consulta de status | `GET /api/OrdemServico/{id}` | JWT Admin |
+| Listagem (ordem evolutiva; exclui Finalizada, Entregue, Descartada) | `GET /api/OrdemServico` | JWT Admin |
+| Aprovação / rejeição de orçamento (ator externo) | `POST /api/public/ordens-servico/aprovar?token=` · `.../rejeitar?token=` | Público (token opaco) |
+
+O endpoint público chama os **mesmos** use cases de aprovar/rejeitar autenticados (sem SMTP). Cliente da OS vem do vínculo do veículo. Listas de serviços/peças na criação podem ser `[]`.
+
+Decisões e deltas vs Fase 1: [`docs/04_requisitos-fase-02.md`](docs/04_requisitos-fase-02.md).
+
+---
 
 ## Pré-requisitos
 
-### Opção 1: Com Docker (Recomendado)
-- Docker
-- Docker Compose
+**Docker Compose (app):** Docker + Docker Compose.
 
-### Opção 2: Localmente
-- .NET SDK 8.0+
-- PostgreSQL 16+
-- Git
+**Local (`dotnet`):** .NET SDK 8+, PostgreSQL (ex.: via Compose sem profile `app`), Git.
 
-## Como Executar
+**Kubernetes local:** `docker`, `kubectl`, `kind`, `terraform`, `helm` no `PATH`.
 
-### 1️⃣ Com Docker
+---
 
-A imagem da API roda como usuário **não-root** (`app`). Connection string e JWT vêm de variáveis de ambiente **obrigatórias** (sem defaults no compose — o deploy falha se faltarem). Em Kubernetes, esses valores devem vir de Secret/ConfigMap.
+## Execução local
+
+### Docker Compose (recomendado para demo rápida)
+
+A imagem da API roda como usuário não-root (`app`). Connection string e JWT vêm de variáveis **obrigatórias** (sem defaults sensíveis no Compose).
 
 ```bash
-# Obrigatório: criar .env a partir do exemplo
 cp .env.example .env
-
-# Na raiz do projeto:
 docker compose --profile app up -d --build
 ```
 
-Isso vai iniciar:
-- **PostgreSQL** na porta `5432`
-- **SonarQube** na porta `9001`
-- **PgAdmin** na porta `5050`
-- **Aplicação** (profile `app`) na porta `8080`
+Sobe PostgreSQL (`5432`), SonarQube (`9001`), PgAdmin (`5050`) e a API (`8080`).
 
-Aguarde alguns segundos até a aplicação iniciar completamente.
+- API: http://localhost:8080  
+- Swagger: http://localhost:8080/swagger/index.html  
+- Health: http://localhost:8080/health  
 
-**Acessar a aplicação:**
-- API: http://localhost:8080
-- Swagger: http://localhost:8080/swagger/index.html
-- Health Check: http://localhost:8080/health
+Credenciais auxiliares e variáveis: [`.env.example`](.env.example). Login seed da API: `admin` / `admin`.
 
-**Acessar serviços auxiliares:**
-- PgAdmin: http://localhost:5050
-  - Email: `admin@techchallenge.com`
-  - Senha: `admin`
-- SonarQube: http://localhost:9001
-  - Usuário: `admin`
-  - Senha: `admin`
-
-Variáveis obrigatórias: ver [`.env.example`](.env.example) (`POSTGRES_*`, `JWT_*`, `ASPNETCORE_ENVIRONMENT`, `PGADMIN_*`).
-### 2️⃣ Executar Localmente
-
-#### 2.1. Preparar a infraestrutura
+### SDK .NET + Postgres
 
 ```bash
-docker-compose up --build -d
-```
-
-#### 2.2. Restaurar dependências
-
-```bash
+docker compose up -d
 dotnet restore
-```
-
-#### 2.3. Executar migrações
-
-```bash
 dotnet ef database update --project src/Infrastructure --startup-project src/Api
+dotnet run --project src/Api --launch-profile http
 ```
 
-#### 2.4. Iniciar a aplicação
+API local: http://localhost:5225 — Swagger: http://localhost:5225/swagger/index.html
+
+---
+
+## Provisionamento com Terraform e deploy no Kubernetes
+
+Atalho (infra + API no kind):
 
 ```bash
-dotnet run
+./scripts/up.sh          # terraform apply + load imagem + apply k8s
+./scripts/restart.sh     # rebuild/reload da API
+./scripts/down.sh        # derruba o cluster
 ```
 
-A aplicação estará disponível em `http://localhost:5000`
+- Terraform (`/infra`): kind + Postgres + metrics-server — guia em [`docs/05`](docs/05_infraestrutura-kind-terraform.md).
+- Manifests (`/k8s`): Deployment, Service, ConfigMap, Secret, HPA — guia em [`docs/06`](docs/06_kubernetes-api.md).
+- Stress do HPA: `./scripts/stress-hpa.sh` (com `watch kubectl get hpa,pods -n techchallenge`).
 
-### 3️⃣ Executar Testes
+CD automatizado: workflow **CD** no Actions (self-hosted na mesma máquina do kind). Setup do runner e secrets: [`docs/05`](docs/05_infraestrutura-kind-terraform.md).
 
-#### Testes unitários simples:
-```bash
-dotnet test tests/UnitTests/UnitTests.csproj
+---
+
+## Testes
+
+Documentação completa: [`docs/tests/README.md`](docs/tests/README.md).
+
+| Camada | Projeto / artefato | Comando |
+|--------|--------------------|---------|
+| Unitários | `tests/UnitTests` | `dotnet test tests/UnitTests/UnitTests.csproj` |
+| Integração | `tests/IntegrationTests` (Docker/Testcontainers) | `dotnet test tests/IntegrationTests/IntegrationTests.csproj` |
+| Cobertura | script + gate CI ≥ 80% line/branch | `./run-tests-with-coverage.sh` |
+| E2E HTTP | Requestly (`docs/api`) | Importar collections — ver abaixo |
+
+---
+
+## CI/CD
+
+**CI** ([`ci.yml`](.github/workflows/ci.yml)) — a cada `push` em qualquer branch, em paralelo:
+
+- Lint (InspectCode)
+- Unit tests com cobertura ≥ 80% line/branch por assembly + artifact `coverage-report`
+- Integration tests (Testcontainers)
+
+**CD** ([`cd.yml`](.github/workflows/cd.yml)) — `push` em `main` ou `workflow_dispatch`, self-hosted:
+
+- `terraform apply` → build imagem → `kind load` → `kubectl apply`
+- Migrations via `Database.Migrate()` no startup da API
+- Secrets alinhados a [`.env.example`](.env.example)
+
+---
+
+## Collection das APIs
+
+- **Swagger (Docker / kind):** http://localhost:8080/swagger/index.html  
+- **Swagger (local SDK):** http://localhost:5225/swagger/index.html  
+- **Requestly:** guia e arquivos em [`docs/api/README.md`](docs/api/README.md)
+  - Exploratória: [`docs/api/requestly/tech-challenge.requestly.json`](docs/api/requestly/tech-challenge.requestly.json)
+  - Suites e2e (Collection Runner): [`docs/api/requestly/tech-challenge-e2e-tests.requestly.json`](docs/api/requestly/tech-challenge-e2e-tests.requestly.json)
+
+---
+
+## Vídeo demonstrativo
+
+> **TODO:** publicar no YouTube ou Vimeo (público ou não listado) e colar a URL aqui.
+
+O vídeo (≤ 15 minutos) deve demonstrar:
+
+1. Deploy da aplicação  
+2. Execução do CI/CD  
+3. Consumo das APIs  
+4. Escalabilidade automática (HPA / carga)
+
+---
+
+## Entrega no portal do aluno
+
+PDF com:
+
+1. Link do repositório GitHub compartilhado com o usuário [`soat-architecture`](https://github.com/soat-architecture)
+2. Desenho da arquitetura (diagramas deste README)
+3. Link do vídeo (≤ 15 min)
+
+Repositório: https://github.com/victorS7P/tech-challenge-1
+
+---
+
+## Estrutura do repositório
+
+```
+├── src/Api|Application|Domain|Infrastructure
+├── tests/UnitTests|IntegrationTests
+├── infra/                 # Terraform (kind + Postgres + metrics-server)
+├── k8s/                   # Manifests da API
+├── scripts/               # up / restart / down / stress-hpa
+├── .github/workflows/     # ci.yml + cd.yml
+├── docs/                  # Índice em docs/README.md
+├── docker-compose.yml
+├── Dockerfile
+└── .env.example
 ```
 
-#### Testes de integração (requer Docker):
-```bash
-dotnet test tests/IntegrationTests/IntegrationTests.csproj
-```
+## Documentação
 
-#### Testes com cobertura de código:
-```bash
-./run-tests-with-coverage.sh
-```
+Índice completo: [`docs/README.md`](docs/README.md)
 
-Após executar, visualizar o relatório em HTML:
-```bash
-# Abrir em seu navegador
-open test-results/coverage-report/index.html  # macOS
-xdg-open test-results/coverage-report/index.html  # Linux
-start test-results/coverage-report/index.html  # Windows
-```
-
-### CI (GitHub Actions)
-
-A cada `push` em qualquer branch, o workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda em paralelo:
-
-- **Lint** — build + InspectCode (Rider); **errors** e **warnings** falham o job
-- **Unit tests** — testes unitários com gate de cobertura **≥ 80%** line e branch (por assembly)
-- **Integration tests** — Testcontainers (Docker)
-
-**Ver cobertura no CI:** abra o run em Actions → artifact **`coverage-report`** → baixe e abra `index.html`. O Job Summary do job *Unit tests* também mostra o resumo percentual.
-
-### Kubernetes + Terraform + CD (Fase 02)
-
-Cluster local **kind**, banco e metrics-server via Terraform; API via manifests; deploy contínuo no **self-hosted runner**.
-
-| Pasta / workflow | Conteúdo |
-|------------------|----------|
-| [`infra/`](infra/) | Terraform (kind + Postgres + metrics-server via Helm) — [doc](docs/05_infraestrutura-kind-terraform.md) |
-| [`k8s/`](k8s/) | Deployment, Service, ConfigMap, Secret, HPA da API — [doc](docs/06_kubernetes-api.md) |
-| [`.github/workflows/cd.yml`](.github/workflows/cd.yml) | Build imagem → `kind load` → `kubectl apply` |
-| [`scripts/up.sh`](scripts/up.sh) / [`restart.sh`](scripts/restart.sh) / [`down.sh`](scripts/down.sh) | Sobe / atualiza API / derruba kind localmente |
-| [`scripts/stress-hpa.sh`](scripts/stress-hpa.sh) | Carga HTTP para validar o HPA |
-
-Fluxo resumido:
-
-1. Instalar ferramentas e (para CD) o self-hosted runner — ver [docs/05](docs/05_infraestrutura-kind-terraform.md)
-2. `cd infra && cp terraform.tfvars.example terraform.tfvars && terraform apply`
-3. Deploy da API — ver [docs/06](docs/06_kubernetes-api.md) — ou dispare o workflow **CD** no Actions
-4. API: http://localhost:8080 — Swagger: `/swagger/index.html`
-
-## Estrutura do Projeto
-
-```
-├── src/
-│   ├── Api/              # API REST (Controllers, Contracts, Validators)
-│   ├── Application/      # Lógica de aplicação (Use Cases, DTOs)
-│   ├── Domain/           # Entidades e interfaces de domínio
-│   └── Infrastructure/   # Implementações (Database, Services)
-├── tests/
-│   ├── UnitTests/        # Testes unitários
-│   └── IntegrationTests/ # Testes de integração (HTTP + Testcontainers)
-├── infra/                # Terraform: kind + Postgres + metrics-server (Helm)
-├── k8s/                  # Manifests da API (Deployment, Service, HPA, …)
-├── scripts/              # Utilitários (ex.: stress do HPA)
-├── .github/workflows/    # CI + CD (GitHub Actions)
-├── docs/
-│   ├── 00_… 01_… 04_…     # Requisitos / domínio
-│   ├── 05_infraestrutura-kind-terraform.md
-│   ├── 06_kubernetes-api.md
-│   ├── api/requestly/    # Collections Requestly (exploratória + e2e)
-│   └── adrs/             # ADRs
-├── docker-compose.yml    # Orquestração de containers
-├── Dockerfile            # Imagem da API (não-root, K8s-ready)
-├── .dockerignore         # Contexto de build enxuto
-└── .env.example          # Variáveis obrigatórias (copiar para .env)
-```
-
-## Collections Requestly (demo / e2e HTTP)
-
-Importar no [Requestly API Client](https://requestly.com/) — detalhes em [docs/api/README.md](docs/api/README.md):
-
-- Exploratória: [`docs/api/requestly/tech-challenge.requestly.json`](docs/api/requestly/tech-challenge.requestly.json)
-- Suites e2e (Collection Runner): [`docs/api/requestly/tech-challenge-e2e-tests.requestly.json`](docs/api/requestly/tech-challenge-e2e-tests.requestly.json)
-- Environments: [`docs/api/requestly/environments/`](docs/api/requestly/environments/) — **Docker** (`http://localhost:8080`) e **Local** (`http://localhost:5225`)
-
-Login seed: `admin` / `admin`.
-
-## Documentação Adicional
-
-- [Linguagem Onipresente](docs/00_linguagem-onipresente.md)
-- [Requisitos do Projeto](docs/01_requisitos.md)
-- [Requisitos e decisões — Fase 02](docs/04_requisitos-fase-02.md)
-- [Infraestrutura (kind + Terraform)](docs/05_infraestrutura-kind-terraform.md)
+- [Linguagem onipresente](docs/00_linguagem-onipresente.md)
+- [Requisitos Fase 1](docs/01_requisitos.md)
+- [Requisitos e decisões Fase 2](docs/04_requisitos-fase-02.md)
+- [Infraestrutura kind + Terraform](docs/05_infraestrutura-kind-terraform.md)
 - [Kubernetes — API](docs/06_kubernetes-api.md)
-- [Collections / exploração da API](docs/api/README.md)
-- [ADR - Escolha do Banco de Dados](docs/adrs/001-escolha-banco-de-dados.md)
+- [Testes](docs/tests/README.md)
+- [API / collections](docs/api/README.md)
+- [ADR — banco de dados](docs/adrs/001-escolha-banco-de-dados.md)
 - [Guia para agentes de IA](AGENTS.md)

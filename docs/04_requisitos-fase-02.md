@@ -1,124 +1,71 @@
-# Requisitos e decisões — Fase 02
+# Documento de Requisitos — Fase 02
 
-Documento **versionado** (canon da equipe) para a Fase 02 do Tech Challenge. O checklist pessoal local (`FASE02-CHECKLIST.md`, gitignored) pode espelhar tarefas; decisões de produto/arquitetura vivem **aqui**.
+> **Fase 2.** Evolui a aplicação da Fase 1 para qualidade, resiliência e escalabilidade.  
+> Requisitos históricos da **Fase 1**: [`01_requisitos.md`](01_requisitos.md) (permanecem válidos salvo onde um RF/RNF abaixo **substitui** explicitamente).  
+> Índice: [`docs/README.md`](README.md) · Vitrine: [`README.md`](../README.md).  
+> Referência Clean Architecture: https://github.com/proferickmuller/soat-cleanarch-csharp
 
-Referência Clean Architecture (casca SOAT): https://github.com/proferickmuller/soat-cleanarch-csharp
+## Objetivos
 
-Relacionados: [Linguagem onipresente](00_linguagem-onipresente.md), [Requisitos fase 1](01_requisitos.md), [Requisitos fase 2](04_requisitos-fase-02.md).
-
----
-
-## Objetivos da fase
-
-Evoluir a aplicação da Fase 1 para qualidade, resiliência e escalabilidade:
-
-- Reduzir riscos operacionais com infraestrutura escalável
-- Automatizar provisionamento e deploy
-- Melhorar organização do código (Clean Code + Clean Architecture purista)
-- Preparar para picos de demanda (HPA / escalabilidade dinâmica)
+* Reduzir riscos operacionais com infraestrutura escalável.
+* Automatizar o provisionamento e o deploy do ambiente.
+* Melhorar a qualidade e a organização do código (Clean Code + Clean Architecture).
+* Preparar a aplicação para picos de demanda com escalabilidade dinâmica (HPA).
 
 ---
 
-## Decisões fechadas
+## 1. Requisitos Não-Funcionais (Técnicos e Globais)
 
-| Tema | Decisão |
-|------|---------|
-| Cluster | Local (**kind**); cloud = fase 03 |
-| CI/CD | GitHub Actions + **self-hosted runner** → kind; **CI (build/test) cedo**; CD completo depois |
-| Status externo / “via email” | Endpoint **público** (sem JWT) localizado por **token opaco**; chama os **mesmos use cases** de aprovar/rejeitar; sem SMTP; token não exposto nas responses |
-| Status OS | Manter status do domínio; listagem exclui **Finalizada, Entregue e Descartada**; ordenação evolutiva + mais antigas primeiro |
-| Criação OS | Veículo amarra o cliente; contrato: **veículo + serviços + peças** (listas podem ser `[]`) |
-| Adição de serviços/peças | Permitido **somente** em `Recebida` e `EmDiagnostico`; qualquer outro status é rejeitado pelo domínio |
-| Aprovação externa | Endpoint público localiza a OS por **token opaco** (não exposto nas responses); chama os mesmos use cases de aprovar/rejeitar |
-| Estoque insuficiente | Domínio já envia OS para `AguardandoPeca` / item `EstoqueEmFalta` — não criar ItemEstoque “sem saldo” como contorno |
-| Guid | Fora do escopo desta fase |
-| Clean Arch | Visão **purista antes das APIs novas**: Presenters, Gateways, UseCases explícitos, Domain limpo de ORM |
-
----
-
-## Ordem de trabalho
-
-Não pular etapas:
-
-1. Documentação (este doc, alinhamentos)
-2. Rede de segurança: testes só do comportamento **já implementado** (sem TDD de feature futura)
-3. **CI cedo** (build + testes no GitHub Actions)
-4. **Refatoração Clean Architecture purista**
-5. APIs novas da fase 02
-6. Testes das APIs novas
-7. Docker revisado → Kubernetes → Terraform → CD (deploy)
-8. Entregáveis (README, collection, vídeo, PDF, share `soat-architecture`)
-9. Melhorias opcionais por último
+* **RNF11 (Arquitetura):** Refatorar o código aplicando Clean Code e Clean Architecture, com separação de camadas e dependências apontando para dentro:
+  * **RNF11.1:** Domain sem dependência de EF/ASP.NET (sem atributos de ORM no domínio).
+  * **RNF11.2:** Application com Use Cases explícitos e ports (**Gateways**).
+  * **RNF11.3:** Api com Controllers finos e **Presenters** montando ViewModels/Responses.
+  * **RNF11.4:** Infrastructure implementando Gateways (EF Core, JWT, etc.).
+* **RNF12 (Qualidade):** Manter testes automatizados (unitários e de integração) dos fluxos críticos, incluindo as APIs novas, com cobertura mínima de **80%** line e branch nos assemblies críticos. Ver [`docs/tests/README.md`](tests/README.md).
+* **RNF13 (Containerização):** Garantir a aplicação containerizada com Dockerfile atualizado e `docker-compose` para desenvolvimento local (imagem não-root; variáveis sensíveis via env, sem defaults hardcoded de segredo).
+* **RNF14 (Orquestração):** Disponibilizar manifestos Kubernetes em `/k8s`, contemplando:
+  * **RNF14.1:** Deployments e Services.
+  * **RNF14.2:** ConfigMaps e Secrets para variáveis sensíveis.
+  * **RNF14.3:** Horizontal Pod Autoscaler (HPA) por consumo de CPU e memória.
+* **RNF15 (Infraestrutura como Código):** Provisionar com Terraform em `/infra`:
+  * **RNF15.1:** Cluster Kubernetes **local** (**kind**); cloud fica para fase posterior.
+  * **RNF15.2:** Banco de dados (PostgreSQL no cluster).
+  * **RNF15.3:** metrics-server (via Helm) para viabilizar o HPA.
+  * **RNF15.4:** Documentar recursos criados e como aplicar ([`05_infraestrutura-kind-terraform.md`](05_infraestrutura-kind-terraform.md)).
+* **RNF16 (CI/CD):** Pipeline no GitHub Actions que execute:
+  * **RNF16.1 (CI):** Build da aplicação e execução dos testes automatizados (a cada push).
+  * **RNF16.2 (CD):** Build da imagem Docker, deploy do banco (migrations no startup da API), aplicação dos manifestos no cluster kind via **self-hosted runner**.
+* **RNF17 (Escalabilidade):** A API deve escalar horizontalmente no cluster conforme carga (HPA), demonstrável sob stress ([`06_kubernetes-api.md`](06_kubernetes-api.md)).
+* **RNF18 (Documentação):** `README.md` atualizado com descrição/objetivos da fase, diagramas de arquitetura (C4 e infra/deploy), instruções de execução local, Terraform e Kubernetes, link da collection de APIs e link do vídeo demonstrativo.
+* **RNF19 (Segurança operacional):** Credenciais e chaves (Postgres, JWT) via Secrets do Kubernetes / secrets do Actions — não embutidas na imagem.
+* **RNF20 (Observabilidade operacional):** Manter endpoint de health para verificação da aplicação em runtime (alinhado ao RNF09 da Fase 1).
 
 ---
 
-## Listagem de OS — ordenação e exclusões
+## 2. Requisitos Funcionais — Ordem de Serviço (evolução)
 
-**Excluir da listagem:** `Finalizada`, `Entregue`, `Descartada`.
+A máquina de estados e as regras de domínio da Fase 1 (**RF02–RF10**, **RF05–RF08**, etc. em [`01_requisitos.md`](01_requisitos.md)) permanecem, salvo os itens abaixo.
 
-**Prioridade evolutiva** (maior primeiro), depois data mais antiga (`RecebidaEm`):
-
-A ordem do enum `StatusOrdemServico` já é evolutiva (`Recebida` → `EmExecucao`); a listagem usa `OrderByDescending(Status)`.
-
-1. `EmExecucao`
-2. `LiberadaParaExecucao`
-3. `AguardandoPeca`
-4. `ChecandoEstoque`
-5. `AguardandoAprovacao`
-6. `EmDiagnostico`
-7. `Recebida`
-
----
-
-## Criação de OS e adição de serviços (Fase 02)
-
-- Contrato de abertura: `veículo` + `serviços` + `peças` (listas podem ser ausentes ou `[]`).
-- Serviços/peças informados na criação são adicionados enquanto a OS ainda está `Recebida`; o evento de criação segue levando a OS para `EmDiagnostico` (diagnóstico **não** é finalizado automaticamente).
-- `AdicionarItemServico` no domínio aceita **apenas** `Recebida` e `EmDiagnostico`. Qualquer outro status (`AguardandoAprovacao`, `ChecandoEstoque`, etc.) lança regra de negócio.
-
-## APIs obrigatórias
-
-| API | Estado atual | Gap |
-|-----|--------------|-----|
-| Abertura de OS | `POST` com `IdVeiculo` | Incluir serviços e peças (podem ser `[]`); cliente via veículo |
-| Consulta de status | `GET /api/OrdemServico/{id}` | Garantir status claro na response |
-| Aprovação de orçamento (ator externo) | Aprovar/rejeitar com JWT Admin | Adapter **público por token** → mesmos use cases (token não retornado na API) |
-| Listagem de OS | Não existe | Ordenação + exclusões acima |
-| Atualização “externa” de status | — | Coberto pelo endpoint público + demo Swagger / Requestly ([`docs/api/`](api/README.md)) |
-
-Implementar **depois** da refatoração Clean Arch.
-
----
-
-## Clean Architecture (alvo)
-
-Fluxo esperado:
-
-`Controller` (DTO entrada) → `Use Case` → `Gateway` → Domain → Presenter (ViewModel) → Controller (HTTP)
-
-Solution .NET:
-
-- **Domain** — Entities, VOs, eventos; sem EF/ASP.NET
-- **Application** — UseCases (+ Commands/Queries/Handlers se mantidos) e ports/Gateways
-- **Infrastructure** — implementação de Gateways, EF Core, serviços externos
-- **Api** — Controllers, Presenters, validators, DI/host
-
----
-
-## Infraestrutura (resumo)
-
-- Docker: Dockerfile + docker-compose (já existem; revisar)
-- `/k8s`: Deployments, Services, ConfigMaps, Secrets, HPA — [doc](06_kubernetes-api.md)
-- `/infra`: Terraform (kind + banco + metrics-server via Helm) — [doc](05_infraestrutura-kind-terraform.md)
-- GitHub Actions: CI (build/test) cedo; depois imagem, DB, apply manifests no kind via self-hosted runner
-
----
-
-## Fora de escopo
-
-- Migrar IDs para Guid
-- Cloud (EKS/AKS/GKE) — fase 03
-- SMTP / parser de e-mail
-- ItemEstoque com saldo 0 só para contornar falta de peça
-- Testes de features ainda não implementadas (antes da implementação)
-- Cursor hooks (não fazem parte da base de AI desta fase)
+* **RF17 (Abertura de OS):** *(substitui parcialmente RF01.1)* O sistema deve permitir abrir uma OS recebendo **veículo**, **serviços** e **peças** (listas de serviços/peças podem ser ausentes ou `[]`), retornando a identificação única da OS. O cliente é obtido pelo vínculo do veículo.
+  * **RF17.1:** Serviços/peças informados na criação são adicionados com a OS em `Recebida`; o fluxo de criação segue para `EmDiagnostico` sem finalizar o diagnóstico automaticamente.
+* **RF18 (Adição de serviços e peças):** *(substitui RF01.3)* O domínio só permite adicionar itens de serviço/peças quando a OS estiver em **`Recebida`** ou **`EmDiagnostico`**. Qualquer outro status deve ser rejeitado por regra de negócio.
+* **RF19 (Consulta de status):** O sistema deve expor consulta da OS por id informando a situação atual (status do domínio: Recebida, Em Diagnóstico, Aguardando Aprovação, Execução, Finalizada, Entregue, etc.).
+  * Endpoint: `GET /api/OrdemServico/{id}` (JWT Admin).
+* **RF20 (Listagem de OS):** O sistema deve listar ordens de serviço ativas com as regras:
+  * **RF20.1 (Exclusão lógica da listagem):** Não incluir OS em `Finalizada`, `Entregue` ou `Descartada`.
+  * **RF20.2 (Ordenação):** Prioridade evolutiva de status (maior prioridade primeiro), depois as mais antigas (`RecebidaEm`). Ordem de prioridade:
+    1. `EmExecucao`
+    2. `LiberadaParaExecucao`
+    3. `AguardandoPeca`
+    4. `ChecandoEstoque`
+    5. `AguardandoAprovacao`
+    6. `EmDiagnostico`
+    7. `Recebida`  
+    (Cumpre e estende a ordem mínima do enunciado: Em Execução > Aguardando Aprovação > Diagnóstico > Recebida.)
+  * Endpoint: `GET /api/OrdemServico` (JWT Admin).
+* **RF21 (Aprovação de orçamento — ator externo):** *(substitui o canal “e-mail/SMTP” do RF03 / enunciado)* O sistema deve receber aprovação ou recusa do orçamento via endpoint **público** (sem JWT), localizando a OS por **token opaco**.
+  * **RF21.1:** Os endpoints públicos devem acionar os **mesmos** use cases de aprovar/rejeitar já usados pela API administrativa.
+  * **RF21.2:** O token não deve ser exposto nas responses de criação/consulta da API.
+  * **RF21.3:** Não há envio SMTP nem parser de e-mail nesta fase.
+  * Endpoints: `POST /api/public/ordens-servico/aprovar?token=` e `POST /api/public/ordens-servico/rejeitar?token=`.
+* **RF22 (Estoque insuficiente):** Em falta de peça, o domínio deve seguir o comportamento já existente (`AguardandoPeca` / `EstoqueEmFalta`). Não criar ItemEstoque com saldo 0 apenas para contornar a regra.

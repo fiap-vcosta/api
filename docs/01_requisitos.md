@@ -1,5 +1,9 @@
 # Documento de Requisitos - Sistema de Gestão de Oficina Mecânica
 
+> **Fase 1.** Este documento registra os requisitos da primeira fase e permanece como histórico.  
+> Evoluções, deltas e estado entregue da **Fase 2**: [`04_requisitos-fase-02.md`](04_requisitos-fase-02.md).
+> Índice: [`docs/README.md`](README.md).
+
 ## 1. Requisitos Não-Funcionais (Técnicos e Globais)
 
 * **RNF01 (Segurança):** Implementação de autenticação JWT para proteger as APIs administrativas.

@@ -1,6 +1,7 @@
 # Kubernetes — API
 
-Deploy da API no kind. Manifests em [`/k8s`](../k8s). Infra antes: [05_infraestrutura-kind-terraform.md](05_infraestrutura-kind-terraform.md).
+Deploy da API no kind. Manifests em [`/k8s`](../k8s). Infra antes: [05_infraestrutura-kind-terraform.md](05_infraestrutura-kind-terraform.md).  
+Índice: [docs/README.md](README.md) · vitrine: [README.md](../README.md).
 
 ## Deploy
 

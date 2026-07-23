@@ -59,6 +59,8 @@ build/
 
 # Work-in-progress checklist (fase 02)
 FASE02-CHECKLIST.md
+ROTEIRO-VIDEO-FASE02.md
+ENTREGA-PORTAL.md
 
 # Terraform / Kubernetes local
 infra/.terraform/

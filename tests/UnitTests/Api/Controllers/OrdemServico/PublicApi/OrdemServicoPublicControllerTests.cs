@@ -1,4 +1,4 @@
-using Api.Controllers.PublicApi.OrdemServico;
+using Api.Controllers.OrdemServico.PublicApi;
 using Api.Presenters.OrdemServico;
 using Api.ViewModels.OrdemServico;
 using Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
@@ -11,7 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace UnitTests.Api.Controllers.PublicApi.OrdemServico;
+namespace UnitTests.Api.Controllers.OrdemServico.PublicApi;
 
 public class OrdemServicoPublicControllerTests
 {

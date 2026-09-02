@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.PublicApi.OrdemServico;
+namespace Api.Controllers.OrdemServico.PublicApi;
 
 [ApiController]
 [AllowAnonymous]

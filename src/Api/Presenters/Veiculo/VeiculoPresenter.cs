@@ -10,7 +10,7 @@ public class VeiculoPresenter
         return new VeiculoViewModel
         {
             Id = response.Id,
-            IdDono = response.IdDono,
+            IdCliente = response.IdCliente,
             Placa = response.Placa,
             Modelo = response.Modelo,
             Marca = response.Marca

@@ -11,10 +11,10 @@ public class CreateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
 {
     public async Task<VeiculoResponse> Handle(CreateVeiculoCommand request, CancellationToken cancellationToken)
     {
-        var dono = await clienteGateway.GetByIdAsync(request.IdDono);
-        if (dono == null)
+        var cliente = await clienteGateway.GetByIdAsync(request.IdCliente);
+        if (cliente == null)
         {
-            throw new DomainNotFoundException("Dono não encontrado.");
+            throw new DomainNotFoundException("Cliente não encontrado.");
         }
 
         var existingVeiculo = await veiculoGateway.GetByPlacaAsync(request.Placa);
@@ -26,7 +26,7 @@ public class CreateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
         var veiculo = new Domain.Administrativo.Entities.VeiculoAggregateRoot
         {
             Placa = request.Placa,
-            IdDono = request.IdDono,
+            IdCliente = request.IdCliente,
             Modelo = request.Modelo,
             Marca = request.Marca
         };
@@ -37,7 +37,7 @@ public class CreateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            IdDono = veiculo.IdDono,
+            IdCliente = veiculo.IdCliente,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

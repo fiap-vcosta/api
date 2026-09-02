@@ -5,11 +5,11 @@ namespace UnitTests.Api.Controllers.Auth.Login;
 public class LoginRequestValidatorTests
 {
     [Fact]
-    public void Validate_IsValid_WhenBothLoginAndPasswordAreProvided()
+    public void Validate_IsValid_WhenBothLoginAndSenhaAreProvided()
     {
         // Arrange
         var validator = new LoginRequestValidator();
-        var request = new LoginRequest { Login = "admin", Password = "password" };
+        var request = new LoginRequest { Login = "admin", Senha = "senha" };
 
         // Act
         var result = validator.Validate(request);
@@ -24,29 +24,29 @@ public class LoginRequestValidatorTests
     {
         // Arrange
         var validator = new LoginRequestValidator();
-        var request = new LoginRequest { Login = "", Password = "password" };
+        var request = new LoginRequest { Login = "", Senha = "senha" };
 
         // Act
         var result = validator.Validate(request);
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains("Login must not be empty.", result.Errors);
+        Assert.Contains("Login não pode estar vazio.", result.Errors);
     }
 
     [Fact]
-    public void Validate_HasError_WhenPasswordIsEmpty()
+    public void Validate_HasError_WhenSenhaIsEmpty()
     {
         // Arrange
         var validator = new LoginRequestValidator();
-        var request = new LoginRequest { Login = "admin", Password = "" };
+        var request = new LoginRequest { Login = "admin", Senha = "" };
 
         // Act
         var result = validator.Validate(request);
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains("Password must not be empty.", result.Errors);
+        Assert.Contains("Senha não pode estar vazia.", result.Errors);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class LoginRequestValidatorTests
     {
         // Arrange
         var validator = new LoginRequestValidator();
-        var request = new LoginRequest { Login = "", Password = "" };
+        var request = new LoginRequest { Login = "", Senha = "" };
 
         // Act
         var result = validator.Validate(request);
@@ -62,7 +62,7 @@ public class LoginRequestValidatorTests
         // Assert
         Assert.False(result.IsValid);
         Assert.Equal(2, result.Errors.Count);
-        Assert.Contains("Login must not be empty.", result.Errors);
-        Assert.Contains("Password must not be empty.", result.Errors);
+        Assert.Contains("Login não pode estar vazio.", result.Errors);
+        Assert.Contains("Senha não pode estar vazia.", result.Errors);
     }
 }

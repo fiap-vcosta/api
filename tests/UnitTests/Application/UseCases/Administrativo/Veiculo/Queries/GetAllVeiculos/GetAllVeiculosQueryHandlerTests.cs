@@ -14,8 +14,8 @@ public class GetAllVeiculosQueryHandlerTests
     {
         var veiculos = new List<VeiculoAggregateRoot>
         {
-            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, Placa = "DEF-2G34", IdDono = 2, Modelo = "Polo", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, Placa = "DEF-2G34", IdCliente = 2, Modelo = "Polo", Marca = "Volkswagen" }
         };
 
         _mockGateway.Setup(r => r.GetAllAsync()).ReturnsAsync(veiculos);

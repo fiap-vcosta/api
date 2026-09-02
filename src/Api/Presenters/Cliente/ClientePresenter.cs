@@ -1,9 +1,10 @@
 using Api.ViewModels.Cliente;
+using Api.Presenters.Veiculo;
 using Application.UseCases.Administrativo.Cliente.Responses;
 
 namespace Api.Presenters.Cliente;
 
-public class ClientePresenter
+public class ClientePresenter(VeiculoPresenter veiculoPresenter)
 {
     public ClienteViewModel Present(ClienteResponse response)
     {
@@ -12,7 +13,8 @@ public class ClientePresenter
             Id = response.Id,
             Nome = response.Nome,
             TipoDocumento = response.TipoDocumento,
-            Documento = response.Documento
+            Documento = response.Documento,
+            Veiculos = veiculoPresenter.Present(response.Veiculos).ToList()
         };
     }
 

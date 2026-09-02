@@ -58,7 +58,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -82,7 +82,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -120,7 +120,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -148,7 +148,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -176,7 +176,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -204,7 +204,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -232,7 +232,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -260,7 +260,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -288,7 +288,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -326,7 +326,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -354,7 +354,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -382,7 +382,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -439,7 +439,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -463,7 +463,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -501,7 +501,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -529,7 +529,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -567,7 +567,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -595,7 +595,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -623,7 +623,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -651,7 +651,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -679,7 +679,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -707,7 +707,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -745,7 +745,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -773,7 +773,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -801,7 +801,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -858,7 +858,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -882,7 +882,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -920,7 +920,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -948,7 +948,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -976,7 +976,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1004,7 +1004,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/rejeitar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1032,7 +1032,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1060,7 +1060,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/descartar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1088,7 +1088,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1145,7 +1145,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1169,7 +1169,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -1207,7 +1207,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -1245,7 +1245,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1273,7 +1273,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/rejeitar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1301,7 +1301,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1329,7 +1329,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1357,7 +1357,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1414,7 +1414,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1438,7 +1438,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "POST",
           "headers": [
             {
@@ -1477,7 +1477,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -1516,7 +1516,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1544,7 +1544,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1572,7 +1572,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1600,7 +1600,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}/registrar-entrada",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEstoqueId}}/registrar-entrada",
           "method": "POST",
           "headers": [
             {
@@ -1638,7 +1638,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1666,7 +1666,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1694,7 +1694,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -1732,7 +1732,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1760,7 +1760,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1788,7 +1788,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1845,7 +1845,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1869,7 +1869,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -1907,7 +1907,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1935,7 +1935,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1963,7 +1963,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -1991,7 +1991,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar-parcialmente",
           "method": "POST",
           "headers": [
             {
@@ -2030,7 +2030,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2058,7 +2058,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -2086,7 +2086,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2114,7 +2114,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -2153,7 +2153,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2181,7 +2181,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -2209,7 +2209,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2266,7 +2266,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -2290,7 +2290,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -2328,7 +2328,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -2366,7 +2366,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -2404,7 +2404,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2432,7 +2432,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -2460,7 +2460,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar-parcialmente",
           "method": "POST",
           "headers": [
             {
@@ -2499,7 +2499,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2527,7 +2527,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "POST",
           "headers": [
             {
@@ -2566,7 +2566,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "POST",
           "headers": [
             {
@@ -2605,7 +2605,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -2644,7 +2644,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -2683,7 +2683,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -2721,7 +2721,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2749,7 +2749,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -2777,7 +2777,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar-parcialmente",
           "method": "POST",
           "headers": [
             {
@@ -2816,7 +2816,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2844,7 +2844,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -2872,7 +2872,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -2900,7 +2900,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEmFalta1}}/registrar-entrada",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEmFalta1}}/registrar-entrada",
           "method": "POST",
           "headers": [
             {
@@ -2938,7 +2938,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEmFalta2}}/registrar-entrada",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEmFalta2}}/registrar-entrada",
           "method": "POST",
           "headers": [
             {
@@ -2976,7 +2976,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3004,7 +3004,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3032,7 +3032,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -3070,7 +3070,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3098,7 +3098,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3126,7 +3126,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3197,7 +3197,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3255,7 +3255,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -3279,7 +3279,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3317,7 +3317,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3355,7 +3355,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3383,7 +3383,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3421,7 +3421,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3449,7 +3449,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3477,7 +3477,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "POST",
           "headers": [
             {
@@ -3516,7 +3516,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3555,7 +3555,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3583,7 +3583,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3611,7 +3611,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3649,7 +3649,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/descartar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3677,7 +3677,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -3715,7 +3715,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3743,7 +3743,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3771,7 +3771,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3799,7 +3799,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -3837,7 +3837,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -3865,7 +3865,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{osLiberadaId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{osLiberadaId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3893,7 +3893,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{osAguardandoPecaId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{osAguardandoPecaId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3921,7 +3921,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{osEntregueId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{osEntregueId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3949,7 +3949,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{osDescartadaId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{osDescartadaId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -3977,7 +3977,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -4003,42 +4003,34 @@
       "name": "Docker",
       "variables": {
         "baseUrl": {
-          "id": 1,
           "type": "string",
           "syncValue": "http://localhost:8080"
         },
         "token": {
-          "id": 2,
           "type": "secret",
           "syncValue": ""
         },
         "tokenAprovacao": {
-          "id": 3,
           "type": "string",
           "syncValue": ""
         },
         "ordemServicoId": {
-          "id": 4,
           "type": "string",
           "syncValue": ""
         },
         "clienteId": {
-          "id": 5,
           "type": "string",
           "syncValue": ""
         },
         "veiculoId": {
-          "id": 6,
           "type": "string",
           "syncValue": ""
         },
         "servicoId": {
-          "id": 7,
           "type": "string",
           "syncValue": ""
         },
         "itemEstoqueId": {
-          "id": 8,
           "type": "string",
           "syncValue": ""
         }
@@ -4049,42 +4041,34 @@
       "name": "Local",
       "variables": {
         "baseUrl": {
-          "id": 1,
           "type": "string",
           "syncValue": "http://localhost:5225"
         },
         "token": {
-          "id": 2,
           "type": "secret",
           "syncValue": ""
         },
         "tokenAprovacao": {
-          "id": 3,
           "type": "string",
           "syncValue": ""
         },
         "ordemServicoId": {
-          "id": 4,
           "type": "string",
           "syncValue": ""
         },
         "clienteId": {
-          "id": 5,
           "type": "string",
           "syncValue": ""
         },
         "veiculoId": {
-          "id": 6,
           "type": "string",
           "syncValue": ""
         },
         "servicoId": {
-          "id": 7,
           "type": "string",
           "syncValue": ""
         },
         "itemEstoqueId": {
-          "id": 8,
           "type": "string",
           "syncValue": ""
         }

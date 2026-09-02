@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Servico;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/servicos")]
 [Authorize(Roles = "Admin")]
 public class ServicoController(
     IMediator mediator,

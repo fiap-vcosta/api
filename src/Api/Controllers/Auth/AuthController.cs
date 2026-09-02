@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Auth;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController(IMediator mediator, AuthPresenter presenter, IValidator<LoginRequest> validator) : ControllerBase
 {
     [HttpPost("login")]
@@ -20,7 +20,7 @@ public class AuthController(IMediator mediator, AuthPresenter presenter, IValida
             return BadRequest(new { validationResult.Errors });
         }
 
-        var response = await mediator.Send(new LoginCommand { Login = request.Login, Password = request.Password });
+        var response = await mediator.Send(new LoginCommand { Login = request.Login, Senha = request.Senha });
         return Ok(presenter.Present(response));
     }
 }

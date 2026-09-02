@@ -10,7 +10,6 @@ using Application.UseCases.Administrativo.Veiculo.Responses;
 using Application.UseCases.Administrativo.Veiculo.Commands.DeleteVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetAllVeiculos;
-using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoByDono;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +40,7 @@ public class VeiculoControllerTests
     public async Task Create_ReturnsBadRequest_WhenValidationFails()
     {
         // Arrange
-        var request = new CreateVeiculoRequest { Placa = "", DonoId = 0, Modelo = "", Marca = "" };
+        var request = new CreateVeiculoRequest { Placa = "", IdCliente = 0, Modelo = "", Marca = "" };
         var validationResult = new ValidationResult();
         validationResult.Errors.Add("Placa inválida");
 
@@ -58,8 +57,8 @@ public class VeiculoControllerTests
     public async Task Create_ReturnsCreatedAtAction_WhenRequestIsValid()
     {
         // Arrange
-        var request = new CreateVeiculoRequest { Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
-        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var request = new CreateVeiculoRequest { Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" };
 
         _createValidatorMock.Setup(v => v.Validate(It.IsAny<CreateVeiculoRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<CreateVeiculoCommand>(), CancellationToken.None)).ReturnsAsync(response);
@@ -79,7 +78,7 @@ public class VeiculoControllerTests
     public async Task GetById_ReturnsOk_WhenVeiculoExists()
     {
         // Arrange
-        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculoByIdQuery>(), CancellationToken.None)).ReturnsAsync(response);
 
         // Act
@@ -111,8 +110,8 @@ public class VeiculoControllerTests
         // Arrange
         var veiculos = new List<VeiculoResponse>
         {
-            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, Placa = "DEF-2G34", IdDono = 2, Modelo = "Polo", Marca = "Volkswagen" }
+            new() { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, Placa = "DEF-2G34", IdCliente = 2, Modelo = "Polo", Marca = "Volkswagen" }
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllVeiculosQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
@@ -129,33 +128,11 @@ public class VeiculoControllerTests
     }
 
     [Fact]
-    public async Task GetByDono_ReturnsOkWithVeiculosOfDono()
-    {
-        // Arrange
-        var veiculos = new List<VeiculoResponse>
-        {
-            new() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" }
-        };
-
-        _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculosByDonoQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
-
-        // Act
-        var result = await _controller.GetByDono(1);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var viewModels = Assert.IsAssignableFrom<IEnumerable<VeiculoViewModel>>(okResult.Value).ToList();
-        Assert.Single(viewModels);
-        Assert.Equal(veiculos[0].Id, viewModels[0].Id);
-        Assert.Equal(veiculos[0].IdDono, viewModels[0].IdDono);
-    }
-
-    [Fact]
     public async Task Update_ReturnsOk_WhenRequestIsValid()
     {
         // Arrange
-        var request = new UpdateVeiculoRequest { Placa = "DEF-2G34", DonoId = 1, Modelo = "Polo", Marca = "Volkswagen" };
-        var response = new VeiculoResponse { Id = 1, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var request = new UpdateVeiculoRequest { Placa = "DEF-2G34", IdCliente = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var response = new VeiculoResponse { Id = 1, Placa = "DEF-2G34", IdCliente = 1, Modelo = "Polo", Marca = "Volkswagen" };
 
         _updateValidatorMock.Setup(v => v.Validate(It.IsAny<UpdateVeiculoRequest>())).Returns(new ValidationResult());
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateVeiculoCommand>(), CancellationToken.None)).ReturnsAsync(response);

@@ -30,7 +30,7 @@ public class AuthControllerTests
             .Setup(m => m.Send(It.IsAny<IRequest<LoginResponse>>(), CancellationToken.None))
             .ReturnsAsync(new LoginResponse { Token = "token-value" });
 
-        var request = new LoginRequest { Login = "admin", Password = "password" };
+        var request = new LoginRequest { Login = "admin", Senha = "password" };
 
         // Act
         var result = await _controller.Login(request);
@@ -42,10 +42,10 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Login_ReturnsBadRequest_WhenLoginOrPasswordIsMissing()
+    public async Task Login_ReturnsBadRequest_WhenLoginOrSenhaIsMissing()
     {
         // Arrange
-        var request = new LoginRequest { Login = "", Password = "" };
+        var request = new LoginRequest { Login = "", Senha = "" };
 
         // Act
         var result = await _controller.Login(request);
@@ -63,7 +63,7 @@ public class AuthControllerTests
             .Setup(m => m.Send(It.IsAny<IRequest<LoginResponse>>(), CancellationToken.None))
             .ThrowsAsync(new UnauthorizedAccessException());
 
-        var request = new LoginRequest { Login = "admin", Password = "password" };
+        var request = new LoginRequest { Login = "admin", Senha = "password" };
 
         // Act & Assert
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _controller.Login(request));

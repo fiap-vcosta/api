@@ -2,11 +2,13 @@ using Api.Contracts.Validation;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
 using Api.Presenters.Cliente;
+using Api.Presenters.Veiculo;
 using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
 using Application.UseCases.Administrativo.Cliente.Commands.DeleteCliente;
 using Application.UseCases.Administrativo.Cliente.Commands.UpdateCliente;
 using Application.UseCases.Administrativo.Cliente.Queries.GetAllClientes;
 using Application.UseCases.Administrativo.Cliente.Queries.GetClienteById;
+using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculosByCliente;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Cliente;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/clientes")]
 [Authorize(Roles = "Admin")]
 public class ClienteController(
     IMediator mediator,
     ClientePresenter presenter,
+    VeiculoPresenter veiculoPresenter,
     IValidator<CreateClienteRequest> createValidator,
     IValidator<UpdateClienteRequest> updateValidator) : ControllerBase
 {
@@ -54,6 +57,14 @@ public class ClienteController(
         }
 
         return Ok(presenter.Present(response));
+    }
+
+    [HttpGet("{id:int}/veiculos")]
+    public async Task<IActionResult> GetVeiculos(int id)
+    {
+        var query = new GetVeiculosByClienteQuery { IdCliente = id };
+        var response = await mediator.Send(query);
+        return Ok(veiculoPresenter.Present(response));
     }
 
     [HttpGet]

@@ -6,7 +6,6 @@ using Application.UseCases.Administrativo.Veiculo.Commands.CreateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.DeleteVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetAllVeiculos;
-using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoByDono;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Veiculo;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/veiculos")]
 [Authorize(Roles = "Admin")]
 public class VeiculoController(
     IMediator mediator,
@@ -35,7 +34,7 @@ public class VeiculoController(
         var command = new CreateVeiculoCommand
         {
             Placa = request.Placa,
-            IdDono = request.DonoId,
+            IdCliente = request.IdCliente,
             Modelo = request.Modelo,
             Marca = request.Marca
         };
@@ -66,14 +65,6 @@ public class VeiculoController(
         return Ok(presenter.Present(response));
     }
 
-    [HttpGet("por-dono/{donoId:int}")]
-    public async Task<IActionResult> GetByDono(int donoId)
-    {
-        var query = new GetVeiculosByDonoQuery { IdDono = donoId };
-        var response = await mediator.Send(query);
-        return Ok(presenter.Present(response));
-    }
-
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateVeiculoRequest request)
     {
@@ -87,7 +78,7 @@ public class VeiculoController(
         {
             Id = id,
             Placa = request.Placa,
-            IdDono = request.DonoId,
+            IdCliente = request.IdCliente,
             Modelo = request.Modelo,
             Marca = request.Marca
         };

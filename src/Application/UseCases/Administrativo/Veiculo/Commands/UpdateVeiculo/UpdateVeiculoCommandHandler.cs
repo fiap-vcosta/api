@@ -17,10 +17,10 @@ public class UpdateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
             throw new DomainNotFoundException($"Veículo com id {request.Id} não encontrado");
         }
 
-        var dono = await clienteGateway.GetByIdAsync(request.IdDono);
-        if (dono == null)
+        var cliente = await clienteGateway.GetByIdAsync(request.IdCliente);
+        if (cliente == null)
         {
-            throw new DomainNotFoundException("Dono não encontrado.");
+            throw new DomainNotFoundException("Cliente não encontrado.");
         }
 
         var existingVeiculo = await veiculoGateway.GetByPlacaAsync(request.Placa);
@@ -30,7 +30,7 @@ public class UpdateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
         }
 
         veiculo.Placa = request.Placa;
-        veiculo.IdDono = request.IdDono;
+        veiculo.IdCliente = request.IdCliente;
         veiculo.Modelo = request.Modelo;
         veiculo.Marca = request.Marca;
 
@@ -40,7 +40,7 @@ public class UpdateVeiculoCommandHandler(IClienteGateway clienteGateway, IVeicul
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            IdDono = veiculo.IdDono,
+            IdCliente = veiculo.IdCliente,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

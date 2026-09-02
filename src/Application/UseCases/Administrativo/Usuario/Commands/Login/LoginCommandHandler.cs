@@ -10,10 +10,10 @@ public class LoginCommandHandler(IUsuarioGateway usuarioGateway, IJwtService jwt
 {
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var usuario = await usuarioGateway.GetByLoginAndPasswordAsync(request.Login, request.Password);
+        var usuario = await usuarioGateway.GetByLoginAndSenhaAsync(request.Login, request.Senha);
         
         var token = usuario == null
-            ? throw new UnauthorizedAccessException("Invalid login or password")
+            ? throw new UnauthorizedAccessException("Login ou senha inválidos.")
             : jwtService.GenerateToken(usuario.Login, usuario.TipoUsuario.ToString(), usuario.Id);
 
         return new LoginResponse { Token = token };

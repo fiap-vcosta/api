@@ -17,9 +17,9 @@ public class UsuarioGateway(AppDbContext context) : IUsuarioGateway
         return await context.Usuarios.ToListAsync();
     }
 
-    public async Task<UsuarioAggregateRoot?> GetByLoginAndPasswordAsync(string login, string password)
+    public async Task<UsuarioAggregateRoot?> GetByLoginAndSenhaAsync(string login, string senha)
     {
-        var hashedPassword = PasswordHasher.HashPassword(password);
-        return await context.Usuarios.FirstOrDefaultAsync(u => u.Login == login && u.Password == hashedPassword);
+        var hashedSenha = PasswordHasher.HashPassword(senha);
+        return await context.Usuarios.FirstOrDefaultAsync(u => u.Login == login && u.Senha == hashedSenha);
     }
 }

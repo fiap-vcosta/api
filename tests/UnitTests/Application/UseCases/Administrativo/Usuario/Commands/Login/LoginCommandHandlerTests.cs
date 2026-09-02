@@ -15,12 +15,12 @@ public class LoginCommandHandlerTests
         {
             Id = 1,
             Login = "admin",
-            Password = "secret",
+            Senha = "secret",
             TipoUsuario = TipoUsuario.Admin
         });
         var jwtService = new StubJwtService();
         var handler = new LoginCommandHandler(gateway, jwtService);
-        var command = new LoginCommand { Login = "admin", Password = "secret" };
+        var command = new LoginCommand { Login = "admin", Senha = "secret" };
 
         // Act
         var response = await handler.Handle(command, CancellationToken.None);
@@ -37,12 +37,12 @@ public class LoginCommandHandlerTests
         {
             Id = 1,
             Login = "admin",
-            Password = "secret",
+            Senha = "secret",
             TipoUsuario = TipoUsuario.Admin
         });
         var jwtService = new StubJwtService();
         var handler = new LoginCommandHandler(gateway, jwtService);
-        var command = new LoginCommand { Login = "admin", Password = "wrong" };
+        var command = new LoginCommand { Login = "admin", Senha = "wrong" };
 
         // Act & Assert
         await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>

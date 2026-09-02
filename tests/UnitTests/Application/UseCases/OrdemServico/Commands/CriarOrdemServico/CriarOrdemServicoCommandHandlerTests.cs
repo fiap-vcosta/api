@@ -24,7 +24,7 @@ public class CriarOrdemServicoCommandHandlerTests
         var mockMediator = new Mock<IMediator>();
 
         var cliente = new ClienteAggregateRoot { Id = 1, Nome = "João", Email = "joao@test.com", TipoDocumento = TipoDocumento.Cpf, Documento = "12345678901" };
-        var veiculo = new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1234", Marca = "Toyota", Modelo = "Corolla", IdDono = 1 };
+        var veiculo = new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1234", Marca = "Toyota", Modelo = "Corolla", IdCliente = 1 };
         var command = new CriarOrdemServicoCommand { IdVeiculo = 1 };
 
         mockVeiculoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(veiculo);
@@ -80,7 +80,7 @@ public class CriarOrdemServicoCommandHandlerTests
         var mockMediator = new Mock<IMediator>();
 
         var cliente = new ClienteAggregateRoot { Id = 1, Nome = "João", Email = "joao@test.com", TipoDocumento = TipoDocumento.Cpf, Documento = "12345678901" };
-        var veiculo = new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1234", Marca = "Toyota", Modelo = "Corolla", IdDono = 1 };
+        var veiculo = new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1234", Marca = "Toyota", Modelo = "Corolla", IdCliente = 1 };
 
         mockVeiculoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(veiculo);
         mockClienteGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(cliente);

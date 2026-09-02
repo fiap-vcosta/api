@@ -21,8 +21,8 @@ public class VeiculoGatewayTests : IDisposable
 
         _context.Clientes.Add(new ClienteAggregateRoot { Id = 1, Nome = "Cliente 1", TipoDocumento = TipoDocumento.Cpf, Documento = "12345678901" });
         _context.Veiculos.AddRange(
-            new VeiculoAggregateRoot { Id = 1, IdDono = 1, Placa = "ABC-1234", Modelo = "Civic", Marca = "Honda" },
-            new VeiculoAggregateRoot { Id = 2, IdDono = 1, Placa = "DEF-5678", Modelo = "Corolla", Marca = "Toyota" }
+            new VeiculoAggregateRoot { Id = 1, IdCliente = 1, Placa = "ABC-1234", Modelo = "Civic", Marca = "Honda" },
+            new VeiculoAggregateRoot { Id = 2, IdCliente = 1, Placa = "DEF-5678", Modelo = "Corolla", Marca = "Toyota" }
         );
         _context.SaveChanges();
     }
@@ -56,12 +56,14 @@ public class VeiculoGatewayTests : IDisposable
     }
 
     [Fact]
-    public async Task GetByDonoIdAsync_ReturnsVeiculos_ForDonoId()
+    public async Task GetByClienteIdAsync_ReturnsVeiculos_ForClienteId()
     {
-        var veiculos = (await _gateway.GetByDonoIdAsync(1)).ToList();
+        // Arrange / Act
+        var veiculos = (await _gateway.GetByClienteIdAsync(1)).ToList();
 
+        // Assert
         Assert.Equal(2, veiculos.Count);
-        Assert.All(veiculos, v => Assert.Equal(1, v.IdDono));
+        Assert.All(veiculos, v => Assert.Equal(1, v.IdCliente));
     }
 
     [Fact]
@@ -76,7 +78,7 @@ public class VeiculoGatewayTests : IDisposable
     [Fact]
     public async Task CreateAsync_AddsVeiculo_ToDatabase()
     {
-        var newVeiculo = new VeiculoAggregateRoot { IdDono = 1, Placa = "GHI-9012", Modelo = "Fit", Marca = "Honda" };
+        var newVeiculo = new VeiculoAggregateRoot { IdCliente = 1, Placa = "GHI-9012", Modelo = "Fit", Marca = "Honda" };
 
         await _gateway.CreateAsync(newVeiculo);
 

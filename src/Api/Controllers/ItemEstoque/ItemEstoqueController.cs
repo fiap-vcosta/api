@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.ItemEstoque;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/itens-estoque")]
 [Authorize(Roles = "Admin")]
 public class ItemEstoqueController
 (

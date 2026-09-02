@@ -19,7 +19,7 @@ public class GetVeiculoByIdQueryHandler(IVeiculoGateway veiculoGateway)
         {
             Id = veiculo.Id,
             Placa = veiculo.Placa,
-            IdDono = veiculo.IdDono,
+            IdCliente = veiculo.IdCliente,
             Modelo = veiculo.Modelo,
             Marca = veiculo.Marca
         };

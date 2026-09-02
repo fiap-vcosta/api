@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.OrdemServico;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/ordens-servico")]
 [Authorize(Roles = "Admin")]
 public class OrdemServicoController(
     IMediator mediator,

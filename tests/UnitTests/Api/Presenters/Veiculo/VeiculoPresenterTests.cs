@@ -14,7 +14,7 @@ public class VeiculoPresenterTests
         var response = new VeiculoResponse
         {
             Id = 7,
-            IdDono = 3,
+            IdCliente = 3,
             Placa = "ABC-1D23",
             Modelo = "Gol",
             Marca = "Volkswagen"
@@ -25,7 +25,7 @@ public class VeiculoPresenterTests
 
         // Assert
         Assert.Equal(response.Id, viewModel.Id);
-        Assert.Equal(response.IdDono, viewModel.IdDono);
+        Assert.Equal(response.IdCliente, viewModel.IdCliente);
         Assert.Equal(response.Placa, viewModel.Placa);
         Assert.Equal(response.Modelo, viewModel.Modelo);
         Assert.Equal(response.Marca, viewModel.Marca);
@@ -37,8 +37,8 @@ public class VeiculoPresenterTests
         // Arrange
         var responses = new List<VeiculoResponse>
         {
-            new() { Id = 1, IdDono = 1, Placa = "ABC-1D23", Modelo = "Gol", Marca = "Volkswagen" },
-            new() { Id = 2, IdDono = 2, Placa = "DEF-2G34", Modelo = "Polo", Marca = "Volkswagen" }
+            new() { Id = 1, IdCliente = 1, Placa = "ABC-1D23", Modelo = "Gol", Marca = "Volkswagen" },
+            new() { Id = 2, IdCliente = 2, Placa = "DEF-2G34", Modelo = "Polo", Marca = "Volkswagen" }
         };
 
         // Act

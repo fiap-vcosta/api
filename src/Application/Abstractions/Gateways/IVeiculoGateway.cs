@@ -6,7 +6,7 @@ public interface IVeiculoGateway
 {
     Task<IEnumerable<VeiculoAggregateRoot>> GetAllAsync();
     Task<VeiculoAggregateRoot?> GetByIdAsync(int id);
-    Task<IEnumerable<VeiculoAggregateRoot>> GetByDonoIdAsync(int donoId);
+    Task<IEnumerable<VeiculoAggregateRoot>> GetByClienteIdAsync(int clienteId);
     Task<VeiculoAggregateRoot?> GetByPlacaAsync(string placa);
     Task CreateAsync(VeiculoAggregateRoot veiculoAggregateRoot);
     Task UpdateAsync(VeiculoAggregateRoot veiculoAggregateRoot);

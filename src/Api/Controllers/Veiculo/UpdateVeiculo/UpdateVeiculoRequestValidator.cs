@@ -20,9 +20,9 @@ public partial class UpdateVeiculoRequestValidator : IValidator<UpdateVeiculoReq
             result.Errors.Add("Placa inválida.");
         }
 
-        if (request.DonoId <= 0)
+        if (request.IdCliente <= 0)
         {
-            result.Errors.Add("DonoId deve ser um cliente válido.");
+            result.Errors.Add("IdCliente deve ser um cliente válido.");
         }
 
         if (string.IsNullOrWhiteSpace(request.Modelo))

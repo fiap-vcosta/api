@@ -22,9 +22,9 @@ public class UsuarioGatewayTests : IDisposable
 
         // Seed test data
         _context.Usuarios.AddRange(
-            new UsuarioAggregateRoot { Id = 1, Login = "admin", Password = PasswordHasher.HashPassword("admin"), TipoUsuario = TipoUsuario.Admin },
-            new UsuarioAggregateRoot { Id = 2, Login = "atendente", Password = PasswordHasher.HashPassword("atendente"), TipoUsuario = TipoUsuario.Atendente },
-            new UsuarioAggregateRoot { Id = 3, Login = "mecanico", Password = PasswordHasher.HashPassword("mecanico"), TipoUsuario = TipoUsuario.Mecanico }
+            new UsuarioAggregateRoot { Id = 1, Login = "admin", Senha = PasswordHasher.HashPassword("admin"), TipoUsuario = TipoUsuario.Admin },
+            new UsuarioAggregateRoot { Id = 2, Login = "atendente", Senha = PasswordHasher.HashPassword("atendente"), TipoUsuario = TipoUsuario.Atendente },
+            new UsuarioAggregateRoot { Id = 3, Login = "mecanico", Senha = PasswordHasher.HashPassword("mecanico"), TipoUsuario = TipoUsuario.Mecanico }
         );
         _context.SaveChanges();
     }
@@ -67,10 +67,10 @@ public class UsuarioGatewayTests : IDisposable
     }
 
     [Fact]
-    public async Task GetByLoginAndPasswordAsync_ReturnsUser_WhenCredentialsMatch()
+    public async Task GetByLoginAndSenhaAsync_ReturnsUser_WhenCredentialsMatch()
     {
         // Act
-        var user = await _gateway.GetByLoginAndPasswordAsync("admin", "admin");
+        var user = await _gateway.GetByLoginAndSenhaAsync("admin", "admin");
 
         // Assert
         Assert.NotNull(user);
@@ -80,10 +80,10 @@ public class UsuarioGatewayTests : IDisposable
     }
 
     [Fact]
-    public async Task GetByLoginAndPasswordAsync_ReturnsNull_WhenPasswordDoesNotMatch()
+    public async Task GetByLoginAndSenhaAsync_ReturnsNull_WhenSenhaDoesNotMatch()
     {
         // Act
-        var user = await _gateway.GetByLoginAndPasswordAsync("admin", "wrong");
+        var user = await _gateway.GetByLoginAndSenhaAsync("admin", "wrong");
 
         // Assert
         Assert.Null(user);

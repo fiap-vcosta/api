@@ -12,7 +12,7 @@ public class GetVeiculoByIdQueryHandlerTests
     [Fact]
     public async Task Handle_ReturnsVeiculo_WhenVeiculoExists()
     {
-        var veiculo = new VeiculoAggregateRoot() { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var veiculo = new VeiculoAggregateRoot() { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" };
         _mockGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(veiculo);
 
         var handler = new GetVeiculoByIdQueryHandler(_mockGateway.Object);

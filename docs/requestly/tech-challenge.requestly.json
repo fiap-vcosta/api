@@ -57,7 +57,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -348,7 +348,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"Placa\": \"ABC-1D23\",\n  \"DonoId\": \"{{clienteId}}\",\n  \"Modelo\": \"Gol\",\n  \"Marca\": \"Volkswagen\"\n}",
+            "raw": "{\n  \"Placa\": \"ABC-1D23\",\n  \"IdCliente\": \"{{clienteId}}\",\n  \"Modelo\": \"Gol\",\n  \"Marca\": \"Volkswagen\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -436,7 +436,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"Placa\": \"DEF-2G34\",\n  \"DonoId\": \"{{clienteId}}\",\n  \"Modelo\": \"Polo\",\n  \"Marca\": \"Volkswagen\"\n}",
+            "raw": "{\n  \"Placa\": \"DEF-2G34\",\n  \"IdCliente\": \"{{clienteId}}\",\n  \"Modelo\": \"Polo\",\n  \"Marca\": \"Volkswagen\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"

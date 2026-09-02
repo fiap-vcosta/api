@@ -26,13 +26,13 @@ public class UpdateVeiculoCommandHandlerTests
         {
             Id = 1,
             Placa = "DEF-2G34",
-            IdDono = 1,
+            IdCliente = 1,
             Modelo = "Polo",
             Marca = "Volkswagen"
         };
 
         _mockVeiculoGateway.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" });
 
         _mockClienteGateway.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(new ClienteAggregateRoot { Id = 1, Nome = "Cliente Teste", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" });
@@ -55,7 +55,7 @@ public class UpdateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsDomainNotFoundException_WhenVeiculoDoesNotExist()
     {
-        var command = new UpdateVeiculoCommand { Id = 999, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var command = new UpdateVeiculoCommand { Id = 999, Placa = "DEF-2G34", IdCliente = 1, Modelo = "Polo", Marca = "Volkswagen" };
         _mockVeiculoGateway.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((VeiculoAggregateRoot?)null);
 
         await Assert.ThrowsAsync<DomainNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -64,16 +64,16 @@ public class UpdateVeiculoCommandHandlerTests
     [Fact]
     public async Task Handle_ThrowsBusinessRuleException_WhenAnotherVeiculoHasSamePlaca()
     {
-        var command = new UpdateVeiculoCommand { Id = 1, Placa = "DEF-2G34", IdDono = 1, Modelo = "Polo", Marca = "Volkswagen" };
+        var command = new UpdateVeiculoCommand { Id = 1, Placa = "DEF-2G34", IdCliente = 1, Modelo = "Polo", Marca = "Volkswagen" };
 
         _mockVeiculoGateway.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" });
 
         _mockClienteGateway.Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync(new ClienteAggregateRoot { Id = 1, Nome = "Cliente Teste", TipoDocumento = TipoDocumento.Cpf, Documento = "11144477735" });
 
         _mockVeiculoGateway.Setup(r => r.GetByPlacaAsync(command.Placa))
-            .ReturnsAsync(new VeiculoAggregateRoot { Id = 2, Placa = command.Placa, IdDono = 1, Modelo = "Uno", Marca = "Fiat" });
+            .ReturnsAsync(new VeiculoAggregateRoot { Id = 2, Placa = command.Placa, IdCliente = 1, Modelo = "Uno", Marca = "Fiat" });
 
         await Assert.ThrowsAsync<BusinessRuleException>(() => _handler.Handle(command, CancellationToken.None));
     }

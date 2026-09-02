@@ -58,7 +58,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -439,7 +439,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -858,7 +858,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1145,7 +1145,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1414,7 +1414,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -1845,7 +1845,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -2266,7 +2266,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"
@@ -3255,7 +3255,7 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin\"\n}",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
             "rawContentType": "application/json"
           },
           "contentType": "raw"

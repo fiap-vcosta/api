@@ -6,5 +6,5 @@ public interface IUsuarioGateway
 {
     Task<UsuarioAggregateRoot?> GetByIdAsync(int id);
     Task<IEnumerable<UsuarioAggregateRoot>> GetAllAsync();
-    Task<UsuarioAggregateRoot?> GetByLoginAndPasswordAsync(string login, string password);
+    Task<UsuarioAggregateRoot?> GetByLoginAndSenhaAsync(string login, string senha);
 }

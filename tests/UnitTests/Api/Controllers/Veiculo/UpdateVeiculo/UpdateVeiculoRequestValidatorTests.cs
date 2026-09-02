@@ -9,7 +9,7 @@ public class UpdateVeiculoRequestValidatorTests
     [Fact]
     public void Validate_ReturnsError_WhenMarcaIsEmpty()
     {
-        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "" };
+        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "" };
 
         var result = _validator.Validate(request);
 
@@ -20,7 +20,7 @@ public class UpdateVeiculoRequestValidatorTests
     [Fact]
     public void Validate_ReturnsError_WhenModeloIsEmpty()
     {
-        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", DonoId = 1, Modelo = "", Marca = "Volkswagen" };
+        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", IdCliente = 1, Modelo = "", Marca = "Volkswagen" };
 
         var result = _validator.Validate(request);
 
@@ -29,20 +29,20 @@ public class UpdateVeiculoRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_ReturnsError_WhenDonoIdIsInvalid()
+    public void Validate_ReturnsError_WhenIdClienteIsInvalid()
     {
-        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", DonoId = 0, Modelo = "Gol", Marca = "Volkswagen" };
+        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", IdCliente = 0, Modelo = "Gol", Marca = "Volkswagen" };
 
         var result = _validator.Validate(request);
 
         Assert.False(result.IsValid);
-        Assert.Contains("DonoId deve ser um cliente válido.", result.Errors);
+        Assert.Contains("IdCliente deve ser um cliente válido.", result.Errors);
     }
 
     [Fact]
     public void Validate_IsValid_WithValidRequest()
     {
-        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", DonoId = 1, Modelo = "Gol", Marca = "Volkswagen" };
+        var request = new UpdateVeiculoRequest { Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" };
 
         var result = _validator.Validate(request);
 

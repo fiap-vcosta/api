@@ -21,7 +21,7 @@ public class DeleteVeiculoCommandHandlerTests
     public async Task Handle_DeletesVeiculo_WhenVeiculoExists()
     {
         _mockVeiculoGateway.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdDono = 1, Modelo = "Gol", Marca = "Volkswagen" });
+            .ReturnsAsync(new VeiculoAggregateRoot { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" });
         _mockVeiculoGateway.Setup(r => r.DeleteAsync(1)).Returns(Task.CompletedTask);
 
         await _handler.Handle(new DeleteVeiculoCommand { Id = 1 }, CancellationToken.None);

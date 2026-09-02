@@ -6,7 +6,7 @@ using Application.UseCases.Administrativo.Veiculo.Commands.CreateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.DeleteVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetAllVeiculos;
-using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoByDono;
+using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculosByCliente;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +35,7 @@ public class VeiculoController(
         var command = new CreateVeiculoCommand
         {
             Placa = request.Placa,
-            IdDono = request.DonoId,
+            IdCliente = request.IdCliente,
             Modelo = request.Modelo,
             Marca = request.Marca
         };
@@ -66,10 +66,10 @@ public class VeiculoController(
         return Ok(presenter.Present(response));
     }
 
-    [HttpGet("por-dono/{donoId:int}")]
-    public async Task<IActionResult> GetByDono(int donoId)
+    [HttpGet("por-dono/{clienteId:int}")]
+    public async Task<IActionResult> GetByDono(int clienteId)
     {
-        var query = new GetVeiculosByDonoQuery { IdDono = donoId };
+        var query = new GetVeiculosByClienteQuery { IdCliente = clienteId };
         var response = await mediator.Send(query);
         return Ok(presenter.Present(response));
     }
@@ -87,7 +87,7 @@ public class VeiculoController(
         {
             Id = id,
             Placa = request.Placa,
-            IdDono = request.DonoId,
+            IdCliente = request.IdCliente,
             Modelo = request.Modelo,
             Marca = request.Marca
         };

@@ -16,9 +16,9 @@ public class VeiculoGateway(AppDbContext context) : IVeiculoGateway
         return await context.Veiculos.FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public async Task<IEnumerable<VeiculoAggregateRoot>> GetByDonoIdAsync(int donoId)
+    public async Task<IEnumerable<VeiculoAggregateRoot>> GetByClienteIdAsync(int clienteId)
     {
-        return await context.Veiculos.Where(v => v.IdDono == donoId).ToListAsync();
+        return await context.Veiculos.Where(v => v.IdCliente == clienteId).ToListAsync();
     }
 
     public async Task<VeiculoAggregateRoot?> GetByPlacaAsync(string placa)

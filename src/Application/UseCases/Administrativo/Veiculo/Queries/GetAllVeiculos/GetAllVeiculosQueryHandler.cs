@@ -14,7 +14,7 @@ public class GetAllVeiculosQueryHandler(IVeiculoGateway veiculoGateway)
         {
             Id = v.Id,
             Placa = v.Placa,
-            IdDono = v.IdDono,
+            IdCliente = v.IdCliente,
             Modelo = v.Modelo,
             Marca = v.Marca
         }).ToList();

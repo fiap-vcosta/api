@@ -46,7 +46,7 @@ public class CadastrosTests
         var createVeiculo = await _client.PostAsJsonAsync("/api/Veiculo", new
         {
             Placa = "ABC-1D23",
-            DonoId = cliente.Id,
+            IdCliente = cliente.Id,
             Modelo = "Gol",
             Marca = "Volkswagen"
         });

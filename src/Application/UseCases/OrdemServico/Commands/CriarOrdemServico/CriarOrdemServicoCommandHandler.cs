@@ -25,17 +25,17 @@ public class CriarOrdemServicoCommandHandler(
             throw new DomainNotFoundException($"Veículo com id {request.IdVeiculo} não encontrado");
         }
 
-        var dono = await clienteGateway.GetByIdAsync(veiculo.IdDono);
-        if (dono is null)
+        var cliente = await clienteGateway.GetByIdAsync(veiculo.IdCliente);
+        if (cliente is null)
         {
-            throw new DomainNotFoundException($"Cliente com id {veiculo.IdDono} não encontrado");
+            throw new DomainNotFoundException($"Cliente com id {veiculo.IdCliente} não encontrado");
         }
 
         var clienteOrdemServico = new ClienteOrdemServico
         {
-            Id = dono.Id,
-            Nome = dono.Nome,
-            Email = dono.Email,
+            Id = cliente.Id,
+            Nome = cliente.Nome,
+            Email = cliente.Email,
         };
 
         var veiculoOrdemServico = new VeiculoOrdemServico

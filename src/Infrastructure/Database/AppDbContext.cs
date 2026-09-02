@@ -26,14 +26,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         usuarios.HasKey(u => u.Id);
         usuarios.HasIndex(u => u.Login).IsUnique();
         usuarios.Property(u => u.Login).IsRequired();
-        usuarios.Property(u => u.Password).IsRequired();
+        usuarios.Property(u => u.Senha).IsRequired();
         usuarios.Property(u => u.TipoUsuario).HasConversion<string>().IsRequired();
         usuarios.HasData(
             new UsuarioAggregateRoot
             {
                 Id = 1,
                 Login = "admin",
-                Password = PasswordHasher.HashPassword("admin"),
+                Senha = PasswordHasher.HashPassword("admin"),
                 TipoUsuario = TipoUsuario.Admin
             }
         );
@@ -59,7 +59,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         veiculos
             .HasOne<ClienteAggregateRoot>()
             .WithMany()
-            .HasForeignKey(v => v.IdDono)
+            .HasForeignKey(v => v.IdCliente)
             .OnDelete(DeleteBehavior.Restrict);
         SeedVeiculos(veiculos);
 
@@ -223,26 +223,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     private static void SeedVeiculos(EntityTypeBuilder<VeiculoAggregateRoot> veiculos)
     {
         veiculos.HasData(
-            new VeiculoAggregateRoot { Id = 1, IdDono = 1, Placa = "ABC1234", Marca = "Chevrolet", Modelo = "Onix" },
-            new VeiculoAggregateRoot { Id = 2, IdDono = 1, Placa = "XYZ1A23", Marca = "Volkswagen", Modelo = "Gol" },
-            new VeiculoAggregateRoot { Id = 3, IdDono = 1, Placa = "DEF5678", Marca = "Honda", Modelo = "Civic" },
-            new VeiculoAggregateRoot { Id = 4, IdDono = 2, Placa = "GHI9B12", Marca = "Toyota", Modelo = "Corolla" },
-            new VeiculoAggregateRoot { Id = 5, IdDono = 2, Placa = "JKL3456", Marca = "Fiat", Modelo = "Argo" },
-            new VeiculoAggregateRoot { Id = 6, IdDono = 3, Placa = "MNO4C56", Marca = "Hyundai", Modelo = "HB20" },
-            new VeiculoAggregateRoot { Id = 7, IdDono = 3, Placa = "PQR7890", Marca = "Ford", Modelo = "Ka" },
-            new VeiculoAggregateRoot { Id = 8, IdDono = 3, Placa = "STU5D78", Marca = "Renault", Modelo = "Kwid" },
-            new VeiculoAggregateRoot { Id = 9, IdDono = 4, Placa = "VWX1234", Marca = "Jeep", Modelo = "Compass" },
-            new VeiculoAggregateRoot { Id = 10, IdDono = 5, Placa = "YZA6E90", Marca = "Nissan", Modelo = "Kicks" },
-            new VeiculoAggregateRoot { Id = 11, IdDono = 5, Placa = "BCD5678", Marca = "Chevrolet", Modelo = "Tracker" },
-            new VeiculoAggregateRoot { Id = 12, IdDono = 6, Placa = "EFG7F12", Marca = "Volkswagen", Modelo = "Saveiro" },
-            new VeiculoAggregateRoot { Id = 13, IdDono = 6, Placa = "HIJ9012", Marca = "Fiat", Modelo = "Fiorino" },
-            new VeiculoAggregateRoot { Id = 14, IdDono = 6, Placa = "KLM8G34", Marca = "Peugeot", Modelo = "Partner" },
-            new VeiculoAggregateRoot { Id = 15, IdDono = 7, Placa = "NOP3456", Marca = "Chevrolet", Modelo = "Montana" },
-            new VeiculoAggregateRoot { Id = 16, IdDono = 8, Placa = "QRS9H56", Marca = "Mercedes-Benz", Modelo = "Sprinter" },
-            new VeiculoAggregateRoot { Id = 17, IdDono = 8, Placa = "TUV7890", Marca = "Iveco", Modelo = "Daily" },
-            new VeiculoAggregateRoot { Id = 18, IdDono = 8, Placa = "WXY0I78", Marca = "Ford", Modelo = "Transit" },
-            new VeiculoAggregateRoot { Id = 19, IdDono = 9, Placa = "ZAB1234", Marca = "Fiat", Modelo = "Mobi" },
-            new VeiculoAggregateRoot { Id = 20, IdDono = 10, Placa = "CDE1J90", Marca = "Volkswagen", Modelo = "Kombi" }
+            new VeiculoAggregateRoot { Id = 1, IdCliente = 1, Placa = "ABC1234", Marca = "Chevrolet", Modelo = "Onix" },
+            new VeiculoAggregateRoot { Id = 2, IdCliente = 1, Placa = "XYZ1A23", Marca = "Volkswagen", Modelo = "Gol" },
+            new VeiculoAggregateRoot { Id = 3, IdCliente = 1, Placa = "DEF5678", Marca = "Honda", Modelo = "Civic" },
+            new VeiculoAggregateRoot { Id = 4, IdCliente = 2, Placa = "GHI9B12", Marca = "Toyota", Modelo = "Corolla" },
+            new VeiculoAggregateRoot { Id = 5, IdCliente = 2, Placa = "JKL3456", Marca = "Fiat", Modelo = "Argo" },
+            new VeiculoAggregateRoot { Id = 6, IdCliente = 3, Placa = "MNO4C56", Marca = "Hyundai", Modelo = "HB20" },
+            new VeiculoAggregateRoot { Id = 7, IdCliente = 3, Placa = "PQR7890", Marca = "Ford", Modelo = "Ka" },
+            new VeiculoAggregateRoot { Id = 8, IdCliente = 3, Placa = "STU5D78", Marca = "Renault", Modelo = "Kwid" },
+            new VeiculoAggregateRoot { Id = 9, IdCliente = 4, Placa = "VWX1234", Marca = "Jeep", Modelo = "Compass" },
+            new VeiculoAggregateRoot { Id = 10, IdCliente = 5, Placa = "YZA6E90", Marca = "Nissan", Modelo = "Kicks" },
+            new VeiculoAggregateRoot { Id = 11, IdCliente = 5, Placa = "BCD5678", Marca = "Chevrolet", Modelo = "Tracker" },
+            new VeiculoAggregateRoot { Id = 12, IdCliente = 6, Placa = "EFG7F12", Marca = "Volkswagen", Modelo = "Saveiro" },
+            new VeiculoAggregateRoot { Id = 13, IdCliente = 6, Placa = "HIJ9012", Marca = "Fiat", Modelo = "Fiorino" },
+            new VeiculoAggregateRoot { Id = 14, IdCliente = 6, Placa = "KLM8G34", Marca = "Peugeot", Modelo = "Partner" },
+            new VeiculoAggregateRoot { Id = 15, IdCliente = 7, Placa = "NOP3456", Marca = "Chevrolet", Modelo = "Montana" },
+            new VeiculoAggregateRoot { Id = 16, IdCliente = 8, Placa = "QRS9H56", Marca = "Mercedes-Benz", Modelo = "Sprinter" },
+            new VeiculoAggregateRoot { Id = 17, IdCliente = 8, Placa = "TUV7890", Marca = "Iveco", Modelo = "Daily" },
+            new VeiculoAggregateRoot { Id = 18, IdCliente = 8, Placa = "WXY0I78", Marca = "Ford", Modelo = "Transit" },
+            new VeiculoAggregateRoot { Id = 19, IdCliente = 9, Placa = "ZAB1234", Marca = "Fiat", Modelo = "Mobi" },
+            new VeiculoAggregateRoot { Id = 20, IdCliente = 10, Placa = "CDE1J90", Marca = "Volkswagen", Modelo = "Kombi" }
         );
     }
 

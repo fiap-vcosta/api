@@ -11,7 +11,7 @@ public static class AuthHelper
         var response = await client.PostAsJsonAsync("/api/Auth/login", new
         {
             login = "admin",
-            password = "admin"
+            senha = "admin"
         });
 
         response.EnsureSuccessStatusCode();

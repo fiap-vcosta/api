@@ -88,7 +88,7 @@ public class ProblemDetailsExceptionFilterTests
     public void OnException_Returns401ProblemDetails_WhenUnauthorizedAccessException()
     {
         // Arrange
-        var context = CreateExceptionContext(new UnauthorizedAccessException("Invalid login or password"));
+        var context = CreateExceptionContext(new UnauthorizedAccessException("Login ou senha inválidos."));
 
         // Act
         _filter.OnException(context);
@@ -99,7 +99,7 @@ public class ProblemDetailsExceptionFilterTests
         var problem = Assert.IsType<ProblemDetails>(result.Value);
         Assert.Equal(StatusCodes.Status401Unauthorized, problem.Status);
         Assert.Equal("Unauthorized", problem.Title);
-        Assert.Equal("Invalid login or password", problem.Detail);
+        Assert.Equal("Login ou senha inválidos.", problem.Detail);
         Assert.True(context.ExceptionHandled);
     }
 

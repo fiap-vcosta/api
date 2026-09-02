@@ -4,13 +4,17 @@ using Api.Controllers.Cliente;
 using Api.Controllers.Cliente.CreateCliente;
 using Api.Controllers.Cliente.UpdateCliente;
 using Api.Presenters.Cliente;
+using Api.Presenters.Veiculo;
 using Api.ViewModels.Cliente;
+using Api.ViewModels.Veiculo;
 using Application.UseCases.Administrativo.Cliente.Commands.CreateCliente;
 using Application.UseCases.Administrativo.Cliente.Responses;
 using Application.UseCases.Administrativo.Cliente.Commands.DeleteCliente;
 using Application.UseCases.Administrativo.Cliente.Commands.UpdateCliente;
 using Application.UseCases.Administrativo.Cliente.Queries.GetAllClientes;
 using Application.UseCases.Administrativo.Cliente.Queries.GetClienteById;
+using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculosByCliente;
+using Application.UseCases.Administrativo.Veiculo.Responses;
 using Domain.Administrativo.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +37,7 @@ public class ClienteControllerTests
         _controller = new ClienteController(
             _mediatorMock.Object,
             new ClientePresenter(),
+            new VeiculoPresenter(),
             _createValidatorMock.Object,
             _updateValidatorMock.Object);
     }
@@ -110,6 +115,28 @@ public class ClienteControllerTests
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task GetVeiculos_ReturnsOkWithVeiculosOfCliente()
+    {
+        // Arrange
+        var veiculos = new List<VeiculoResponse>
+        {
+            new() { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" }
+        };
+
+        _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculosByClienteQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
+
+        // Act
+        var result = await _controller.GetVeiculos(1);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var viewModels = Assert.IsAssignableFrom<IEnumerable<VeiculoViewModel>>(okResult.Value).ToList();
+        Assert.Single(viewModels);
+        Assert.Equal(veiculos[0].Id, viewModels[0].Id);
+        Assert.Equal(veiculos[0].IdCliente, viewModels[0].IdCliente);
     }
 
     [Fact]

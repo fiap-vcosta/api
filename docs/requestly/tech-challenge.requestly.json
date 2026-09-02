@@ -389,14 +389,14 @@
     },
     {
       "id": "e172825f-e2cb-4c80-9d59-3fc5a082aa1c",
-      "name": "listar-por-dono",
+      "name": "listar-veiculos-do-cliente",
       "type": "api",
       "parentId": "c455fd9f-782d-48c1-a6cf-1aca7c3d1b4b",
       "deleted": false,
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo/por-dono/{{clienteId}}",
+          "url": "{{baseUrl}}/api/cliente/{{clienteId}}/veiculos",
           "method": "GET",
           "headers": [],
           "queryParams": [],

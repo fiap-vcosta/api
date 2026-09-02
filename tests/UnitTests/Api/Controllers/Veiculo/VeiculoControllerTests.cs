@@ -10,7 +10,6 @@ using Application.UseCases.Administrativo.Veiculo.Responses;
 using Application.UseCases.Administrativo.Veiculo.Commands.DeleteVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetAllVeiculos;
-using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculosByCliente;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -126,28 +125,6 @@ public class VeiculoControllerTests
         Assert.Equal(2, viewModels.Count);
         Assert.Equal(veiculos[0].Id, viewModels[0].Id);
         Assert.Equal(veiculos[1].Placa, viewModels[1].Placa);
-    }
-
-    [Fact]
-    public async Task GetByDono_ReturnsOkWithVeiculosOfDono()
-    {
-        // Arrange
-        var veiculos = new List<VeiculoResponse>
-        {
-            new() { Id = 1, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" }
-        };
-
-        _mediatorMock.Setup(m => m.Send(It.IsAny<GetVeiculosByClienteQuery>(), CancellationToken.None)).ReturnsAsync(veiculos);
-
-        // Act
-        var result = await _controller.GetByDono(1);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var viewModels = Assert.IsAssignableFrom<IEnumerable<VeiculoViewModel>>(okResult.Value).ToList();
-        Assert.Single(viewModels);
-        Assert.Equal(veiculos[0].Id, viewModels[0].Id);
-        Assert.Equal(veiculos[0].IdCliente, viewModels[0].IdCliente);
     }
 
     [Fact]

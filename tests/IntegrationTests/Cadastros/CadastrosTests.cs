@@ -57,8 +57,8 @@ public class CadastrosTests
         var getVeiculo = await _client.GetAsync($"/api/Veiculo/{veiculo.Id}");
         getVeiculo.EnsureSuccessStatusCode();
 
-        var porDono = await _client.GetAsync($"/api/Veiculo/por-dono/{cliente.Id}");
-        porDono.EnsureSuccessStatusCode();
+        var veiculosDoCliente = await _client.GetAsync($"/api/Cliente/{cliente.Id}/veiculos");
+        veiculosDoCliente.EnsureSuccessStatusCode();
 
         var createServico = await _client.PostAsJsonAsync("/api/Servico", new
         {

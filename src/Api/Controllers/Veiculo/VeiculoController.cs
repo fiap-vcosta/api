@@ -6,7 +6,6 @@ using Application.UseCases.Administrativo.Veiculo.Commands.CreateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.DeleteVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Commands.UpdateVeiculo;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetAllVeiculos;
-using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculosByCliente;
 using Application.UseCases.Administrativo.Veiculo.Queries.GetVeiculoById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -62,14 +61,6 @@ public class VeiculoController(
     public async Task<IActionResult> GetAll()
     {
         var query = new GetAllVeiculosQuery();
-        var response = await mediator.Send(query);
-        return Ok(presenter.Present(response));
-    }
-
-    [HttpGet("por-dono/{clienteId:int}")]
-    public async Task<IActionResult> GetByDono(int clienteId)
-    {
-        var query = new GetVeiculosByClienteQuery { IdCliente = clienteId };
         var response = await mediator.Send(query);
         return Ok(presenter.Present(response));
     }

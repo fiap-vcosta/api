@@ -103,7 +103,7 @@ public class CadastrosTests
 
     private sealed record IdResponse(int Id);
 
-    private sealed record ClienteComVeiculosResponse(int Id, IReadOnlyList<VeiculoResumoResponse> Veiculos);
+    private sealed record ClienteComVeiculosResponse(IReadOnlyList<VeiculoResumoResponse> Veiculos);
 
     private sealed record VeiculoResumoResponse(int Id, string Placa);
 }

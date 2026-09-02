@@ -60,6 +60,12 @@ public class CadastrosTests
         var veiculosDoCliente = await _client.GetAsync($"/api/Cliente/{cliente.Id}/veiculos");
         veiculosDoCliente.EnsureSuccessStatusCode();
 
+        var getClienteComVeiculos = await _client.GetAsync($"/api/Cliente/{cliente.Id}");
+        getClienteComVeiculos.EnsureSuccessStatusCode();
+        var clienteComVeiculos = await getClienteComVeiculos.Content.ReadFromJsonAsync<ClienteComVeiculosResponse>(JsonOptions);
+        Assert.NotNull(clienteComVeiculos);
+        Assert.Contains(clienteComVeiculos.Veiculos, v => v.Id == veiculo.Id && v.Placa == "ABC-1D23");
+
         var createServico = await _client.PostAsJsonAsync("/api/Servico", new
         {
             Codigo = "OLE-999",
@@ -96,4 +102,8 @@ public class CadastrosTests
     }
 
     private sealed record IdResponse(int Id);
+
+    private sealed record ClienteComVeiculosResponse(int Id, IReadOnlyList<VeiculoResumoResponse> Veiculos);
+
+    private sealed record VeiculoResumoResponse(int Id, string Placa);
 }

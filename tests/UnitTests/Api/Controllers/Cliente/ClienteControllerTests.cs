@@ -36,7 +36,7 @@ public class ClienteControllerTests
         _updateValidatorMock = new Mock<IValidator<UpdateClienteRequest>>();
         _controller = new ClienteController(
             _mediatorMock.Object,
-            new ClientePresenter(),
+            new ClientePresenter(new VeiculoPresenter()),
             new VeiculoPresenter(),
             _createValidatorMock.Object,
             _updateValidatorMock.Object);
@@ -88,7 +88,17 @@ public class ClienteControllerTests
     public async Task GetById_ReturnsOk_WhenClienteExists()
     {
         // Arrange
-        var response = new ClienteResponse { Id = 1, Nome = "Cliente Test", TipoDocumento = 0, Documento = "11144477735" };
+        var response = new ClienteResponse
+        {
+            Id = 1,
+            Nome = "Cliente Test",
+            TipoDocumento = 0,
+            Documento = "11144477735",
+            Veiculos =
+            [
+                new VeiculoResponse { Id = 10, Placa = "ABC-1D23", IdCliente = 1, Modelo = "Gol", Marca = "Volkswagen" }
+            ]
+        };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetClienteByIdQuery>(), CancellationToken.None))
             .ReturnsAsync(response);
@@ -101,6 +111,8 @@ public class ClienteControllerTests
         var viewModel = Assert.IsType<ClienteViewModel>(okResult.Value);
         Assert.Equal(response.Id, viewModel.Id);
         Assert.Equal(response.Documento, viewModel.Documento);
+        Assert.Single(viewModel.Veiculos);
+        Assert.Equal(10, viewModel.Veiculos[0].Id);
     }
 
     [Fact]

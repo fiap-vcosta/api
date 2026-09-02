@@ -8,7 +8,7 @@ public static class AuthHelper
 {
     public static async Task AuthenticateAsAdminAsync(HttpClient client)
     {
-        var response = await client.PostAsJsonAsync("/api/Auth/login", new
+        var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             login = "admin",
             senha = "admin"

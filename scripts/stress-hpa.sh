@@ -10,8 +10,8 @@ CONCURRENCY="${2:-25}"
 LOGIN="${LOGIN:-admin}"
 PASSWORD="${PASSWORD:-admin}"
 
-echo "Login em ${BASE_URL}/api/Auth/login ..."
-TOKEN="$(curl -fsS -X POST "${BASE_URL}/api/Auth/login" \
+echo "Login em ${BASE_URL}/api/auth/login ..."
+TOKEN="$(curl -fsS -X POST "${BASE_URL}/api/auth/login" \
   -H 'Content-Type: application/json' \
   -d "{\"login\":\"${LOGIN}\",\"password\":\"${PASSWORD}\"}" \
   | sed -n 's/.*"token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
@@ -21,7 +21,7 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-URL="${BASE_URL}/api/OrdemServico"
+URL="${BASE_URL}/api/ordens-servico"
 echo "Stress: url=${URL} duration=${DURATION}s concurrency=${CONCURRENCY}"
 echo "Em outro terminal: watch -n 2 kubectl get hpa,pods -n techchallenge"
 

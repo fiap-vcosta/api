@@ -113,9 +113,9 @@ HPA: `./scripts/stress-hpa.sh` · `kubectl get hpa,pods -n techchallenge`
 
 | Capacidade | Endpoint | Auth |
 |------------|----------|------|
-| Abrir OS (veículo + serviços + peças) | `POST /api/OrdemServico` | JWT Admin |
-| Consultar OS | `GET /api/OrdemServico/{id}` | JWT Admin |
-| Listar OS ativas | `GET /api/OrdemServico` | JWT Admin |
+| Abrir OS (veículo + serviços + peças) | `POST /api/ordens-servico` | JWT Admin |
+| Consultar OS | `GET /api/ordens-servico/{id}` | JWT Admin |
+| Listar OS ativas | `GET /api/ordens-servico` | JWT Admin |
 | Aprovar / rejeitar orçamento | `POST /api/public/ordens-servico/aprovar?token=` · `.../rejeitar?token=` | Público |
 
 Listagem exclui Finalizada, Entregue e Descartada; ordenação por status evolutivo e data. Aprovação pública reutiliza os mesmos use cases da API autenticada. Requisitos: [`docs/01_requisitos.md`](docs/01_requisitos.md).

@@ -147,7 +147,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente",
+          "url": "{{baseUrl}}/api/clientes",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -172,7 +172,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente",
+          "url": "{{baseUrl}}/api/clientes",
           "method": "POST",
           "headers": [
             {
@@ -210,7 +210,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "url": "{{baseUrl}}/api/clientes/{{clienteId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -235,7 +235,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "url": "{{baseUrl}}/api/clientes/{{clienteId}}",
           "method": "PUT",
           "headers": [
             {
@@ -270,7 +270,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente/{{clienteId}}",
+          "url": "{{baseUrl}}/api/clientes/{{clienteId}}",
           "method": "DELETE",
           "headers": [],
           "queryParams": [],
@@ -308,7 +308,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo",
+          "url": "{{baseUrl}}/api/veiculos",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -333,7 +333,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo",
+          "url": "{{baseUrl}}/api/veiculos",
           "method": "POST",
           "headers": [
             {
@@ -371,7 +371,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -396,7 +396,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/cliente/{{clienteId}}/veiculos",
+          "url": "{{baseUrl}}/api/clientes/{{clienteId}}/veiculos",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -421,7 +421,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}",
           "method": "PUT",
           "headers": [
             {
@@ -456,7 +456,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/veiculo/{{veiculoId}}",
+          "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}",
           "method": "DELETE",
           "headers": [],
           "queryParams": [],
@@ -494,7 +494,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/servico",
+          "url": "{{baseUrl}}/api/servicos",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -519,7 +519,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/servico",
+          "url": "{{baseUrl}}/api/servicos",
           "method": "POST",
           "headers": [
             {
@@ -557,7 +557,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "url": "{{baseUrl}}/api/servicos/{{servicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -582,7 +582,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "url": "{{baseUrl}}/api/servicos/{{servicoId}}",
           "method": "PUT",
           "headers": [
             {
@@ -617,7 +617,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/servico/{{servicoId}}",
+          "url": "{{baseUrl}}/api/servicos/{{servicoId}}",
           "method": "DELETE",
           "headers": [],
           "queryParams": [],
@@ -657,7 +657,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -682,7 +682,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque",
+          "url": "{{baseUrl}}/api/itens-estoque",
           "method": "POST",
           "headers": [
             {
@@ -720,7 +720,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEstoqueId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -745,7 +745,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEstoqueId}}",
           "method": "PUT",
           "headers": [
             {
@@ -780,7 +780,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEstoqueId}}",
           "method": "DELETE",
           "headers": [],
           "queryParams": [],
@@ -805,7 +805,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/itemestoque/{{itemEstoqueId}}/registrar-entrada",
+          "url": "{{baseUrl}}/api/itens-estoque/{{itemEstoqueId}}/registrar-entrada",
           "method": "POST",
           "headers": [
             {
@@ -869,7 +869,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -897,7 +897,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -922,7 +922,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/tempo-medio-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/tempo-medio-execucao",
           "method": "GET",
           "headers": [],
           "queryParams": [],
@@ -961,7 +961,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -999,7 +999,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico",
+          "url": "{{baseUrl}}/api/ordens-servico",
           "method": "POST",
           "headers": [
             {
@@ -1037,7 +1037,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/adicionar-servico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/adicionar-servico",
           "method": "POST",
           "headers": [
             {
@@ -1072,7 +1072,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/finalizar-diagnostico",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1097,7 +1097,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1122,7 +1122,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/rejeitar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/rejeitar",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1147,7 +1147,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/aprovar-parcialmente",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/aprovar-parcialmente",
           "method": "POST",
           "headers": [
             {
@@ -1182,7 +1182,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-execucao",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-execucao",
           "method": "POST",
           "headers": [
             {
@@ -1217,7 +1217,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/confirmar-pagamento",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/confirmar-pagamento",
           "method": "POST",
           "headers": [],
           "queryParams": [],
@@ -1242,7 +1242,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/ordemservico/{{ordemServicoId}}/descartar",
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/descartar",
           "method": "POST",
           "headers": [],
           "queryParams": [],

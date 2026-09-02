@@ -49,4 +49,4 @@ watch -n 2 kubectl get hpa,pods -n techchallenge
 ./scripts/stress-hpa.sh
 ```
 
-O script faz login (`admin`/`admin`) e gera carga em `GET /api/OrdemServico`.
+O script faz login (`admin`/`admin`) e gera carga em `GET /api/ordens-servico`.

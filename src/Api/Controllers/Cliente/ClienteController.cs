@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Cliente;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/clientes")]
 [Authorize(Roles = "Admin")]
 public class ClienteController(
     IMediator mediator,

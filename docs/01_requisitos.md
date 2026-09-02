@@ -121,7 +121,7 @@ A máquina de estados e demais regras da sessão de Maio/2025 (**RF02–RF16**) 
   * **RF17.1:** Serviços/peças informados na criação são adicionados com a OS em `Recebida`; o fluxo de criação segue para `EmDiagnostico` sem finalizar o diagnóstico automaticamente.
 * **RF18 (Adição de serviços e peças):** *(substitui RF01.3)* O domínio só permite adicionar itens de serviço/peças quando a OS estiver em **`Recebida`** ou **`EmDiagnostico`**. Qualquer outro status deve ser rejeitado por regra de negócio.
 * **RF19 (Consulta de status):** O sistema deve expor consulta da OS por id informando a situação atual (status do domínio: Recebida, Em Diagnóstico, Aguardando Aprovação, Execução, Finalizada, Entregue, etc.).
-  * Endpoint: `GET /api/OrdemServico/{id}` (JWT Admin).
+  * Endpoint: `GET /api/ordens-servico/{id}` (JWT Admin).
 * **RF20 (Listagem de OS):** O sistema deve listar ordens de serviço ativas com as regras:
   * **RF20.1 (Exclusão lógica da listagem):** Não incluir OS em `Finalizada`, `Entregue` ou `Descartada`.
   * **RF20.2 (Ordenação):** Prioridade evolutiva de status (maior prioridade primeiro), depois as mais antigas (`RecebidaEm`). Ordem de prioridade:
@@ -132,7 +132,7 @@ A máquina de estados e demais regras da sessão de Maio/2025 (**RF02–RF16**) 
     5. `AguardandoAprovacao`
     6. `EmDiagnostico`
     7. `Recebida`
-  * Endpoint: `GET /api/OrdemServico` (JWT Admin).
+  * Endpoint: `GET /api/ordens-servico` (JWT Admin).
 * **RF21 (Aprovação de orçamento — ator externo):** *(substitui o canal “e-mail/SMTP” do RF03)* O sistema deve receber aprovação ou recusa do orçamento via endpoint **público** (sem JWT), localizando a OS por **token opaco**.
   * **RF21.1:** Os endpoints públicos devem acionar os **mesmos** use cases de aprovar/rejeitar já usados pela API administrativa.
   * **RF21.2:** O token não deve ser exposto nas responses de criação/consulta da API.

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Auth;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController(IMediator mediator, AuthPresenter presenter, IValidator<LoginRequest> validator) : ControllerBase
 {
     [HttpPost("login")]

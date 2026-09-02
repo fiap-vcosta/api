@@ -32,7 +32,7 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
         await DescartarAsync(descartadaId);
 
         // Act
-        var listResponse = await Client.GetAsync("/api/OrdemServico");
+        var listResponse = await Client.GetAsync("/api/ordens-servico");
         listResponse.EnsureSuccessStatusCode();
         await using var stream = await listResponse.Content.ReadAsStreamAsync();
         using var document = await JsonDocument.ParseAsync(stream);
@@ -69,7 +69,7 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
         ClearAuthentication();
 
         // Act
-        var response = await Client.GetAsync("/api/OrdemServico");
+        var response = await Client.GetAsync("/api/ordens-servico");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

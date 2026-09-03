@@ -8,6 +8,7 @@ Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoqu
 2. Ler [docs/00_linguagem-onipresente.md](docs/00_linguagem-onipresente.md) quando o domínio for tocado
 3. Espelhar padrões das pastas vizinhas; não inventar estrutura paralela
 4. Não escrever testes de feature ainda não implementada; não inventar requisitos fora de `docs/01`
+5. **Git:** nunca commit/push direto em `main` — branch → PR → merge (ver [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc))
 
 ## Layout da solution
 

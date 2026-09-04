@@ -1,7 +1,9 @@
 # Kubernetes — API
 
-Deploy da API no kind. Manifests em [`/k8s`](../k8s). Infra antes: [04_infraestrutura-kind-terraform.md](04_infraestrutura-kind-terraform.md).  
+Deploy da API no kind (lab local). Manifests em [`/k8s`](../k8s). Infra antes: [04_infraestrutura-kind-terraform.md](04_infraestrutura-kind-terraform.md).  
 Índice: [docs/README.md](README.md) · [README.md](../README.md).
+
+> **Fase 03:** entrega na GCP não usa este fluxo; ver `infra-k8s` (§5).
 
 ## Deploy
 
@@ -38,7 +40,7 @@ curl -s http://localhost:8080/health
 - API: http://localhost:8080  
 - Swagger: http://localhost:8080/swagger/index.html  
 
-Via pipeline: workflow **CD** (cria o Secret a partir dos GitHub Secrets; não precisa de `k8s/secret.yaml`).
+O workflow CD kind foi removido; use os scripts/`kubectl` acima no lab local.
 
 ## HPA / stress
 

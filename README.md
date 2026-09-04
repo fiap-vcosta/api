@@ -1,6 +1,6 @@
 # Gestão de Oficina Mecânica
 
-API .NET 8 para ordens de serviço, clientes, veículos, catálogo de serviços e estoque. Clean Architecture, PostgreSQL, Docker, Kubernetes (kind), Terraform e CI/CD com GitHub Actions.
+API .NET 8 para ordens de serviço, clientes, veículos, catálogo de serviços e estoque. Clean Architecture, PostgreSQL, Docker Compose (dev local). Entrega Fase 03 na GCP fica em `infra-db` / `infra-k8s` (kind local é legado).
 
 ## Arquitetura
 
@@ -53,23 +53,17 @@ flowchart TB
   api --> pg
 ```
 
-### Deploy
+### CI
 
 ```mermaid
 sequenceDiagram
   participant Dev
   participant CI as CI
-  participant CD as CD
-  participant Cluster as kind
-  Dev->>CI: push
+  Dev->>CI: push / PR
   CI->>CI: lint, unit, integration
-  Dev->>CD: push main ou dispatch
-  CD->>Cluster: terraform apply
-  CD->>Cluster: build, load image, kubectl apply
-  Note over Cluster: migrations no startup da API
 ```
 
-Detalhes: [`docs/04`](docs/04_infraestrutura-kind-terraform.md), [`docs/05`](docs/05_kubernetes-api.md), [`.github/workflows`](.github/workflows).
+Kind + Terraform em [`docs/04`](docs/04_infraestrutura-kind-terraform.md) / [`docs/05`](docs/05_kubernetes-api.md) são **legado local** (não é CD de entrega Fase 03). Deploy GCP: repos `infra-*` + workflow manual na §5.
 
 ---
 
@@ -133,7 +127,7 @@ dotnet test tests/IntegrationTests/IntegrationTests.csproj   # requer Docker
 - Estratégia: [`docs/06_testes.md`](docs/06_testes.md)
 - Collections HTTP: [`docs/07_api.md`](docs/07_api.md) (Swagger + Requestly)
 - CI: lint + unit + integration em paralelo ([`ci.yml`](.github/workflows/ci.yml))
-- CD: imagem → kind → manifests ([`cd.yml`](.github/workflows/cd.yml))
+- CD kind/self-hosted: **removido** (Fase 03). Deploy GCP manual na §5.
 
 ---
 

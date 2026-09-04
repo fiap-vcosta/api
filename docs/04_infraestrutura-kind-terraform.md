@@ -1,5 +1,7 @@
 # Infraestrutura local (kind + Terraform)
 
+> **Fase 03:** kind + self-hosted runner **não** são o caminho de entrega. Entrega na GCP: repos `infra-db` / `infra-k8s`. Este doc permanece como referência de lab local.
+
 Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [05_kubernetes-api.md](05_kubernetes-api.md).  
 Índice: [docs/README.md](README.md) · [README.md](../README.md).
 
@@ -26,23 +28,8 @@ Equivalente manual: pare o que usa a porta **8080**, depois `terraform apply` em
 ./scripts/down.sh
 ```
 
-## CD (self-hosted runner)
+## CD (self-hosted runner) — removido
 
-Workflow: [`.github/workflows/cd.yml`](../.github/workflows/cd.yml) (`runs-on: self-hosted` — mesma máquina do kind).
+O workflow `cd.yml` (kind + self-hosted) foi **removido** na Fase 03. Para lab local, use `./scripts/up.sh` nesta máquina. Deploy na nuvem: §5 (`infra-k8s` + workflow manual na `api`).
 
-1. GitHub → **Settings → Actions → Runners → New self-hosted runner** (Linux x64); seguir o script; `./svc.sh install && ./svc.sh start`.
-2. Runner **Idle**; `docker`, `kubectl`, `kind`, `terraform` e `helm` no `PATH` do serviço; usuário no grupo `docker`.
-3. **Settings → Secrets and variables → Actions** (alinhados a [`.env.example`](../.env.example)):
-
-| Secret |
-|--------|
-| `POSTGRES_DB` |
-| `POSTGRES_USER` |
-| `POSTGRES_PASSWORD` |
-| `JWT_KEY` |
-| `JWT_ISSUER` |
-| `JWT_AUDIENCE` |
-
-4. Disparar o workflow **CD** (`workflow_dispatch` ou push em `main`).
-
-Apply manual sem Actions: use `infra/terraform.tfvars` (gitignored; modelo em `terraform.tfvars.example`).
+Apply local sem Actions: use `infra/terraform.tfvars` (gitignored; modelo em `terraform.tfvars.example`). Secrets JWT/Postgres no lab local ficam no tfvars / `k8s/secret.yaml`, não no CD.

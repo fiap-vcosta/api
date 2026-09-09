@@ -1,21 +1,11 @@
-# Kubernetes — API
+# Kubernetes — API (fluxo kind, legado)
 
-Deploy da API no kind (lab local). Manifests em [`/k8s`](../k8s). Infra antes: [04_infraestrutura-kind-terraform.md](04_infraestrutura-kind-terraform.md).  
+> **Legado:** este doc descreve o deploy no kind. A pasta [`/k8s`](../k8s) hoje contém os manifests do **GKE Autopilot** (namespace `tech-challenge`, sidecar do Cloud SQL Auth Proxy, Service `LoadBalancer`), aplicados pelo workflow `deploy` — ver [README](../README.md). Infra antiga: [04_infraestrutura-kind-terraform.md](04_infraestrutura-kind-terraform.md).  
 Índice: [docs/README.md](README.md) · [README.md](../README.md).
-
-> **Fase 03:** entrega na GCP não usa este fluxo; ver `infra-k8s` (§5).
 
 ## Deploy
 
-Atalho (infra + API):
-
-```bash
-./scripts/up.sh
-./scripts/restart.sh
-./scripts/down.sh
-```
-
-Passo a passo (com infra já no ar):
+Os atalhos `scripts/up.sh`, `restart.sh` e `down.sh` foram removidos junto com o Terraform do kind. O que segue é o passo a passo manual do fluxo antigo:
 
 ```bash
 export KUBECONFIG="$(pwd)/infra/kubeconfig"

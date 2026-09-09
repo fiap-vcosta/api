@@ -57,10 +57,7 @@ inspectcode.sarif.json
 publish/
 build/
 
-# Terraform / Kubernetes local
-infra/.terraform/
-infra/terraform.tfvars
-infra/*.tfstate
-infra/*.tfstate.*
-infra/kubeconfig*
+# Kubernetes
+kubeconfig*
+*.rendered.yaml
 k8s/secret.yaml

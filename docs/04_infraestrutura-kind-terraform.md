@@ -1,8 +1,8 @@
-# Infraestrutura local (kind + Terraform)
+# Infraestrutura local (kind + Terraform) — legado
 
-> **Fase 03:** kind + self-hosted runner **não** são o caminho de entrega. Entrega na GCP: repos `infra-db` / `infra-k8s`. Este doc permanece como referência de lab local.
+> **Legado:** o Terraform de kind foi **removido** do repo. A entrega roda em GKE Autopilot, com cluster no repo `infra-k8s`, banco no `infra-db` e deploy pelos workflows deste repo (ver [README](../README.md)). Este documento fica como registro do lab anterior; os comandos abaixo não têm mais código correspondente.
 
-Sobe cluster kind, Postgres e metrics-server. Código em [`/infra`](../infra). Deploy da API: [05_kubernetes-api.md](05_kubernetes-api.md).  
+Subia cluster kind, Postgres e metrics-server. Deploy da API no fluxo antigo: [05_kubernetes-api.md](05_kubernetes-api.md).  
 Índice: [docs/README.md](README.md) · [README.md](../README.md).
 
 ## Pré-requisitos

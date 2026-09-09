@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: api
-  namespace: techchallenge
+  namespace: tech-challenge
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -11,15 +11,17 @@ spec:
   minReplicas: 1
   maxReplicas: 10
   metrics:
-    - type: Resource
-      resource:
+    - type: ContainerResource
+      containerResource:
         name: cpu
+        container: api
         target:
           type: Utilization
           averageUtilization: 50
-    - type: Resource
-      resource:
+    - type: ContainerResource
+      containerResource:
         name: memory
+        container: api
         target:
           type: Utilization
           averageUtilization: 80

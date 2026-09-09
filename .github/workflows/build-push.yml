@@ -3,7 +3,6 @@ name: build-push
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: build-push
@@ -55,14 +54,6 @@ jobs:
           IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPOSITORY }}/api
         run: |
           tag="${GITHUB_SHA::7}"
-          docker build --tag "$IMAGE:$tag" .
+          docker build --tag "$IMAGE:$tag" --tag "$IMAGE:latest" .
           docker push "$IMAGE:$tag"
-          {
-            echo "## Imagem publicada"
-            echo ""
-            echo '```'
-            echo "$IMAGE:$tag"
-            echo '```'
-            echo ""
-            echo "Informe a tag \`$tag\` no workflow \`deploy\`."
-          } >> "$GITHUB_STEP_SUMMARY"
+          docker push "$IMAGE:latest"

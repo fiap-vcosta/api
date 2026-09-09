@@ -2,11 +2,6 @@ name: deploy
 
 on:
   workflow_dispatch:
-    inputs:
-      image_tag:
-        description: "Tag da imagem no Artifact Registry (vazio = a mais recente)"
-        required: false
-        type: string
 
 concurrency:
   group: deploy
@@ -60,26 +55,6 @@ jobs:
         with:
           install_components: gke-gcloud-auth-plugin
 
-      - name: Resolver a tag da imagem
-        id: image
-        env:
-          REPOSITORY: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPOSITORY }}/api
-          REQUESTED_TAG: ${{ inputs.image_tag }}
-        run: |
-          tag="$REQUESTED_TAG"
-          if [[ -z "$tag" ]]; then
-            tag="$(gcloud artifacts docker tags list "$REPOSITORY" \
-              --sort-by=~UPDATE_TIME --limit=1 --format='value(tag)' | awk -F/ '{print $NF}')"
-          fi
-
-          if [[ -z "$tag" ]]; then
-            echo "nenhuma imagem em $REPOSITORY; rode o build-push primeiro" >&2
-            exit 1
-          fi
-
-          echo "image=$REPOSITORY:$tag" >> "$GITHUB_OUTPUT"
-          echo "Imagem: $REPOSITORY:$tag"
-
       - name: Credenciais do cluster
         run: |
           gcloud container clusters get-credentials "${{ vars.GCP_GKE_CLUSTER_NAME }}" \
@@ -106,7 +81,7 @@ jobs:
 
       - name: Aplicar manifests
         env:
-          IMAGE: ${{ steps.image.outputs.image }}
+          IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPOSITORY }}/api:latest
         run: |
           export IMAGE
           envsubst '${IMAGE}' < k8s/deployment.yaml > deployment.rendered.yaml
@@ -134,7 +109,6 @@ jobs:
               {
                 echo "## API no ar"
                 echo ""
-                echo "- Imagem: \`${{ steps.image.outputs.image }}\`"
                 echo "- Health: http://$ip/health"
                 echo "- Swagger: http://$ip/swagger"
               } >> "$GITHUB_STEP_SUMMARY"

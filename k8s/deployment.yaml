@@ -48,8 +48,8 @@ spec:
             runAsNonRoot: true
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: "50m"
+              memory: "128Mi"
       containers:
         - name: api
           image: ${IMAGE}
@@ -79,5 +79,5 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "250m"
+              memory: "512Mi"

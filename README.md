@@ -76,8 +76,6 @@ sequenceDiagram
   CI->>CI: lint, unit, integration
 ```
 
-[`docs/04`](docs/04_infraestrutura-kind-terraform.md) e [`docs/05`](docs/05_kubernetes-api.md) descrevem o lab antigo em kind, que foi **removido** do repo e permanece só como registro histórico.
-
 ---
 
 ## Como executar
@@ -114,10 +112,10 @@ Não há Job de migration: a aplicação roda `db.Database.Migrate()` no start, 
 
 | Workflow | Quando | O que faz |
 |----------|--------|-----------|
-| [`build-push`](.github/workflows/build-push.yml) | Merge em `main` (e manual) | Build da imagem e push no Artifact Registry com tag do SHA curto |
-| [`deploy`](.github/workflows/deploy.yml) | Só manual | Aplica os manifests no cluster e devolve o IP público |
+| [`build-push`](.github/workflows/build-push.yml) | Merge em `main` | Build da imagem e push no Artifact Registry (`:latest` + SHA curto) |
+| [`deploy`](.github/workflows/deploy.yml) | Só manual | Aplica os manifests com a imagem `:latest` e devolve o IP público |
 
-O `build-push` mantém o registry sempre com a imagem da `main`, e é independente de cluster e banco — roda fora da janela de demo. O `deploy` pede a tag da imagem; vazio significa a mais recente publicada.
+O `build-push` mantém o registry sempre com a imagem da `main`, e é independente de cluster e banco — roda fora da janela de demo. O `deploy` sempre usa `:latest`.
 
 A cada deploy o workflow lê a senha do banco no Secret Manager, **gera** uma chave JWT nova e recria o Secret `api` do cluster. Nenhum dos dois valores existe no Git ou em tfstate. Em troca, a chave rotaciona: token de staff obtido antes de um redeploy deixa de valer, e basta logar de novo.
 

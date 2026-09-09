@@ -9,13 +9,13 @@ BASE_URL="${1:-${BASE_URL:-http://localhost:8080}}"
 DURATION="${2:-120}"
 CONCURRENCY="${3:-25}"
 LOGIN="${LOGIN:-admin}"
-PASSWORD="${PASSWORD:-admin}"
+SENHA="${SENHA:-${PASSWORD:-admin}}"
 NAMESPACE="${NAMESPACE:-tech-challenge}"
 
 echo "Login em ${BASE_URL}/api/auth/login ..."
 TOKEN="$(curl -fsS -X POST "${BASE_URL}/api/auth/login" \
   -H 'Content-Type: application/json' \
-  -d "{\"login\":\"${LOGIN}\",\"password\":\"${PASSWORD}\"}" \
+  -d "{\"login\":\"${LOGIN}\",\"senha\":\"${SENHA}\"}" \
   | sed -n 's/.*"token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
 
 if [[ -z "${TOKEN}" ]]; then

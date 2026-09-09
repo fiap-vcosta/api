@@ -1,0 +1,121 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  K8S_NAMESPACE: tech-challenge
+  DB_NAME: techchallenge
+  DB_USER: api
+
+jobs:
+  deploy:
+    name: Deploy no GKE
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check required org vars
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ vars.GCP_REGION }}
+          GCP_AR_REPOSITORY: ${{ vars.GCP_AR_REPOSITORY }}
+          GCP_GKE_CLUSTER_NAME: ${{ vars.GCP_GKE_CLUSTER_NAME }}
+          GCP_DB_PASSWORD_SECRET: ${{ vars.GCP_DB_PASSWORD_SECRET }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SERVICE_ACCOUNT_EMAIL: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
+        run: |
+          missing=()
+          for name in GCP_PROJECT_ID GCP_REGION GCP_AR_REPOSITORY GCP_GKE_CLUSTER_NAME \
+                      GCP_DB_PASSWORD_SECRET GCP_WORKLOAD_IDENTITY_PROVIDER GCP_SERVICE_ACCOUNT_EMAIL; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "org vars faltando: ${missing[*]}" >&2
+            exit 1
+          fi
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: gke-gcloud-auth-plugin
+
+      - name: Credenciais do cluster
+        run: |
+          gcloud container clusters get-credentials "${{ vars.GCP_GKE_CLUSTER_NAME }}" \
+            --region "${{ vars.GCP_REGION }}" --dns-endpoint
+
+      - name: Namespace e service account
+        run: kubectl apply -f k8s/namespace.yaml -f k8s/serviceaccount.yaml
+
+      - name: Secret da aplicação
+        env:
+          DB_PASSWORD_SECRET: ${{ vars.GCP_DB_PASSWORD_SECRET }}
+        run: |
+          db_password="$(gcloud secrets versions access latest --secret="$DB_PASSWORD_SECRET")"
+          jwt_key="$(openssl rand -base64 48)"
+          echo "::add-mask::$db_password"
+          echo "::add-mask::$jwt_key"
+
+          kubectl create secret generic api \
+            --namespace "$K8S_NAMESPACE" \
+            --from-literal=ConnectionStrings__DefaultConnection="Host=127.0.0.1;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${db_password}" \
+            --from-literal=Jwt__Key="$jwt_key" \
+            --dry-run=client -o yaml \
+          | kubectl apply -f -
+
+      - name: Aplicar manifests
+        env:
+          IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPOSITORY }}/api:latest
+        run: |
+          export IMAGE
+          envsubst '${IMAGE}' < k8s/deployment.yaml > deployment.rendered.yaml
+          kubectl apply -f k8s/configmap.yaml -f deployment.rendered.yaml -f k8s/service.yaml -f k8s/hpa.yaml
+          # a chave JWT é regerada a cada deploy: sem restart os pods seguem com a antiga
+          kubectl rollout restart deployment/api --namespace "$K8S_NAMESPACE"
+          kubectl rollout status deployment/api --namespace "$K8S_NAMESPACE" --timeout=10m
+
+      - name: Endereço público e smoke de health
+        run: |
+          for _ in $(seq 1 30); do
+            ip="$(kubectl get service api --namespace "$K8S_NAMESPACE" \
+              -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+            [[ -n "$ip" ]] && break
+            sleep 10
+          done
+
+          if [[ -z "$ip" ]]; then
+            echo "LoadBalancer sem IP externo depois de 5 min" >&2
+            exit 1
+          fi
+
+          for _ in $(seq 1 18); do
+            if curl -fsS --max-time 5 "http://$ip/health" >/dev/null; then
+              {
+                echo "## API no ar"
+                echo ""
+                echo "- Health: http://$ip/health"
+                echo "- Swagger: http://$ip/swagger"
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 10
+          done
+
+          echo "http://$ip/health não respondeu 200 em 3 min" >&2
+          exit 1

@@ -20,6 +20,7 @@ Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoqu
 | `src/Api` | Controllers, Requests/Validators, **Presenters**, ViewModels e filtro de Problem Details |
 | `tests/UnitTests` | Testes unitários do comportamento existente |
 | `tests/IntegrationTests` | Testes de integração HTTP (`WebApplicationFactory` + Testcontainers) |
+| `k8s/` | Manifests do GKE Autopilot aplicados pelo workflow `deploy` |
 
 Dependências apontam para dentro: Api → Application → Domain; Infrastructure implementa ports.
 
@@ -46,6 +47,7 @@ dotnet restore
 # Integração precisa de Docker (Testcontainers Postgres)
 # Docker app (ver README): docker-compose --profile app up -d
 # CI: .github/workflows/ci.yml (push → lint + unit + integration em paralelo)
+# CD: build-push (merge em main) e deploy (manual) — nunca disparar sem pedido explícito
 ```
 
 Swagger local (Docker): `http://localhost:8080/swagger/index.html`

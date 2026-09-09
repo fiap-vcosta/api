@@ -52,7 +52,7 @@ No CI: job **Integration tests** em paralelo com unitários e lint.
 
 ## E2E HTTP (Requestly)
 
-Exercitam a API **já em execução** (Docker, kind ou `dotnet run`), fora da suite .NET.
+Exercitam a API **já em execução** (Docker ou `dotnet run`), fora da suite .NET.
 
 | | |
 |--|--|

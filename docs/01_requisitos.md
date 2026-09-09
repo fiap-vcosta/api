@@ -100,16 +100,15 @@ Objetivos desta sessão: infraestrutura escalável, automação de provisionamen
   * **RNF14.1:** Deployments e Services.
   * **RNF14.2:** ConfigMaps e Secrets para variáveis sensíveis.
   * **RNF14.3:** Horizontal Pod Autoscaler (HPA) por consumo de CPU e memória.
-* **RNF15 (Infraestrutura como Código):** Provisionamento com Terraform em `/infra`:
-  * **RNF15.1:** Cluster Kubernetes **local** (**kind**); cloud fora do escopo atual.
-  * **RNF15.2:** Banco de dados (PostgreSQL no cluster).
-  * **RNF15.3:** metrics-server (via Helm) para viabilizar o HPA.
-  * **RNF15.4:** Documentar recursos criados e como aplicar ([`04_infraestrutura-kind-terraform.md`](04_infraestrutura-kind-terraform.md)).
+* **RNF15 (Infraestrutura como Código):** Provisionamento com Terraform nos repos de infra da org (`infra-bootstrap`, `infra-db`, `infra-k8s`):
+  * **RNF15.1:** Cluster **GKE Autopilot** (`infra-k8s`).
+  * **RNF15.2:** Banco de dados Cloud SQL PostgreSQL (`infra-db`).
+  * **RNF15.3:** Rede, WIF e Artifact Registry na camada persistente (`infra-bootstrap`).
 * **RNF16 (CI/CD):** Pipeline no GitHub Actions que execute:
   * **RNF16.1 (CI):** Build da aplicação e execução dos testes automatizados (a cada push).
-  * **RNF16.2 (CD):** Build da imagem Docker, deploy do banco (migrations no startup da API), aplicação dos manifestos no cluster kind via **self-hosted runner**.
-* **RNF17 (Escalabilidade):** A API deve escalar horizontalmente no cluster conforme carga (HPA), demonstrável sob stress ([`05_kubernetes-api.md`](05_kubernetes-api.md)).
-* **RNF18 (Documentação):** `README.md` com descrição da solução, diagramas de arquitetura (C4 e infra/deploy), instruções de execução local, Terraform e Kubernetes, e link das collections de API.
+  * **RNF16.2 (CD):** Build e push da imagem no Artifact Registry a cada merge em `main`; deploy no GKE só via `workflow_dispatch`.
+* **RNF17 (Escalabilidade):** A API deve escalar horizontalmente no cluster conforme carga (HPA), demonstrável sob stress (`scripts/stress-hpa.sh`).
+* **RNF18 (Documentação):** `README.md` com descrição da solução, diagramas de arquitetura (C4 e infra/deploy), instruções de execução local e deploy na GCP, e link das collections de API.
 * **RNF19 (Segurança operacional):** Credenciais e chaves (Postgres, JWT) via Secrets do Kubernetes / secrets do Actions — não embutidas na imagem.
 * **RNF20 (Observabilidade operacional):** Manter endpoint de health para verificação da aplicação em runtime (alinhado ao RNF09).
 

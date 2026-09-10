@@ -21,7 +21,10 @@ public class ServiceCollectionExtensionsTests
                 ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Database=test;Username=postgres;Password=postgres",
                 ["Jwt:Key"] = "super-secret-key-1234567890-ABCDEFGH",
                 ["Jwt:Issuer"] = "test-issuer",
-                ["Jwt:Audience"] = "test-audience"
+                ["Jwt:Audience"] = "test-audience",
+                ["JwtClient:Key"] = "local-jwt-client-key-change-me-32chars-min",
+                ["JwtClient:Issuer"] = "tech-challenge-client",
+                ["JwtClient:Audience"] = "tech-challenge-client"
             })
             .Build();
         services.AddSingleton<IConfiguration>(configuration);

@@ -49,6 +49,14 @@
         "documentoCliente": {
           "type": "string",
           "syncValue": "11144477735"
+        },
+        "tokenCliente": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "jwtClientIssuer": {
+          "type": "string",
+          "syncValue": "tech-challenge-client"
         }
       }
     }

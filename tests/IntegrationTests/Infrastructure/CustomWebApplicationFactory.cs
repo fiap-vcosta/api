@@ -39,6 +39,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
                 ["Jwt:Key"] = "a-really-long-dummy-token-key-that-should-be-kept-secret",
                 ["Jwt:Issuer"] = "dummy-issuer",
                 ["Jwt:Audience"] = "dummy-audience",
+                ["JwtClient:Key"] = ClientJwtHelper.DefaultKey,
+                ["JwtClient:Issuer"] = ClientJwtHelper.DefaultIssuer,
+                ["JwtClient:Audience"] = ClientJwtHelper.DefaultAudience,
                 ["ServiceAuth:Key"] = "integration-service-auth-key"
             });
         });

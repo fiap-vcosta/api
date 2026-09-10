@@ -1,3 +1,4 @@
+using Api.Auth;
 using Api.Filters;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -59,7 +60,15 @@ public static class ServiceCollectionExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
         services.AddJwtAuthentication(configuration);
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicies.ClienteJwt, policy =>
+            {
+                policy.AddAuthenticationSchemes(AuthSchemes.Cliente);
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim(ClientJwtClaims.Cpf);
+            });
+        });
     }
 
     private static void AddCoreServices(this IServiceCollection services)
@@ -126,6 +135,10 @@ public static class ServiceCollectionExtensions
         var jwtIssuer = configuration["Jwt:Issuer"] ?? "default-issuer";
         var jwtAudience = configuration["Jwt:Audience"] ?? "default-audience";
 
+        var jwtClientKey = configuration["JwtClient:Key"] ?? "default-client-key";
+        var jwtClientIssuer = configuration["JwtClient:Issuer"] ?? "default-client-issuer";
+        var jwtClientAudience = configuration["JwtClient:Audience"] ?? "default-client-audience";
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -137,6 +150,18 @@ public static class ServiceCollectionExtensions
                     ValidateAudience = true,
                     ValidIssuer = jwtIssuer,
                     ValidAudience = jwtAudience
+                };
+            })
+            .AddJwtBearer(AuthSchemes.Cliente, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtClientKey)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = jwtClientIssuer,
+                    ValidAudience = jwtClientAudience
                 };
             });
     }

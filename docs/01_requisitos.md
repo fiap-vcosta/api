@@ -148,7 +148,7 @@ Objetivos desta sessão: autenticação do cliente por CPF (JWT) **por cima** do
 ### 8. Requisitos Não-Funcionais (complementares)
 
 * **RNF21 (Auth cliente × staff):** Dois materiais de assinatura JWT distintos — staff (API) e cliente (emitido pela Function no repo `auth`). A Function de auth cliente **não** deve conhecer o secret admin.
-* **RNF22 (Observabilidade):** Instrumentação **Datadog** (APM primeiro) no workload da API; `/health` permanece público. Ver [`adrs/002-datadog-apm.md`](adrs/002-datadog-apm.md).
+* **RNF22 (Observabilidade):** Instrumentação **Datadog** (APM primeiro) no workload da API; `/health` permanece público. Ver [`adrs/001-datadog-apm.md`](adrs/001-datadog-apm.md).
 * **RNF23 (Correlação):** Logs em JSON com correlação (trace / request id) suficiente para cruzar com o APM na demo.
 
 ### 9. Requisitos Funcionais — Aprovação pelo cliente (substitui RF21)

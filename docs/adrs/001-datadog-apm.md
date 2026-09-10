@@ -1,4 +1,4 @@
-# ADR 002: Observabilidade com Datadog (APM)
+# ADR 001: Observabilidade com Datadog (APM)
 
 **Data:** 10 de Setembro de 2026  
 **Status:** Aceito  

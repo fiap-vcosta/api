@@ -10,13 +10,16 @@ API .NET 8 para ordens de serviço, clientes, veículos, catálogo de serviços 
 C4Context
 title Gestao de Oficina - Context
 
-Person(admin, "Atendente / Admin", "Opera cadastros e o ciclo da OS (JWT).")
-Person(cliente, "Cliente", "Aprova ou rejeita o orcamento (token opaco).")
+Person(admin, "Atendente / Admin", "Opera cadastros e o ciclo da OS (JWT staff).")
+Person(cliente, "Cliente", "Aprova ou rejeita o orcamento (JWT CPF + token opaco).")
 
 System(oficina, "Gestao de Oficina", "Ordens de servico, cadastros, estoque e orcamento.")
+System_Ext(authFn, "Auth cliente", "Cloud Function CPF para JWT.")
 
-Rel(admin, oficina, "HTTPS / JWT")
-Rel(cliente, oficina, "HTTPS / token")
+Rel(admin, oficina, "HTTPS / JWT staff")
+Rel(cliente, authFn, "HTTPS / CPF")
+Rel(authFn, oficina, "HTTPS / secret de servico")
+Rel(cliente, oficina, "HTTPS / JWT cliente + token")
 ```
 
 ### C4 — Containers
@@ -29,12 +32,15 @@ Person(admin, "Atendente / Admin", "")
 Person(cliente, "Cliente", "")
 
 System_Boundary(oficina, "Gestao de Oficina") {
-    Container(api, "API", ".NET 8 / ASP.NET Core", "REST, JWT e aprovacao publica de orcamento.")
+    Container(api, "API", ".NET 8 / ASP.NET Core", "REST, JWT staff e aprovacao com JWT cliente + token.")
     ContainerDb(db, "PostgreSQL", "Banco relacional", "Clientes, veiculos, OS e estoque.")
 }
+System_Ext(authFn, "Auth cliente", "Function CPF para JWT.")
 
-Rel(admin, api, "HTTPS / JWT")
-Rel(cliente, api, "HTTPS / token")
+Rel(admin, api, "HTTPS / JWT staff")
+Rel(cliente, authFn, "HTTPS / CPF")
+Rel(authFn, api, "cliente por CPF")
+Rel(cliente, api, "HTTPS / JWT cliente + token")
 Rel(api, db, "EF Core")
 ```
 
@@ -137,9 +143,10 @@ kubectl get hpa,pods -n tech-challenge
 | Abrir OS (veículo + serviços + peças) | `POST /api/ordens-servico` | JWT Admin |
 | Consultar OS | `GET /api/ordens-servico/{id}` | JWT Admin |
 | Listar OS ativas | `GET /api/ordens-servico` | JWT Admin |
-| Aprovar / rejeitar orçamento | `POST /api/public/ordens-servico/aprovar?token=` · `.../rejeitar?token=` | Público |
+| Aprovar / rejeitar orçamento | `POST …/ordens-servico/aprovar?token=` · `…/rejeitar?token=` | JWT **cliente** + token opaco |
+| Cliente por CPF (serviço) | a definir na implementação | Secret de serviço (Function `auth`) |
 
-Listagem exclui Finalizada, Entregue e Descartada; ordenação por status evolutivo e data. Aprovação pública reutiliza os mesmos use cases da API autenticada. Requisitos: [`docs/01_requisitos.md`](docs/01_requisitos.md).
+Listagem exclui Finalizada, Entregue e Descartada; ordenação por status evolutivo e data. Aprovação reutiliza os mesmos use cases da API autenticada; o CPF do JWT deve ser o do dono da OS. Requisitos: [`docs/01_requisitos.md`](docs/01_requisitos.md). Auth cliente: repo [`auth`](https://github.com/fiap-vcosta/auth).
 
 ---
 

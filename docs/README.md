@@ -5,11 +5,13 @@ Comece pelo [`README.md`](../README.md) na raiz.
 | Doc | Conteúdo |
 |-----|----------|
 | [00_linguagem-onipresente.md](00_linguagem-onipresente.md) | Vocabulário do domínio |
-| [01_requisitos.md](01_requisitos.md) | Requisitos (sessões Maio/2025 e Julho/2026) |
+| [01_requisitos.md](01_requisitos.md) | Requisitos (sessões Maio/2025, Julho/2026 e Setembro/2026) |
 | `02_*.egn` | Histórias de domínio (EventStorming) |
 | `03_01_event-storming-linha-do-tempo.jpg` | Linha do tempo |
 | `03_02_event-storming-agregados.jpg` | Agregados |
 | [06_testes.md](06_testes.md) | Unitários, integração e e2e HTTP |
 | [07_api.md](07_api.md) | Swagger + Requestly |
-| [adrs/001-escolha-banco-de-dados.md](adrs/001-escolha-banco-de-dados.md) | Escolha do PostgreSQL |
+| [adrs/001-datadog-apm.md](adrs/001-datadog-apm.md) | Observabilidade Datadog (APM) |
 | [`requestly/`](requestly/) | Collections e environments HTTP |
+
+Escolha do PostgreSQL e Cloud SQL: ADRs no repo [`infra-db`](https://github.com/fiap-vcosta/infra-db/tree/main/docs/adrs) (a ADR de engine foi migrada para lá).

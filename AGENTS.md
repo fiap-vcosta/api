@@ -4,7 +4,7 @@ Aplicação .NET 8 de gestão de oficina (clientes, veículos, serviços, estoqu
 
 ## Antes de mudar código
 
-1. Ler [docs/01_requisitos.md](docs/01_requisitos.md) (canon de requisitos)
+1. Ler [docs/01_requisitos.md](docs/01_requisitos.md) (canon de requisitos) e ADRs em [`docs/adrs/`](docs/adrs/)
 2. Ler [docs/00_linguagem-onipresente.md](docs/00_linguagem-onipresente.md) quando o domínio for tocado
 3. Espelhar padrões das pastas vizinhas; não inventar estrutura paralela
 4. Não escrever testes de feature ainda não implementada; não inventar requisitos fora de `docs/01`
@@ -57,6 +57,6 @@ Collections Requestly: [`docs/requestly/`](docs/requestly/) (ver [`docs/07_api.m
 ## Regras canônicas (resumo)
 
 - Clean Architecture: Presenters, Gateways, UseCases; Domain sem ORM
-- Endpoint público de aprovação/rejeição chama os **mesmos** use cases (sem JWT; token opaco)
+- Aprovação/rejeição: **JWT cliente + token opaco**; ownership por CPF; **mesmos** use cases
 - Listagem de OS: excluir Finalizada, Entregue, Descartada; ordem evolutiva em `docs/01`
 - Detalhes: [docs/01_requisitos.md](docs/01_requisitos.md)

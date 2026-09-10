@@ -43,14 +43,14 @@ Credenciais seed: `admin` / `admin`.
 Em cada pasta de fluxo (ex.: `01-criar-com-servicos-ate-entregue`): menu **⋯ → Run**.  
 Cada pasta é autônoma (começa com login) e usa `rq.test` / `rq.expect`.
 
-### Ator externo (aprovação sem JWT)
+### Ator cliente (aprovação com JWT + token opaco)
 
-Endpoints públicos (token opaco na query):
+Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Ownership: CPF do JWT deve ser o do dono da OS.
 
-- `POST /api/public/ordens-servico/aprovar?token=...`
-- `POST /api/public/ordens-servico/rejeitar?token=...`
+- `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
+- `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token não é exposto nas responses de criação/consulta — use o valor obtido no fluxo de teste/seed da collection.
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não é exposto nas responses de criação/consulta. JWT cliente é emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth). As collections Requestly ainda refletem o fluxo anônimo até a implementação na API; atualizar junto do código.
 
 ### Alternativa
 

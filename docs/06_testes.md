@@ -63,7 +63,7 @@ Exercitam a API **já em execução** (Docker ou `dotnet run`), fora da suite .N
 
 Importar no [Requestly](https://requestly.com/), escolher o environment, rodar login (seed `admin` / `admin`) e as pastas de fluxo no Collection Runner. Alternativa visual: Swagger.
 
-Aprovação como **ator externo**: `POST /api/public/ordens-servico/aprovar|rejeitar?token=` (sem JWT).
+Aprovação como **ator cliente**: token opaco na query **+** JWT cliente (Bearer); ownership por CPF. Collections Requestly atualizam quando o contrato for implementado.
 
 ---
 

@@ -9,7 +9,7 @@ description: >-
 
 ## Quando usar
 
-Expor um use case via HTTP (CRUD, transição de OS, endpoint público de aprovação, listagem).
+Expor um use case via HTTP (CRUD, transição de OS, aprovação com JWT cliente + token, listagem).
 
 ## Passos
 
@@ -21,7 +21,7 @@ Expor um use case via HTTP (CRUD, transição de OS, endpoint público de aprova
    - Action no `*Controller.cs` do recurso
    - **Presenter** + ViewModel/Response HTTP quando o alvo Clean Arch já tiver Presenters; se ainda não, mapear no controller de forma mínima e deixar nota para Presenter
 4. Mapear Request → Command/Query; resultado → Presenter → `Ok` / `Created` / `NotFound` / Problem Details.
-5. Autorização: Admin JWT por padrão; **exceção** — aprovação/rejeição externa **sem** `[Authorize]`, chamando os mesmos use cases.
+5. Autorização: Admin JWT por padrão; aprovação/rejeição do cliente exigem **JWT cliente** + token opaco (ownership), chamando os mesmos use cases; endpoint de serviço CPF usa secret de serviço (Function `auth`).
 6. Não colocar regra de negócio no controller.
 7. Só então adicionar testes de integração do endpoint.
 

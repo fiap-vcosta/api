@@ -132,9 +132,33 @@ A máquina de estados e demais regras da sessão de Maio/2025 (**RF02–RF16**) 
     6. `EmDiagnostico`
     7. `Recebida`
   * Endpoint: `GET /api/ordens-servico` (JWT Admin).
-* **RF21 (Aprovação de orçamento — ator externo):** *(substitui o canal “e-mail/SMTP” do RF03)* O sistema deve receber aprovação ou recusa do orçamento via endpoint **público** (sem JWT), localizando a OS por **token opaco**.
+* **RF21 (Aprovação de orçamento — ator externo):** *(substitui o canal “e-mail/SMTP” do RF03; **substituído** pelo RF21 da sessão Setembro/2026)* O sistema deve receber aprovação ou recusa do orçamento via endpoint **público** (sem JWT), localizando a OS por **token opaco**.
   * **RF21.1:** Os endpoints públicos devem acionar os **mesmos** use cases de aprovar/rejeitar já usados pela API administrativa.
   * **RF21.2:** O token não deve ser exposto nas responses de criação/consulta da API.
   * **RF21.3:** Não há envio SMTP nem parser de e-mail.
   * Endpoints: `POST /api/public/ordens-servico/aprovar?token=` e `POST /api/public/ordens-servico/rejeitar?token=`.
 * **RF22 (Estoque insuficiente):** Em falta de peça, o domínio deve seguir o comportamento já existente (`AguardandoPeca` / `EstoqueEmFalta`). Não criar ItemEstoque com saldo 0 apenas para contornar a regra.
+
+---
+
+## Sessão — Setembro 2026 (evolução — auth cliente e nuvem)
+
+Objetivos desta sessão: autenticação do cliente por CPF (JWT) **por cima** do token opaco, ownership na aprovação, observabilidade Datadog, e alinhamento da documentação à entrega na GCP (GKE Autopilot + Cloud SQL). A máquina de estados e demais regras das sessões anteriores permanecem, salvo os itens abaixo.
+
+### 8. Requisitos Não-Funcionais (complementares)
+
+* **RNF21 (Auth cliente × staff):** Dois materiais de assinatura JWT distintos — staff (API) e cliente (emitido pela Function no repo `auth`). A Function de auth cliente **não** deve conhecer o secret admin.
+* **RNF22 (Observabilidade):** Instrumentação **Datadog** (APM primeiro) no workload da API; `/health` permanece público. Ver [`adrs/002-datadog-apm.md`](adrs/002-datadog-apm.md).
+* **RNF23 (Correlação):** Logs em JSON com correlação (trace / request id) suficiente para cruzar com o APM na demo.
+
+### 9. Requisitos Funcionais — Aprovação pelo cliente (substitui RF21)
+
+* **RF21 (Aprovação de orçamento — ator cliente):** *(substitui o RF21 da sessão Julho/2026)* O sistema deve receber aprovação ou recusa do orçamento localizando a OS por **token opaco** **e** exigindo **JWT de cliente** (CPF) no header `Authorization: Bearer`.
+  * **RF21.1:** Os endpoints devem acionar os **mesmos** use cases de aprovar/rejeitar já usados pela API administrativa.
+  * **RF21.2:** O token opaco (`TokenAprovacao`) permanece no modelo e **não** deve ser exposto nas responses de criação/consulta da API.
+  * **RF21.3:** Não há envio SMTP nem parser de e-mail.
+  * **RF21.4 (Ownership):** O CPF (ou documento equivalente) reivindicado pelo JWT cliente deve ser o do cliente dono da OS localizada pelo token; caso contrário a API deve **negar** (403 ou 404), sem vazar dados de outro cliente. Teste obrigatório: JWT do cliente A + token de OS do cliente B → falha.
+  * **RF21.5:** Login staff permanece inalterado (JWT staff separado).
+  * **RF21.6:** Consulta `GET` de OS continua para **staff**. Sem área nova de autoatendimento nesta sessão (um `GET` cliente só se o professor exigir além deste escopo).
+  * Endpoints (paths podem ser ajustados na implementação + Swagger): `POST …/ordens-servico/aprovar?token=` e `…/rejeitar?token=` com Bearer JWT cliente.
+* **RF23 (Consulta de cliente por CPF — serviço):** A API deve expor endpoint de serviço para a Function `auth` consultar existência/status de cliente por CPF, autenticado por **secret de serviço** (ou ID token de SA, se adotado). Não é rota anônima pública.

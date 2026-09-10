@@ -38,7 +38,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
                 ["ConnectionStrings:DefaultConnection"] = _postgres.GetConnectionString(),
                 ["Jwt:Key"] = "a-really-long-dummy-token-key-that-should-be-kept-secret",
                 ["Jwt:Issuer"] = "dummy-issuer",
-                ["Jwt:Audience"] = "dummy-audience"
+                ["Jwt:Audience"] = "dummy-audience",
+                ["ServiceAuth:Key"] = "integration-service-auth-key"
             });
         });
     }

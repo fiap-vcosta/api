@@ -80,6 +80,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IClienteGateway, ClienteGateway>();
         services.AddScoped<ClientePresenter>();
+        services.AddScoped<ConsultarClientePorDocumentoPresenter>();
         services.AddSingleton<IValidator<CreateClienteRequest>, CreateClienteRequestValidator>();
         services.AddSingleton<IValidator<UpdateClienteRequest>, UpdateClienteRequestValidator>();
     }

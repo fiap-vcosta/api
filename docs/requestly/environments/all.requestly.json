@@ -41,6 +41,14 @@
         "itemEstoqueId": {
           "type": "string",
           "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "documentoCliente": {
+          "type": "string",
+          "syncValue": "11144477735"
         }
       }
     },
@@ -79,6 +87,14 @@
         "itemEstoqueId": {
           "type": "string",
           "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "documentoCliente": {
+          "type": "string",
+          "syncValue": "11144477735"
         }
       }
     }

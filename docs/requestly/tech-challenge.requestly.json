@@ -1337,6 +1337,79 @@
         }
       },
       "rank": "a1"
+    },
+    {
+      "id": "91132a1b-68a5-4cc5-bcc1-27379db669aa",
+      "name": "06-internal",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a6",
+      "description": "Endpoints de serviço (Function auth → API). Header X-Service-Key = {{serviceAuthKey}}."
+    },
+    {
+      "id": "769d05e3-5799-44dd-a150-b4f13f026540",
+      "name": "cliente-por-documento",
+      "type": "api",
+      "parentId": "91132a1b-68a5-4cc5-bcc1-27379db669aa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/internal/clientes/por-documento/{{documentoCliente}}",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "cbcaedcd-cd19-424c-a8ae-487088500368",
+      "name": "cliente-por-documento-sem-key",
+      "type": "api",
+      "parentId": "91132a1b-68a5-4cc5-bcc1-27379db669aa",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/internal/clientes/por-documento/{{documentoCliente}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1",
+      "description": "Esperado: 401 Unauthorized"
     }
   ],
   "environments": [
@@ -1375,6 +1448,14 @@
         "itemEstoqueId": {
           "type": "string",
           "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "documentoCliente": {
+          "type": "string",
+          "syncValue": "11144477735"
         }
       }
     },
@@ -1413,6 +1494,14 @@
         "itemEstoqueId": {
           "type": "string",
           "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "documentoCliente": {
+          "type": "string",
+          "syncValue": "11144477735"
         }
       }
     }

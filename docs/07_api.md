@@ -25,7 +25,7 @@ As collections já embutem os environments Docker e Local; ao importá-las, os d
 | **Docker** | `http://localhost:8080` | `docker compose --profile app up -d` |
 | **Local** | `http://localhost:5225` | `dotnet run --project src/Api --launch-profile http` |
 
-Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenAprovacao`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
+Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenAprovacao`, `serviceAuthKey` (secret do header `X-Service-Key`), `documentoCliente`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
 
 ### Como importar
 
@@ -37,6 +37,8 @@ Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenA
 6. Rode `00-auth / login` (ou `00-login` nas suites e2e) antes das rotas Admin
 
 Credenciais seed: `admin` / `admin`.
+
+Para o endpoint interno (RF23), use o valor de `SERVICE_AUTH_KEY` do `.env` em `serviceAuthKey` (já vem com o default local do `.env.example`).
 
 ### Collection Runner (e2e)
 
@@ -50,7 +52,18 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 - `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 - `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não é exposto nas responses de criação/consulta. JWT cliente é emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth). As collections Requestly ainda refletem o fluxo anônimo até a implementação na API; atualizar junto do código.
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não é exposto nas responses de criação/consulta. JWT cliente é emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth). As collections Requestly ainda refletem o fluxo anônimo nas rotas públicas até a implementação RF21; atualizar junto do código.
+
+### Endpoint de serviço (RF23 — Function → API)
+
+Consulta existência/tipo de cliente por documento, autenticada por shared secret (não é rota anônima):
+
+- `GET /api/internal/clientes/por-documento/{documento}`
+- Header: `X-Service-Key: {{serviceAuthKey}}`
+- Resposta mínima: `{ "existe": true|false, "documento"?, "tipoDocumento"? }`
+- Sem key ou key inválida → `401`
+
+No Requestly: pasta `06-internal` da collection exploratória.
 
 ### Alternativa
 

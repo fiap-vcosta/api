@@ -60,6 +60,7 @@ services:
       Jwt__Key: ${JWT_KEY:?JWT_KEY is required}
       Jwt__Issuer: ${JWT_ISSUER:?JWT_ISSUER is required}
       Jwt__Audience: ${JWT_AUDIENCE:?JWT_AUDIENCE is required}
+      ServiceAuth__Key: ${SERVICE_AUTH_KEY:?SERVICE_AUTH_KEY is required}
     depends_on:
       db:
         condition: service_healthy

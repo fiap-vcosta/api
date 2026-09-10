@@ -1,18 +1,16 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using IntegrationTests.Infrastructure;
 
-namespace IntegrationTests.Internal;
+namespace IntegrationTests.SystemApi;
 
 [Collection(nameof(IntegrationFixture))]
-public class ClienteInternalApiTests
+public class ClienteSystemApiTests
 {
     private const string ServiceKey = "integration-service-auth-key";
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
     private readonly HttpClient _client;
 
-    public ClienteInternalApiTests(CustomWebApplicationFactory factory)
+    public ClienteSystemApiTests(CustomWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }
@@ -21,7 +19,7 @@ public class ClienteInternalApiTests
     public async Task PorDocumento_ReturnsUnauthorized_WhenServiceKeyMissing()
     {
         // Arrange / Act
-        var response = await _client.GetAsync("/api/internal/clientes/por-documento/11144477735");
+        var response = await _client.GetAsync("/api/system/clientes/por-documento/11144477735");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -31,7 +29,7 @@ public class ClienteInternalApiTests
     public async Task PorDocumento_ReturnsUnauthorized_WhenServiceKeyWrong()
     {
         // Arrange
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/internal/clientes/por-documento/11144477735");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/system/clientes/por-documento/11144477735");
         request.Headers.Add("X-Service-Key", "wrong-key");
 
         // Act
@@ -42,24 +40,35 @@ public class ClienteInternalApiTests
     }
 
     [Fact]
-    public async Task PorDocumento_ReturnsExisteFalse_WhenClienteDoesNotExist()
+    public async Task PorDocumento_ReturnsBadRequest_WhenDocumentoInvalid()
     {
         // Arrange
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/internal/clientes/por-documento/99999999999");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/system/clientes/por-documento/123");
         request.Headers.Add("X-Service-Key", ServiceKey);
 
         // Act
         var response = await _client.SendAsync(request);
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        var body = await response.Content.ReadFromJsonAsync<PorDocumentoResponse>(JsonOptions);
-        Assert.NotNull(body);
-        Assert.False(body.Existe);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
-    public async Task PorDocumento_ReturnsExisteTrue_WhenClienteExists()
+    public async Task PorDocumento_ReturnsNotFound_WhenClienteDoesNotExist()
+    {
+        // Arrange
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/system/clientes/por-documento/52998224725");
+        request.Headers.Add("X-Service-Key", ServiceKey);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PorDocumento_ReturnsOk_WhenClienteExists()
     {
         // Arrange
         await AuthHelper.AuthenticateAsAdminAsync(_client);
@@ -73,20 +82,13 @@ public class ClienteInternalApiTests
         create.EnsureSuccessStatusCode();
         _client.DefaultRequestHeaders.Authorization = null;
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/internal/clientes/por-documento/{documento}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/system/clientes/por-documento/{documento}");
         request.Headers.Add("X-Service-Key", ServiceKey);
 
         // Act
         var response = await _client.SendAsync(request);
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        var body = await response.Content.ReadFromJsonAsync<PorDocumentoResponse>(JsonOptions);
-        Assert.NotNull(body);
-        Assert.True(body.Existe);
-        Assert.Equal(documento, body.Documento);
-        Assert.Equal("Cpf", body.TipoDocumento);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
-
-    private sealed record PorDocumentoResponse(bool Existe, string? Documento, string? TipoDocumento);
 }

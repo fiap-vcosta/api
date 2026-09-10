@@ -3995,6 +3995,343 @@
         }
       },
       "rank": "an"
+    },
+    {
+      "id": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "name": "10-consultar-cliente-por-documento",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a9",
+      "description": "RF23: login → cria CPF A + CNPJ C → consulta system com/sem key, docs inexistentes, existentes e inválido."
+    },
+    {
+      "id": "7b376307-86f8-4629-a901-0340fc65ce99",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1778221646802,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}",
+          "postResponse": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\nrq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);\n"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "3d1ad4e0-e1d9-4e22-831b-d0882cb2caf9",
+      "name": "01-criar-cliente-cpf-a",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/clientes",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Nome\": \"Cliente E2E CPF A\",\n  \"TipoDocumento\": \"Cpf\",\n  \"Documento\": \"39053344705\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"01-criar-cliente-cpf-a retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.environment.set(\"clienteCpfAId\", jsonData.id);\n"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "123acb28-d8d5-46d6-b02c-66b9d3b65c92",
+      "name": "02-criar-cliente-cnpj-c",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/clientes",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Nome\": \"Cliente E2E CNPJ C\",\n  \"TipoDocumento\": \"Cnpj\",\n  \"Documento\": \"11222333000181\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"02-criar-cliente-cnpj-c retorna 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.environment.set(\"clienteCnpjCId\", jsonData.id);\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "a978a390-0d41-437c-b2a6-8b470d67c632",
+      "name": "03-consultar-sem-auth",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/39053344705",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Sem service key retorna 401\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(401);\n});\n"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "7a63eeae-3d4d-4665-8242-6ddd87ea757e",
+      "name": "04-consultar-cpf-b-inexistente",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/52998224725",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"CPF B inexistente retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "bc00e008-30b4-4a4a-bf1d-c85fcb7997d6",
+      "name": "05-consultar-cnpj-d-inexistente",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/34028316000103",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"CNPJ D inexistente retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "82816932-82b9-4d78-b9de-5ac4f70e0351",
+      "name": "06-consultar-cpf-a",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/39053344705",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"CPF A existente retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\n"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "ea3426b8-2503-40a2-adf8-8a1efbccf54d",
+      "name": "07-consultar-cnpj-c",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/11222333000181",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"CNPJ C existente retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\n"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "7d4fb8ae-fbe6-4b1a-bdab-96805ed3c6a8",
+      "name": "08-consultar-documento-invalido",
+      "type": "api",
+      "parentId": "8b5ce338-fd77-4687-8829-e108047bc385",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/123",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": "Shared secret Function→API"
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Documento inválido retorna 400\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(400);\n});\n"
+        }
+      },
+      "rank": "a8"
     }
   ],
   "environments": [

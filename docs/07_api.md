@@ -56,14 +56,13 @@ Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não 
 
 ### Endpoint de serviço (RF23 — Function → API)
 
-Consulta existência/tipo de cliente por documento, autenticada por shared secret (não é rota anônima):
+Consulta existência de cliente por documento (CPF ou CNPJ), autenticada por shared secret (não é rota anônima):
 
-- `GET /api/internal/clientes/por-documento/{documento}`
+- `GET /api/system/clientes/por-documento/{documento}`
 - Header: `X-Service-Key: {{serviceAuthKey}}`
-- Resposta mínima: `{ "existe": true|false, "documento"?, "tipoDocumento"? }`
-- Sem key ou key inválida → `401`
+- Existe → `200` (corpo vazio); não existe → `404`; documento inválido → `400`; sem key → `401`
 
-No Requestly: pasta `06-internal` da collection exploratória.
+No Requestly: pasta `06-system` (exploratória) e suite e2e `10-consultar-cliente-por-documento`.
 
 ### Alternativa
 

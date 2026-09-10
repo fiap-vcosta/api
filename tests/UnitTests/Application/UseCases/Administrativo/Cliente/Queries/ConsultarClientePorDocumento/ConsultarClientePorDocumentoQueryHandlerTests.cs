@@ -10,7 +10,7 @@ public class ConsultarClientePorDocumentoQueryHandlerTests
     private readonly Mock<IClienteGateway> _mockGateway = new();
 
     [Fact]
-    public async Task Handle_ReturnsExisteTrue_WhenClienteExists()
+    public async Task Handle_ReturnsTrue_WhenClienteExists()
     {
         // Arrange
         _mockGateway.Setup(g => g.GetByDocumentoAsync("11144477735"))
@@ -22,19 +22,17 @@ public class ConsultarClientePorDocumentoQueryHandlerTests
                 Documento = "11144477735"
             });
         var handler = new ConsultarClientePorDocumentoQueryHandler(_mockGateway.Object);
-        var query = new ConsultarClientePorDocumentoQuery { Documento = "111.444.777-35" };
+        var query = new ConsultarClientePorDocumentoQuery { Documento = "11144477735" };
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
 
         // Assert
-        Assert.True(result.Existe);
-        Assert.Equal("11144477735", result.Documento);
-        Assert.Equal(TipoDocumento.Cpf, result.TipoDocumento);
+        Assert.True(result);
     }
 
     [Fact]
-    public async Task Handle_ReturnsExisteFalse_WhenClienteDoesNotExist()
+    public async Task Handle_ReturnsFalse_WhenClienteDoesNotExist()
     {
         // Arrange
         _mockGateway.Setup(g => g.GetByDocumentoAsync("99999999999"))
@@ -46,8 +44,6 @@ public class ConsultarClientePorDocumentoQueryHandlerTests
         var result = await handler.Handle(query, CancellationToken.None);
 
         // Assert
-        Assert.False(result.Existe);
-        Assert.Null(result.Documento);
-        Assert.Null(result.TipoDocumento);
+        Assert.False(result);
     }
 }

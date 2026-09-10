@@ -1340,7 +1340,7 @@
     },
     {
       "id": "91132a1b-68a5-4cc5-bcc1-27379db669aa",
-      "name": "06-internal",
+      "name": "06-system",
       "type": "collection",
       "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
       "deleted": false,
@@ -1350,7 +1350,7 @@
         }
       },
       "rank": "a6",
-      "description": "Endpoints de serviço (Function auth → API). Header X-Service-Key = {{serviceAuthKey}}."
+      "description": "Endpoints de sistema (Function auth → API). Header X-Service-Key = {{serviceAuthKey}} nos requests que exigem auth de serviço."
     },
     {
       "id": "769d05e3-5799-44dd-a150-b4f13f026540",
@@ -1361,7 +1361,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/internal/clientes/por-documento/{{documentoCliente}}",
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/{{documentoCliente}}",
           "method": "GET",
           "headers": [
             {
@@ -1394,7 +1394,7 @@
       "data": {
         "type": "http",
         "request": {
-          "url": "{{baseUrl}}/api/internal/clientes/por-documento/{{documentoCliente}}",
+          "url": "{{baseUrl}}/api/system/clientes/por-documento/{{documentoCliente}}",
           "method": "GET",
           "headers": [],
           "queryParams": [],

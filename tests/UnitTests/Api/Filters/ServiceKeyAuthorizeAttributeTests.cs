@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Api.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

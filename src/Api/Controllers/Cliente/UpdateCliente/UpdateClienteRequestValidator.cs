@@ -28,7 +28,7 @@ public class UpdateClienteRequestValidator : IValidator<UpdateClienteRequest>
         else
         {
             var tipoDocumento = request.TipoDocumento;
-            var documentoClean = request.Documento.Replace(".", "").Replace("-", "").Replace("/", "");
+            var documentoClean = DocumentoNormalizer.Normalize(request.Documento);
 
             switch (tipoDocumento)
             {

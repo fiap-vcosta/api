@@ -69,7 +69,7 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
     public async Task AprovarPublico_WithInvalidToken_ReturnsNotFound()
     {
         // Arrange
-        AuthenticateAsCliente(DocumentoClienteSeed1);
+        AuthenticateAsCliente(DocumentoJoaoSilva);
 
         // Act
         var response = await Client.PostAsync("/api/public/ordens-servico/aprovar?token=token-inexistente", null);
@@ -97,7 +97,7 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
         await FinalizarDiagnosticoAsync(ordemId);
         var token = await GetTokenAprovacaoAsync(ordemId);
 
-        AuthenticateAsCliente(DocumentoClienteSeed2);
+        AuthenticateAsCliente(DocumentoMariaOliveira);
 
         // Act
         var response = await Client.PostAsync(

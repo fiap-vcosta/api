@@ -10,8 +10,8 @@ namespace IntegrationTests.OrdemServico;
 
 public abstract class OrdemServicoIntegrationTestBase
 {
-    protected const string DocumentoClienteSeed1 = "43372251034";
-    protected const string DocumentoClienteSeed2 = "74694481024";
+    protected const string DocumentoJoaoSilva = "43372251034";
+    protected const string DocumentoMariaOliveira = "74694481024";
 
     protected static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
@@ -90,7 +90,7 @@ public abstract class OrdemServicoIntegrationTestBase
         response.EnsureSuccessStatusCode();
     }
 
-    protected async Task AprovarPublicamenteAsync(string token, string documentoCliente = DocumentoClienteSeed1)
+    protected async Task AprovarPublicamenteAsync(string token, string documentoCliente = DocumentoJoaoSilva)
     {
         AuthenticateAsCliente(documentoCliente);
         var response = await Client.PostAsync($"/api/public/ordens-servico/aprovar?token={Uri.EscapeDataString(token)}", null);
@@ -98,7 +98,7 @@ public abstract class OrdemServicoIntegrationTestBase
         await AuthenticateAsAdminAsync();
     }
 
-    protected async Task RejeitarPublicamenteAsync(string token, string documentoCliente = DocumentoClienteSeed1)
+    protected async Task RejeitarPublicamenteAsync(string token, string documentoCliente = DocumentoJoaoSilva)
     {
         AuthenticateAsCliente(documentoCliente);
         var response = await Client.PostAsync($"/api/public/ordens-servico/rejeitar?token={Uri.EscapeDataString(token)}", null);

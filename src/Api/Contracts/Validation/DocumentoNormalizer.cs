@@ -1,11 +1,12 @@
 using CpfCnpjLibrary;
+using DomainDocumentoNormalizer = Domain.Administrativo.DocumentoNormalizer;
 
 namespace Api.Contracts.Validation;
 
 public static class DocumentoNormalizer
 {
     public static string Normalize(string documento) =>
-        documento.Replace(".", "").Replace("-", "").Replace("/", "").Trim();
+        DomainDocumentoNormalizer.Normalize(documento);
 
     public static bool TryNormalizeValidCpfOrCnpj(
         string? documento,

@@ -79,16 +79,14 @@ jobs:
           fi
 
           db_password="$(gcloud secrets versions access latest --secret="$DB_PASSWORD_SECRET")"
-          jwt_funcionario_key="$(openssl rand -base64 48)"
+          JWT_FUNCIONARIO_KEY="$(openssl rand -base64 48)"
           echo "::add-mask::$db_password"
-          echo "::add-mask::$jwt_funcionario_key"
-          echo "::add-mask::$JWT_CLIENTE_KEY"
-          echo "::add-mask::$SERVICE_AUTH_KEY"
+          echo "::add-mask::$JWT_FUNCIONARIO_KEY"
 
           kubectl create secret generic api \
             --namespace "$K8S_NAMESPACE" \
             --from-literal=ConnectionStrings__DefaultConnection="Host=127.0.0.1;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${db_password}" \
-            --from-literal=JwtFuncionario__Key="$jwt_funcionario_key" \
+            --from-literal=JwtFuncionario__Key="$JWT_FUNCIONARIO_KEY" \
             --from-literal=JwtCliente__Key="$JWT_CLIENTE_KEY" \
             --from-literal=ServiceAuth__Key="$SERVICE_AUTH_KEY" \
             --dry-run=client -o yaml \

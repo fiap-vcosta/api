@@ -4362,6 +4362,179 @@
         }
       },
       "rank": "a8"
+    },
+    {
+      "id": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "name": "11-jwt-cliente-vs-funcionario-publico",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "aa",
+      "description": "Caminho público: JWT funcionário (login) deve falhar (401); JWT cliente é o scheme aceito (token opaco inválido → 404). Pré: mint tokenCliente com ./scripts/mint-cliente-jwt.sh 43372251034"
+    },
+    {
+      "id": "57d9f837-a1b9-45cd-830f-4dc0637681c7",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"http://localhost:8080\");\n}\n",
+          "postResponse": "rq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token funcionário\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);\n"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "f58f02a4-7a42-4b43-9a90-caac02922a7b",
+      "name": "01-aprovar-publico-com-jwt-funcionario",
+      "type": "api",
+      "parentId": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar?token=token-qualquer",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        },
+        "scripts": {
+          "preRequest": "",
+          "postResponse": "rq.test(\"Aprovar público com JWT funcionário retorna 401\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(401);\n});\n"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "3ece134f-5c9d-49af-863e-6f979d544ea2",
+      "name": "02-rejeitar-publico-com-jwt-funcionario",
+      "type": "api",
+      "parentId": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/rejeitar?token=token-qualquer",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        },
+        "scripts": {
+          "preRequest": "",
+          "postResponse": "rq.test(\"Rejeitar público com JWT funcionário retorna 401\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(401);\n});\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "1597166e-b136-4758-84f8-d3fc320e6a66",
+      "name": "03-aprovar-publico-com-jwt-cliente",
+      "type": "api",
+      "parentId": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar?token=token-inexistente",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "postResponse": "rq.test(\"JWT cliente aceito no scheme (token opaco inválido → 404)\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "3e587ea2-2ef1-4cf1-a152-4ac6c82e06be",
+      "name": "04-rejeitar-publico-com-jwt-cliente",
+      "type": "api",
+      "parentId": "fc60213b-49e1-45cc-964e-4ed4615dcc19",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/rejeitar?token=token-inexistente",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "postResponse": "rq.test(\"Rejeitar público com JWT cliente (token inválido → 404)\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
+        }
+      },
+      "rank": "a4"
     }
   ],
   "environments": [

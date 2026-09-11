@@ -130,6 +130,8 @@ A cada deploy o workflow:
 
 Nada disso vai para o Git ou tfstate. Em troca, o JWT de staff rotaciona a cada redeploy (basta logar de novo); o JWT cliente e o secret de serviço **não** mudam entre deploys.
 
+Issuer/Audience de funcionário e de cliente ficam no ConfigMap (`tech-challenge-api` × `tech-challenge-cliente`) — dois emissores, dois materiais (RNF21). **Não** use secrets GitHub `JWT_KEY` / `JWT_ISSUER` / `JWT_AUDIENCE` (legado sem sufixo): o deploy não os lê; pode removê-los do repo. Também **não** precisa de `JWT_FUNCIONARIO_KEY` no GitHub — a chave de staff é gerada no workflow.
+
 Pré-requisitos: cluster no ar (`infra-k8s` → `tf-apply`), banco no ar (`infra-db` → `tf-apply`), as org vars `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_AR_REPOSITORY`, `GCP_GKE_CLUSTER_NAME`, `GCP_DB_PASSWORD_SECRET`, `GCP_WORKLOAD_IDENTITY_PROVIDER` e `GCP_SERVICE_ACCOUNT_EMAIL`, e os **repo secrets** abaixo (criar uma vez em Settings → Secrets do `fiap-vcosta/api`):
 
 | Secret | Uso |
@@ -144,7 +146,7 @@ openssl rand -base64 48   # JWT_CLIENTE_KEY
 openssl rand -base64 32   # SERVICE_AUTH_KEY
 ```
 
-Issuer/Audience do JWT cliente ficam no ConfigMap (`tech-challenge-cliente`), alinhados ao Compose local.
+Localmente (Compose), use `JWT_FUNCIONARIO_*` e `JWT_CLIENTE_*` no `.env` — ver `.env.example`.
 
 Evidência de HPA depois do deploy:
 

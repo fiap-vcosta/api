@@ -64,7 +64,7 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 
 Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. JWT cliente será emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth); localmente use `scripts/mint-cliente-jwt.sh` (seed CPF dono: `43372251034`; outro: `74694481024`).
 
-No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`) e asserts em `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404).
+No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404) e `11-jwt-cliente-vs-funcionario-publico` (JWT funcionário no caminho público → 401; JWT cliente aceito no scheme).
 
 ### Endpoint de serviço (RF23 — Function → API)
 

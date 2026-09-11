@@ -66,16 +66,31 @@ jobs:
       - name: Secret da aplicação
         env:
           DB_PASSWORD_SECRET: ${{ vars.GCP_DB_PASSWORD_SECRET }}
+          JWT_CLIENTE_KEY: ${{ secrets.JWT_CLIENTE_KEY }}
+          SERVICE_AUTH_KEY: ${{ secrets.SERVICE_AUTH_KEY }}
         run: |
+          missing=()
+          for name in JWT_CLIENTE_KEY SERVICE_AUTH_KEY; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "repo secrets faltando: ${missing[*]}" >&2
+            exit 1
+          fi
+
           db_password="$(gcloud secrets versions access latest --secret="$DB_PASSWORD_SECRET")"
-          jwt_key="$(openssl rand -base64 48)"
+          jwt_funcionario_key="$(openssl rand -base64 48)"
           echo "::add-mask::$db_password"
-          echo "::add-mask::$jwt_key"
+          echo "::add-mask::$jwt_funcionario_key"
+          echo "::add-mask::$JWT_CLIENTE_KEY"
+          echo "::add-mask::$SERVICE_AUTH_KEY"
 
           kubectl create secret generic api \
             --namespace "$K8S_NAMESPACE" \
             --from-literal=ConnectionStrings__DefaultConnection="Host=127.0.0.1;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${db_password}" \
-            --from-literal=JwtFuncionario__Key="$jwt_key" \
+            --from-literal=JwtFuncionario__Key="$jwt_funcionario_key" \
+            --from-literal=JwtCliente__Key="$JWT_CLIENTE_KEY" \
+            --from-literal=ServiceAuth__Key="$SERVICE_AUTH_KEY" \
             --dry-run=client -o yaml \
           | kubectl apply -f -
 
@@ -86,7 +101,7 @@ jobs:
           export IMAGE
           envsubst '${IMAGE}' < k8s/deployment.yaml > deployment.rendered.yaml
           kubectl apply -f k8s/configmap.yaml -f deployment.rendered.yaml -f k8s/service.yaml -f k8s/hpa.yaml
-          # a chave JWT é regerada a cada deploy: sem restart os pods seguem com a antiga
+          # JwtFuncionario__Key é regenerada a cada deploy: sem restart os pods seguem com a antiga
           kubectl rollout restart deployment/api --namespace "$K8S_NAMESPACE"
           kubectl rollout status deployment/api --namespace "$K8S_NAMESPACE" --timeout=10m
 

@@ -8,4 +8,6 @@ data:
   ASPNETCORE_URLS: "http://+:8080"
   JwtFuncionario__Issuer: "tech-challenge-api"
   JwtFuncionario__Audience: "tech-challenge-api"
+  JwtCliente__Issuer: "tech-challenge-cliente"
+  JwtCliente__Audience: "tech-challenge-cliente"
   CLOUD_SQL_CONNECTION_NAME: "vcosta-fiap-tech-challenge:us-central1:tech-challenge-pg"

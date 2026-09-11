@@ -54,9 +54,9 @@
           "type": "secret",
           "syncValue": ""
         },
-        "jwtClientIssuer": {
+        "jwtClienteIssuer": {
           "type": "string",
-          "syncValue": "tech-challenge-client"
+          "syncValue": "tech-challenge-cliente"
         }
       }
     },
@@ -108,9 +108,9 @@
           "type": "secret",
           "syncValue": ""
         },
-        "jwtClientIssuer": {
+        "jwtClienteIssuer": {
           "type": "string",
-          "syncValue": "tech-challenge-client"
+          "syncValue": "tech-challenge-cliente"
         }
       }
     }

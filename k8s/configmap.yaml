@@ -6,6 +6,6 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: "Production"
   ASPNETCORE_URLS: "http://+:8080"
-  Jwt__Issuer: "tech-challenge-api"
-  Jwt__Audience: "tech-challenge-api"
+  JwtFuncionario__Issuer: "tech-challenge-api"
+  JwtFuncionario__Audience: "tech-challenge-api"
   CLOUD_SQL_CONNECTION_NAME: "vcosta-fiap-tech-challenge:us-central1:tech-challenge-pg"

@@ -66,7 +66,7 @@ public static class ServiceCollectionExtensions
             {
                 policy.AddAuthenticationSchemes(AuthSchemes.Cliente);
                 policy.RequireAuthenticatedUser();
-                policy.RequireClaim(ClientJwtClaims.Cpf);
+                policy.RequireClaim(ClienteJwtClaims.Cpf);
             });
         });
     }
@@ -131,13 +131,13 @@ public static class ServiceCollectionExtensions
 
     private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtKey = configuration["Jwt:Key"] ?? "default-key";
-        var jwtIssuer = configuration["Jwt:Issuer"] ?? "default-issuer";
-        var jwtAudience = configuration["Jwt:Audience"] ?? "default-audience";
+        var jwtKey = configuration["JwtFuncionario:Key"] ?? "default-key";
+        var jwtIssuer = configuration["JwtFuncionario:Issuer"] ?? "default-issuer";
+        var jwtAudience = configuration["JwtFuncionario:Audience"] ?? "default-audience";
 
-        var jwtClientKey = configuration["JwtClient:Key"] ?? "default-client-key";
-        var jwtClientIssuer = configuration["JwtClient:Issuer"] ?? "default-client-issuer";
-        var jwtClientAudience = configuration["JwtClient:Audience"] ?? "default-client-audience";
+        var jwtClienteKey = configuration["JwtCliente:Key"] ?? "default-cliente-key";
+        var jwtClienteIssuer = configuration["JwtCliente:Issuer"] ?? "default-cliente-issuer";
+        var jwtClienteAudience = configuration["JwtCliente:Audience"] ?? "default-cliente-audience";
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -157,11 +157,11 @@ public static class ServiceCollectionExtensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtClientKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtClienteKey)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = jwtClientIssuer,
-                    ValidAudience = jwtClientAudience
+                    ValidIssuer = jwtClienteIssuer,
+                    ValidAudience = jwtClienteAudience
                 };
             });
     }

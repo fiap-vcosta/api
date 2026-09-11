@@ -25,7 +25,7 @@ As collections já embutem os environments Docker e Local; ao importá-las, os d
 | **Docker** | `http://localhost:8080` | `docker compose --profile app up -d` |
 | **Local** | `http://localhost:5225` | `dotnet run --project src/Api --launch-profile http` |
 
-Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenCliente` (JWT cliente — mint local até a Function existir), `tokenAprovacao`, `serviceAuthKey` (secret do header `X-Service-Key`), `documentoCliente`, `jwtClientIssuer`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
+Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenCliente` (JWT cliente — mint local até a Function existir), `tokenAprovacao`, `serviceAuthKey` (secret do header `X-Service-Key`), `documentoCliente`, `jwtClienteIssuer`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
 
 ### Como importar
 
@@ -42,13 +42,13 @@ Para o endpoint de sistema (RF23), use o valor de `SERVICE_AUTH_KEY` do `.env` e
 
 ### JWT cliente local (antes da Function `auth`)
 
-Até a §8, mint o Bearer cliente com o mesmo material `JwtClient` do Compose:
+Até a §8, mint o Bearer cliente com o mesmo material `JwtCliente` do Compose:
 
 ```bash
-./scripts/mint-client-jwt.sh 11144477735
+./scripts/mint-cliente-jwt.sh 11144477735
 ```
 
-Cole a saída em `tokenCliente` no environment Docker/Local. O script lê `JWT_CLIENT_*` do `.env`.
+Cole a saída em `tokenCliente` no environment Docker/Local. O script lê `JWT_CLIENTE_*` do `.env`.
 
 ### Collection Runner (e2e)
 
@@ -62,7 +62,7 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 - `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 - `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não é exposto nas responses de criação/consulta. JWT cliente será emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth); localmente use `scripts/mint-client-jwt.sh`. As rotas públicas ainda estão anônimas até o PR de ownership (RF21).
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. O token opaco não é exposto nas responses de criação/consulta. JWT cliente será emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth); localmente use `scripts/mint-cliente-jwt.sh`. As rotas públicas ainda estão anônimas até o PR de ownership (RF21).
 
 ### Endpoint de serviço (RF23 — Function → API)
 

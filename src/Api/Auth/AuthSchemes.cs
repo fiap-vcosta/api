@@ -10,7 +10,7 @@ public static class AuthPolicies
     public const string ClienteJwt = "ClienteJwt";
 }
 
-public static class ClientJwtClaims
+public static class ClienteJwtClaims
 {
     public const string Cpf = "cpf";
 }

@@ -57,12 +57,12 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:?ASPNETCORE_ENVIRONMENT is required}
       ConnectionStrings__DefaultConnection: Host=db;Database=${POSTGRES_DB:?POSTGRES_DB is required};Username=${POSTGRES_USER:?POSTGRES_USER is required};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      Jwt__Key: ${JWT_KEY:?JWT_KEY is required}
-      Jwt__Issuer: ${JWT_ISSUER:?JWT_ISSUER is required}
-      Jwt__Audience: ${JWT_AUDIENCE:?JWT_AUDIENCE is required}
-      JwtClient__Key: ${JWT_CLIENT_KEY:?JWT_CLIENT_KEY is required}
-      JwtClient__Issuer: ${JWT_CLIENT_ISSUER:?JWT_CLIENT_ISSUER is required}
-      JwtClient__Audience: ${JWT_CLIENT_AUDIENCE:?JWT_CLIENT_AUDIENCE is required}
+      JwtFuncionario__Key: ${JWT_FUNCIONARIO_KEY:?JWT_FUNCIONARIO_KEY is required}
+      JwtFuncionario__Issuer: ${JWT_FUNCIONARIO_ISSUER:?JWT_FUNCIONARIO_ISSUER is required}
+      JwtFuncionario__Audience: ${JWT_FUNCIONARIO_AUDIENCE:?JWT_FUNCIONARIO_AUDIENCE is required}
+      JwtCliente__Key: ${JWT_CLIENTE_KEY:?JWT_CLIENTE_KEY is required}
+      JwtCliente__Issuer: ${JWT_CLIENTE_ISSUER:?JWT_CLIENTE_ISSUER is required}
+      JwtCliente__Audience: ${JWT_CLIENTE_AUDIENCE:?JWT_CLIENTE_AUDIENCE is required}
       ServiceAuth__Key: ${SERVICE_AUTH_KEY:?SERVICE_AUTH_KEY is required}
     depends_on:
       db:

@@ -18,11 +18,11 @@ public class ClienteJwtSchemeTests
     }
 
     [Fact]
-    public async Task ClienteScheme_AcceptsTokenSignedWithJwtClientKey()
+    public async Task ClienteScheme_AcceptsTokenSignedWithJwtClienteKey()
     {
         // Arrange
         const string cpf = "11144477735";
-        var token = ClientJwtHelper.CreateToken(cpf);
+        var token = ClienteJwtHelper.CreateToken(cpf);
         using var scope = _factory.Services.CreateScope();
         var auth = scope.ServiceProvider.GetRequiredService<IAuthenticationService>();
         var httpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
@@ -36,23 +36,23 @@ public class ClienteJwtSchemeTests
 
         // Assert
         Assert.True(result.Succeeded);
-        Assert.Equal(cpf, result.Principal?.FindFirstValue(ClientJwtClaims.Cpf));
+        Assert.Equal(cpf, result.Principal?.FindFirstValue(ClienteJwtClaims.Cpf));
     }
 
     [Fact]
-    public async Task ClienteScheme_RejectsStaffToken()
+    public async Task ClienteScheme_RejectsFuncionarioToken()
     {
         // Arrange
         var client = _factory.CreateClient();
         await AuthHelper.AuthenticateAsAdminAsync(client);
-        var staffToken = client.DefaultRequestHeaders.Authorization!.Parameter!;
+        var funcionarioToken = client.DefaultRequestHeaders.Authorization!.Parameter!;
         using var scope = _factory.Services.CreateScope();
         var auth = scope.ServiceProvider.GetRequiredService<IAuthenticationService>();
         var httpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
         {
             RequestServices = scope.ServiceProvider
         };
-        httpContext.Request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", staffToken).ToString();
+        httpContext.Request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", funcionarioToken).ToString();
 
         // Act
         var result = await auth.AuthenticateAsync(httpContext, AuthSchemes.Cliente);
@@ -62,7 +62,7 @@ public class ClienteJwtSchemeTests
     }
 
     [Fact]
-    public async Task StaffLogin_StillWorks_WithDualJwtSchemes()
+    public async Task FuncionarioLogin_StillWorks_WithDualJwtSchemes()
     {
         // Arrange
         var client = _factory.CreateClient();

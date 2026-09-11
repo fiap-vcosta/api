@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Emite um JWT de cliente (claim cpf) com o material JwtClient do .env — substituto local da Function auth até a §8.
+# Emite um JWT de cliente (claim cpf) com o material JwtCliente do .env — substituto local da Function auth até a §8.
 # Uso:
-#   ./scripts/mint-client-jwt.sh <cpf>
-#   ./scripts/mint-client-jwt.sh 11144477735
+#   ./scripts/mint-cliente-jwt.sh <cpf>
+#   ./scripts/mint-cliente-jwt.sh 11144477735
 # Imprime só o token (stdout) para colar em {{tokenCliente}} no Requestly.
 set -euo pipefail
 
@@ -21,9 +21,9 @@ if [[ -f "${ROOT}/.env" ]]; then
   set +a
 fi
 
-KEY="${JWT_CLIENT_KEY:-local-jwt-client-key-change-me-32chars-min}"
-ISSUER="${JWT_CLIENT_ISSUER:-tech-challenge-client}"
-AUDIENCE="${JWT_CLIENT_AUDIENCE:-tech-challenge-client}"
+KEY="${JWT_CLIENTE_KEY:-local-jwt-cliente-key-change-me-32chars-min}"
+ISSUER="${JWT_CLIENTE_ISSUER:-tech-challenge-cliente}"
+AUDIENCE="${JWT_CLIENTE_AUDIENCE:-tech-challenge-cliente}"
 
 exec python3 - "${CPF}" "${KEY}" "${ISSUER}" "${AUDIENCE}" <<'PY'
 import base64, hashlib, hmac, json, sys, time

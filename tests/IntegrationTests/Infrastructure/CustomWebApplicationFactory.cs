@@ -36,12 +36,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = _postgres.GetConnectionString(),
-                ["Jwt:Key"] = "a-really-long-dummy-token-key-that-should-be-kept-secret",
-                ["Jwt:Issuer"] = "dummy-issuer",
-                ["Jwt:Audience"] = "dummy-audience",
-                ["JwtClient:Key"] = ClientJwtHelper.DefaultKey,
-                ["JwtClient:Issuer"] = ClientJwtHelper.DefaultIssuer,
-                ["JwtClient:Audience"] = ClientJwtHelper.DefaultAudience,
+                ["JwtFuncionario:Key"] = "a-really-long-dummy-token-key-that-should-be-kept-secret",
+                ["JwtFuncionario:Issuer"] = "dummy-issuer",
+                ["JwtFuncionario:Audience"] = "dummy-audience",
+                ["JwtCliente:Key"] = ClienteJwtHelper.DefaultKey,
+                ["JwtCliente:Issuer"] = ClienteJwtHelper.DefaultIssuer,
+                ["JwtCliente:Audience"] = ClienteJwtHelper.DefaultAudience,
                 ["ServiceAuth:Key"] = "integration-service-auth-key"
             });
         });

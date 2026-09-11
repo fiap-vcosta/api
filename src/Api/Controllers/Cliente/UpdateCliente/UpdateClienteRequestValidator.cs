@@ -1,5 +1,6 @@
 using Api.Contracts.Validation;
 using CpfCnpjLibrary;
+using Domain.Administrativo;
 using Domain.Administrativo.Entities;
 
 namespace Api.Controllers.Cliente.UpdateCliente;

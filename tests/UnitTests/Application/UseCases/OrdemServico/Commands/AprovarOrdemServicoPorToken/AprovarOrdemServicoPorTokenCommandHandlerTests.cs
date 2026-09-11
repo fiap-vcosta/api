@@ -1,10 +1,9 @@
-using Application.Abstractions.Gateways;
 using Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
 using Application.UseCases.OrdemServico.Commands.AprovarOrdemServicoPorToken;
+using Application.UseCases.OrdemServico.Queries.GetOrdemServicoByTokenEDocumento;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
-using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
 
@@ -19,16 +18,13 @@ public class AprovarOrdemServicoPorTokenCommandHandlerTests
     public async Task Handle_SendsAprovarCommand_WhenTokenAndOwnershipMatch()
     {
         // Arrange
-        var ordemGateway = new Mock<IOrdemServicoGateway>();
         var mediator = new Mock<IMediator>();
-        var ordem = OrdemServicoAggregateRoot.Criar(
-            new ClienteOrdemServico { Id = 1, Nome = "João", Email = "joao@teste.com" },
-            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
-        typeof(OrdemServicoAggregateRoot).GetProperty(nameof(OrdemServicoAggregateRoot.Id))!.SetValue(ordem, 7);
-
-        ordemGateway
-            .Setup(g => g.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, DocumentoJoaoSilva))
-            .ReturnsAsync(ordem);
+        mediator
+            .Setup(m => m.Send(
+                It.Is<GetOrdemServicoByTokenEDocumentoQuery>(q =>
+                    q.TokenAprovacao == "token-ok" && q.DocumentoCliente == DocumentoJoaoSilva),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(7);
         mediator
             .Setup(m => m.Send(It.IsAny<AprovarOrdemServicoCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AprovarOrdemServicoCommandResponse
@@ -38,24 +34,18 @@ public class AprovarOrdemServicoPorTokenCommandHandlerTests
                 ValorTotal = 100m,
                 RecebidaEm = DateTime.UtcNow,
                 AprovadaEm = DateTime.UtcNow,
-                Cliente = new ClienteOrdemServicoResponse
-                {
-                    Id = 1, Nome = "João", Email = "joao@teste.com"
-                },
-                Veiculo = new VeiculoOrdemServicoResponse
-                {
-                    Placa = "ABC-1234", Marca = "VW", Modelo = "Gol"
-                },
+                Cliente = new ClienteOrdemServicoResponse { Id = 1, Nome = "João", Email = "joao@teste.com" },
+                Veiculo = new VeiculoOrdemServicoResponse { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" },
                 Servicos = []
             });
 
-        var handler = new AprovarOrdemServicoPorTokenCommandHandler(ordemGateway.Object, mediator.Object);
+        var handler = new AprovarOrdemServicoPorTokenCommandHandler(mediator.Object);
 
         // Act
         var result = await handler.Handle(
             new AprovarOrdemServicoPorTokenCommand
             {
-                TokenAprovacao = ordem.TokenAprovacao,
+                TokenAprovacao = "token-ok",
                 DocumentoCliente = DocumentoJoaoSilva
             },
             CancellationToken.None);
@@ -71,12 +61,11 @@ public class AprovarOrdemServicoPorTokenCommandHandlerTests
     public async Task Handle_Throws_WhenTokenNotFound()
     {
         // Arrange
-        var ordemGateway = new Mock<IOrdemServicoGateway>();
-        ordemGateway
-            .Setup(g => g.GetByTokenEDocumentoAsync("invalid", DocumentoJoaoSilva))
-            .ReturnsAsync((OrdemServicoAggregateRoot?)null);
-        var handler = new AprovarOrdemServicoPorTokenCommandHandler(
-            ordemGateway.Object, new Mock<IMediator>().Object);
+        var mediator = new Mock<IMediator>();
+        mediator
+            .Setup(m => m.Send(It.IsAny<GetOrdemServicoByTokenEDocumentoQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new DomainNotFoundException("não encontrada"));
+        var handler = new AprovarOrdemServicoPorTokenCommandHandler(mediator.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>
@@ -87,31 +76,34 @@ public class AprovarOrdemServicoPorTokenCommandHandlerTests
                     DocumentoCliente = DocumentoJoaoSilva
                 },
                 CancellationToken.None));
+        mediator.Verify(
+            m => m.Send(It.IsAny<AprovarOrdemServicoCommand>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]
     public async Task Handle_Throws_WhenOwnershipMismatch()
     {
         // Arrange
-        var ordemGateway = new Mock<IOrdemServicoGateway>();
-        var ordem = OrdemServicoAggregateRoot.Criar(
-            new ClienteOrdemServico { Id = 1, Nome = "João", Email = "joao@teste.com" },
-            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
-        ordemGateway
-            .Setup(g => g.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, DocumentoMariaOliveira))
-            .ReturnsAsync((OrdemServicoAggregateRoot?)null);
         var mediator = new Mock<IMediator>();
-        var handler = new AprovarOrdemServicoPorTokenCommandHandler(ordemGateway.Object, mediator.Object);
+        mediator
+            .Setup(m => m.Send(
+                It.Is<GetOrdemServicoByTokenEDocumentoQuery>(q => q.DocumentoCliente == DocumentoMariaOliveira),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new DomainNotFoundException("não encontrada"));
+        var handler = new AprovarOrdemServicoPorTokenCommandHandler(mediator.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>
             handler.Handle(
                 new AprovarOrdemServicoPorTokenCommand
                 {
-                    TokenAprovacao = ordem.TokenAprovacao,
+                    TokenAprovacao = "token-ok",
                     DocumentoCliente = DocumentoMariaOliveira
                 },
                 CancellationToken.None));
-        mediator.Verify(m => m.Send(It.IsAny<AprovarOrdemServicoCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        mediator.Verify(
+            m => m.Send(It.IsAny<AprovarOrdemServicoCommand>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

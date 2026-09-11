@@ -1,13 +1,10 @@
 using CpfCnpjLibrary;
-using DomainDocumentoNormalizer = Domain.Administrativo.DocumentoNormalizer;
+using Domain.Administrativo;
 
 namespace Api.Contracts.Validation;
 
-public static class DocumentoNormalizer
+public static class DocumentoCpfCnpjValidator
 {
-    public static string Normalize(string documento) =>
-        DomainDocumentoNormalizer.Normalize(documento);
-
     public static bool TryNormalizeValidCpfOrCnpj(
         string? documento,
         out string normalized,
@@ -23,7 +20,7 @@ public static class DocumentoNormalizer
             return false;
         }
 
-        normalized = Normalize(documento);
+        normalized = DocumentoNormalizer.Normalize(documento);
         if (!Cpf.Validar(normalized) && !Cnpj.Validar(normalized))
         {
             errorList.Add("Documento inválido.");

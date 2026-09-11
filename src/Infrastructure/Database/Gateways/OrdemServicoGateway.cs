@@ -49,12 +49,15 @@ public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
     {
         var documentoNormalizado = DocumentoNormalizer.Normalize(documentoCliente);
 
-        return await (
-            from os in QueryCompleta()
-            join cliente in context.Clientes on os.Cliente.Id equals cliente.Id
-            where os.TokenAprovacao == tokenAprovacao && cliente.Documento == documentoNormalizado
-            select os
-        ).FirstOrDefaultAsync();
+        return await QueryCompleta()
+            .Join(
+                context.Clientes,
+                os => os.Cliente.Id,
+                cliente => cliente.Id,
+                (os, cliente) => new { os, cliente })
+            .Where(x => x.os.TokenAprovacao == tokenAprovacao && x.cliente.Documento == documentoNormalizado)
+            .Select(x => x.os)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IReadOnlyList<OrdemServicoAggregateRoot>> ListarAtivasAsync()

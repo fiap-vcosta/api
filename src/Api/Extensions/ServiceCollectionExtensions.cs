@@ -1,6 +1,6 @@
+using Api.Auth;
 using Api.Filters;
 using Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -59,7 +59,15 @@ public static class ServiceCollectionExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
         services.AddJwtAuthentication(configuration);
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicies.ClienteJwt, policy =>
+            {
+                policy.AddAuthenticationSchemes(AuthSchemes.Cliente);
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim(ClienteJwtClaims.Cpf);
+            });
+        });
     }
 
     private static void AddCoreServices(this IServiceCollection services)
@@ -122,12 +130,20 @@ public static class ServiceCollectionExtensions
 
     private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtKey = configuration["Jwt:Key"] ?? "default-key";
-        var jwtIssuer = configuration["Jwt:Issuer"] ?? "default-issuer";
-        var jwtAudience = configuration["Jwt:Audience"] ?? "default-audience";
+        var jwtKey = configuration["JwtFuncionario:Key"] ?? "default-key";
+        var jwtIssuer = configuration["JwtFuncionario:Issuer"] ?? "default-issuer";
+        var jwtAudience = configuration["JwtFuncionario:Audience"] ?? "default-audience";
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        var jwtClienteKey = configuration["JwtCliente:Key"] ?? "default-cliente-key";
+        var jwtClienteIssuer = configuration["JwtCliente:Issuer"] ?? "default-cliente-issuer";
+        var jwtClienteAudience = configuration["JwtCliente:Audience"] ?? "default-cliente-audience";
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = AuthSchemes.Funcionario;
+                options.DefaultChallengeScheme = AuthSchemes.Funcionario;
+            })
+            .AddJwtBearer(AuthSchemes.Funcionario, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -137,6 +153,18 @@ public static class ServiceCollectionExtensions
                     ValidateAudience = true,
                     ValidIssuer = jwtIssuer,
                     ValidAudience = jwtAudience
+                };
+            })
+            .AddJwtBearer(AuthSchemes.Cliente, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtClienteKey)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = jwtClienteIssuer,
+                    ValidAudience = jwtClienteAudience
                 };
             });
     }

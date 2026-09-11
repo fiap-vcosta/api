@@ -13,9 +13,9 @@ public class JwtServiceTests
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Jwt:Key"] = "super-secret-key-1234567890-ABCDEFGH",
-                ["Jwt:Issuer"] = "test-issuer",
-                ["Jwt:Audience"] = "test-audience"
+                ["JwtFuncionario:Key"] = "super-secret-key-1234567890-ABCDEFGH",
+                ["JwtFuncionario:Issuer"] = "test-issuer",
+                ["JwtFuncionario:Audience"] = "test-audience"
             })
             .Build();
         var service = new JwtService(config);
@@ -41,7 +41,7 @@ public class JwtServiceTests
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Jwt:Key"] = "super-secret-key-1234567890-ABCDEFGH"
+                ["JwtFuncionario:Key"] = "super-secret-key-1234567890-ABCDEFGH"
             })
             .Build();
         var service = new JwtService(config);

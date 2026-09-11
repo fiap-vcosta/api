@@ -10,9 +10,9 @@ namespace Infrastructure.Services;
 
 public class JwtService(IConfiguration configuration) : IJwtService
 {
-    private readonly string _key = configuration["Jwt:Key"] ?? "default-key";
-    private readonly string _issuer = configuration["Jwt:Issuer"] ?? "default-issuer";
-    private readonly string _audience = configuration["Jwt:Audience"] ?? "default-audience";
+    private readonly string _key = configuration["JwtFuncionario:Key"] ?? "default-key";
+    private readonly string _issuer = configuration["JwtFuncionario:Issuer"] ?? "default-issuer";
+    private readonly string _audience = configuration["JwtFuncionario:Audience"] ?? "default-audience";
 
     public string GenerateToken(string login, string role, int userId)
     {

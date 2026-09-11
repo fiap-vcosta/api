@@ -19,9 +19,12 @@ public class ServiceCollectionExtensionsTests
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Database=test;Username=postgres;Password=postgres",
-                ["Jwt:Key"] = "super-secret-key-1234567890-ABCDEFGH",
-                ["Jwt:Issuer"] = "test-issuer",
-                ["Jwt:Audience"] = "test-audience"
+                ["JwtFuncionario:Key"] = "super-secret-key-1234567890-ABCDEFGH",
+                ["JwtFuncionario:Issuer"] = "test-issuer",
+                ["JwtFuncionario:Audience"] = "test-audience",
+                ["JwtCliente:Key"] = "local-jwt-cliente-key-change-me-32chars-min",
+                ["JwtCliente:Issuer"] = "tech-challenge-cliente",
+                ["JwtCliente:Audience"] = "tech-challenge-cliente"
             })
             .Build();
         services.AddSingleton<IConfiguration>(configuration);

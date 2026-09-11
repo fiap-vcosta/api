@@ -1270,7 +1270,7 @@
         }
       },
       "rank": "a5",
-      "description": "Aprovação/rejeição externa sem JWT (token opaco). Obtenha tokenAprovacao no banco (coluna TokenAprovacao) — não é exposto na API."
+      "description": "Aprovação/rejeição com JWT cliente (Bearer {{tokenCliente}}) + token opaco. Mint: ./scripts/mint-cliente-jwt.sh <cpf>."
     },
     {
       "id": "ae4c7ae5-274f-4512-9633-de8e6e921fbd",
@@ -1300,7 +1300,8 @@
           "contentType": "none"
         },
         "auth": {
-          "type": "inherit"
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
         }
       },
       "rank": "a0"
@@ -1333,7 +1334,8 @@
           "contentType": "none"
         },
         "auth": {
-          "type": "inherit"
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
         }
       },
       "rank": "a1"

@@ -53,10 +53,56 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
     }
 
     [Fact]
+    public async Task AprovarPublico_WithoutClienteJwt_ReturnsUnauthorized()
+    {
+        // Arrange
+        ClearAuthentication();
+
+        // Act
+        var response = await Client.PostAsync("/api/public/ordens-servico/aprovar?token=token-qualquer", null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AprovarPublico_WithInvalidToken_ReturnsNotFound()
     {
-        // Arrange / Act
+        // Arrange
+        AuthenticateAsCliente(DocumentoJoaoSilva);
+
+        // Act
         var response = await Client.PostAsync("/api/public/ordens-servico/aprovar?token=token-inexistente", null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AprovarPublico_WithOwnershipMismatch_ReturnsNotFound()
+    {
+        // Arrange
+        await AuthenticateAsAdminAsync();
+        var ordemId = await CriarOrdemAsync(
+            idVeiculo: 2,
+            servicos:
+            [
+                new
+                {
+                    IdServico = 1,
+                    ValorCobrado = 100m,
+                    ItensNecessarios = Array.Empty<object>()
+                }
+            ]);
+        await FinalizarDiagnosticoAsync(ordemId);
+        var token = await GetTokenAprovacaoAsync(ordemId);
+
+        AuthenticateAsCliente(DocumentoMariaOliveira);
+
+        // Act
+        var response = await Client.PostAsync(
+            $"/api/public/ordens-servico/aprovar?token={Uri.EscapeDataString(token)}",
+            null);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

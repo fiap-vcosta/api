@@ -1,4 +1,5 @@
 using Application.Abstractions.Gateways;
+using Domain.Administrativo;
 using Domain.OrdemServico.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,23 @@ public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
     {
         return await QueryCompleta()
             .FirstOrDefaultAsync(os => os.TokenAprovacao == tokenAprovacao);
+    }
+
+    public async Task<OrdemServicoAggregateRoot?> GetByTokenEDocumentoAsync(
+        string tokenAprovacao,
+        string documentoCliente)
+    {
+        var documentoNormalizado = DocumentoNormalizer.Normalize(documentoCliente);
+
+        return await QueryCompleta()
+            .Join(
+                context.Clientes,
+                os => os.Cliente.Id,
+                cliente => cliente.Id,
+                (os, cliente) => new { os, cliente })
+            .Where(x => x.os.TokenAprovacao == tokenAprovacao && x.cliente.Documento == documentoNormalizado)
+            .Select(x => x.os)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IReadOnlyList<OrdemServicoAggregateRoot>> ListarAtivasAsync()

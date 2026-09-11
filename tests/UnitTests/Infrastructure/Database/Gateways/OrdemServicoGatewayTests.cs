@@ -144,6 +144,39 @@ public class OrdemServicoGatewayTests : IDisposable
     }
 
     [Fact]
+    public async Task GetByTokenEDocumentoAsync_ReturnsOrdem_WhenTokenAndDocumentoMatch()
+    {
+        // Arrange
+        var ordem = OrdemServicoAggregateRoot.Criar(
+            new ClienteOrdemServico { Id = 1, Nome = "João Silva", Email = "joao.silva@email.com" },
+            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
+        await _gateway.CriarAsync(ordem);
+
+        // Act
+        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "433.722.510-34");
+
+        // Assert
+        Assert.NotNull(saved);
+        Assert.Equal(ordem.Id, saved.Id);
+    }
+
+    [Fact]
+    public async Task GetByTokenEDocumentoAsync_ReturnsNull_WhenDocumentoDoesNotMatchOwner()
+    {
+        // Arrange
+        var ordem = OrdemServicoAggregateRoot.Criar(
+            new ClienteOrdemServico { Id = 1, Nome = "João Silva", Email = "joao.silva@email.com" },
+            new VeiculoOrdemServico { Placa = "ABC-1234", Marca = "VW", Modelo = "Gol" });
+        await _gateway.CriarAsync(ordem);
+
+        // Act
+        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "74694481024");
+
+        // Assert
+        Assert.Null(saved);
+    }
+
+    [Fact]
     public async Task ListarAtivasAsync_ExcludesFinalStatuses_AndOrdersByPriorityThenAge()
     {
         // Arrange

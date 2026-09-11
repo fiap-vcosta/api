@@ -3157,7 +3157,36 @@
         }
       },
       "rank": "a7",
-      "description": "Espelha OrdemServicoApiContratoTests (token inválido + unauthorized)."
+      "description": "Contratos HTTP: aprovar público exige JWT cliente (401 sem Bearer); token inválido com JWT → 404. Ownership A≠B coberto por testes de integração."
+    },
+    {
+      "id": "c8f4a1e2-9b3d-4e6f-a7c0-1d2e3f4a5b6c",
+      "name": "00-aprovar-publico-sem-jwt",
+      "type": "api",
+      "parentId": "f2187ab7-e25b-4f34-855e-743e2097ecfb",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar?token=token-qualquer",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Aprovar público sem JWT cliente retorna 401\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(401);\n});\n",
+          "preRequest": "rq.request.headers.delete('Authorization');\nrq.environment.set('token', '');\n"
+        }
+      },
+      "rank": "a0"
     },
     {
       "id": "619e7e2e-00ff-4525-9470-7c6f61726228",
@@ -3179,14 +3208,15 @@
           "contentType": "none"
         },
         "auth": {
-          "type": "inherit"
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
         },
         "scripts": {
-          "postResponse": "rq.test(\"Token inválido retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});",
-          "preRequest": "rq.request.headers.delete('Authorization');\nrq.environment.set('token', '');\n"
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "postResponse": "rq.test(\"Token inválido com JWT cliente retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
         }
       },
-      "rank": "a0"
+      "rank": "a1"
     },
     {
       "id": "2cac0167-6504-4dec-90ee-920c37ec6956",
@@ -3215,7 +3245,7 @@
           "preRequest": "rq.request.headers.delete('Authorization');\nrq.environment.set('token', '');\n"
         }
       },
-      "rank": "a1"
+      "rank": "a2"
     },
     {
       "id": "f683e6a6-db64-4c6b-ac9b-10dcf6566aff",

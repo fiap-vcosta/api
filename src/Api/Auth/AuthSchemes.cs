@@ -2,6 +2,7 @@ namespace Api.Auth;
 
 public static class AuthSchemes
 {
+    public const string Funcionario = "Funcionario";
     public const string Cliente = "Cliente";
 }
 

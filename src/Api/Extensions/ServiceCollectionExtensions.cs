@@ -139,8 +139,12 @@ public static class ServiceCollectionExtensions
         var jwtClienteIssuer = configuration["JwtCliente:Issuer"] ?? "default-cliente-issuer";
         var jwtClienteAudience = configuration["JwtCliente:Audience"] ?? "default-cliente-audience";
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = AuthSchemes.Funcionario;
+                options.DefaultChallengeScheme = AuthSchemes.Funcionario;
+            })
+            .AddJwtBearer(AuthSchemes.Funcionario, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {

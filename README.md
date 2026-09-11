@@ -123,9 +123,30 @@ Não há Job de migration: a aplicação roda `db.Database.Migrate()` no start, 
 
 O `build-push` mantém o registry sempre com a imagem da `main`, e é independente de cluster e banco — roda fora da janela de demo. O `deploy` sempre usa `:latest`.
 
-A cada deploy o workflow lê a senha do banco no Secret Manager, **gera** uma chave JWT nova e recria o Secret `api` do cluster. Nenhum dos dois valores existe no Git ou em tfstate. Em troca, a chave rotaciona: token de staff obtido antes de um redeploy deixa de valer, e basta logar de novo.
+A cada deploy o workflow:
+- lê a senha do banco no Secret Manager;
+- **gera** uma chave JWT de **funcionário** nova (`JwtFuncionario__Key`);
+- injeta `JwtCliente__Key` e `ServiceAuth__Key` a partir de **GitHub Secrets do repo** (valores **estáveis** — a Function `auth` precisa do mesmo material).
 
-Pré-requisitos: cluster no ar (`infra-k8s` → `tf-apply`), banco no ar (`infra-db` → `tf-apply`) e as org vars `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_AR_REPOSITORY`, `GCP_GKE_CLUSTER_NAME`, `GCP_DB_PASSWORD_SECRET`, `GCP_WORKLOAD_IDENTITY_PROVIDER` e `GCP_SERVICE_ACCOUNT_EMAIL`.
+Nada disso vai para o Git ou tfstate. Em troca, o JWT de staff rotaciona a cada redeploy (basta logar de novo); o JWT cliente e o secret de serviço **não** mudam entre deploys.
+
+Issuer/Audience de funcionário e de cliente ficam no ConfigMap (`tech-challenge-api` × `tech-challenge-cliente`) — dois emissores, dois materiais (RNF21). **Não** use secrets GitHub `JWT_KEY` / `JWT_ISSUER` / `JWT_AUDIENCE` (legado sem sufixo): o deploy não os lê; pode removê-los do repo. Também **não** precisa de `JWT_FUNCIONARIO_KEY` no GitHub — a chave de staff é gerada no workflow.
+
+Pré-requisitos: cluster no ar (`infra-k8s` → `tf-apply`), banco no ar (`infra-db` → `tf-apply`), as org vars `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_AR_REPOSITORY`, `GCP_GKE_CLUSTER_NAME`, `GCP_DB_PASSWORD_SECRET`, `GCP_WORKLOAD_IDENTITY_PROVIDER` e `GCP_SERVICE_ACCOUNT_EMAIL`, e os **repo secrets** abaixo (criar uma vez em Settings → Secrets do `fiap-vcosta/api`):
+
+| Secret | Uso |
+|--------|-----|
+| `JWT_CLIENTE_KEY` | Assinatura/validação do JWT cliente (mesma chave que a Function usará na §8) |
+| `SERVICE_AUTH_KEY` | Header `X-Service-Key` no endpoint `GET /api/system/clientes/por-documento/{documento}` |
+
+Gerar valores (exemplo):
+
+```bash
+openssl rand -base64 48   # JWT_CLIENTE_KEY
+openssl rand -base64 32   # SERVICE_AUTH_KEY
+```
+
+Localmente (Compose), use `JWT_FUNCIONARIO_*` e `JWT_CLIENTE_*` no `.env` — ver `.env.example`.
 
 Evidência de HPA depois do deploy:
 
@@ -144,7 +165,7 @@ kubectl get hpa,pods -n tech-challenge
 | Consultar OS | `GET /api/ordens-servico/{id}` | JWT Admin |
 | Listar OS ativas | `GET /api/ordens-servico` | JWT Admin |
 | Aprovar / rejeitar orçamento | `POST …/ordens-servico/aprovar?token=` · `…/rejeitar?token=` | JWT **cliente** + token opaco |
-| Cliente por CPF (serviço) | a definir na implementação | Secret de serviço (Function `auth`) |
+| Cliente por CPF (serviço) | `GET /api/system/clientes/por-documento/{documento}` | `X-Service-Key` |
 
 Listagem exclui Finalizada, Entregue e Descartada; ordenação por status evolutivo e data. Aprovação reutiliza os mesmos use cases da API autenticada; o CPF do JWT deve ser o do dono da OS. Requisitos: [`docs/01_requisitos.md`](docs/01_requisitos.md). Auth cliente: repo [`auth`](https://github.com/fiap-vcosta/auth).
 

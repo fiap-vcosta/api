@@ -66,6 +66,32 @@ public class OrdemServicoApiContratoTests(CustomWebApplicationFactory factory)
     }
 
     [Fact]
+    public async Task AprovarPublico_WithFuncionarioJwt_ReturnsUnauthorized()
+    {
+        // Arrange
+        await AuthenticateAsAdminAsync();
+
+        // Act
+        var response = await Client.PostAsync("/api/public/ordens-servico/aprovar?token=token-qualquer", null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task RejeitarPublico_WithFuncionarioJwt_ReturnsUnauthorized()
+    {
+        // Arrange
+        await AuthenticateAsAdminAsync();
+
+        // Act
+        var response = await Client.PostAsync("/api/public/ordens-servico/rejeitar?token=token-qualquer", null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AprovarPublico_WithInvalidToken_ReturnsNotFound()
     {
         // Arrange

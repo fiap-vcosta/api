@@ -7,15 +7,26 @@ namespace Application.UseCases.OrdemServico.Commands.RejeitarOrdemServicoPorToke
 
 public class RejeitarOrdemServicoPorTokenCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
+    IClienteGateway clienteGateway,
     IMediator mediator
 ) : IRequestHandler<RejeitarOrdemServicoPorTokenCommand, RejeitarOrdemServicoCommandResponse>
 {
-    public async Task<RejeitarOrdemServicoCommandResponse> Handle(RejeitarOrdemServicoPorTokenCommand request, CancellationToken cancellationToken)
+    private const string TokenNaoEncontradoMessage = "Ordem de Serviço não encontrada para o token informado";
+
+    public async Task<RejeitarOrdemServicoCommandResponse> Handle(
+        RejeitarOrdemServicoPorTokenCommand request,
+        CancellationToken cancellationToken)
     {
         var ordemServico = await ordemServicoGateway.GetByTokenAsync(request.TokenAprovacao);
-        if (ordemServico == null)
+        if (ordemServico is null)
         {
-            throw new DomainNotFoundException("Ordem de Serviço não encontrada para o token informado");
+            throw new DomainNotFoundException(TokenNaoEncontradoMessage);
+        }
+
+        var cliente = await clienteGateway.GetByIdAsync(ordemServico.Cliente.Id);
+        if (cliente is null || !OwnershipDocumento.Matches(request.DocumentoCliente, cliente.Documento))
+        {
+            throw new DomainNotFoundException(TokenNaoEncontradoMessage);
         }
 
         return await mediator.Send(new RejeitarOrdemServicoCommand { IdOrdemServico = ordemServico.Id }, cancellationToken);

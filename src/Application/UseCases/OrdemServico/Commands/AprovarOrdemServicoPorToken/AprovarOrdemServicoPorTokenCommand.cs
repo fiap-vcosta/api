@@ -6,4 +6,5 @@ namespace Application.UseCases.OrdemServico.Commands.AprovarOrdemServicoPorToken
 public class AprovarOrdemServicoPorTokenCommand : IRequest<AprovarOrdemServicoCommandResponse>
 {
     public required string TokenAprovacao { get; init; }
+    public required string DocumentoCliente { get; init; }
 }

@@ -59,7 +59,7 @@ public class ItensEmFaltaAteEntregueIntegrationTests(CustomWebApplicationFactory
         await AssertStatusAsync(ordemId, "AguardandoAprovacao");
 
         var token = await GetTokenAprovacaoAsync(ordemId);
-        await AprovarPublicamenteAsync(token);
+        await AprovarPublicamenteAsync(token, DocumentoClienteSeed2);
         await AssertStatusAsync(ordemId, "AguardandoPeca");
 
         await RegistrarEntradaEstoqueAsync(idItemEstoque: idItemSemSaldo, quantidade: 5m);

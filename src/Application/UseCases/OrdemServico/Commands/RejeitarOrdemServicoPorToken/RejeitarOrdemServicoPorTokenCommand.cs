@@ -6,4 +6,5 @@ namespace Application.UseCases.OrdemServico.Commands.RejeitarOrdemServicoPorToke
 public class RejeitarOrdemServicoPorTokenCommand : IRequest<RejeitarOrdemServicoCommandResponse>
 {
     public required string TokenAprovacao { get; init; }
+    public required string DocumentoCliente { get; init; }
 }

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Api.Auth;
 using Api.Presenters.OrdemServico;
 using Application.UseCases.OrdemServico.Commands.AprovarOrdemServicoPorToken;
 using Application.UseCases.OrdemServico.Commands.RejeitarOrdemServicoPorToken;
@@ -8,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.OrdemServico.PublicApi;
 
 [ApiController]
-[AllowAnonymous]
+[Authorize(Policy = AuthPolicies.ClienteJwt)]
 [Route("api/public/ordens-servico")]
 public class OrdemServicoPublicController(IMediator mediator, OrdemServicoPresenter presenter) : ControllerBase
 {
@@ -22,7 +24,17 @@ public class OrdemServicoPublicController(IMediator mediator, OrdemServicoPresen
             return BadRequest(new { Errors = TokenObrigatorioErrors });
         }
 
-        var response = await mediator.Send(new AprovarOrdemServicoPorTokenCommand { TokenAprovacao = token });
+        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Cpf);
+        if (string.IsNullOrWhiteSpace(documentoCliente))
+        {
+            return Unauthorized();
+        }
+
+        var response = await mediator.Send(new AprovarOrdemServicoPorTokenCommand
+        {
+            TokenAprovacao = token,
+            DocumentoCliente = documentoCliente
+        });
         return Ok(presenter.Present(response));
     }
 
@@ -34,7 +46,17 @@ public class OrdemServicoPublicController(IMediator mediator, OrdemServicoPresen
             return BadRequest(new { Errors = TokenObrigatorioErrors });
         }
 
-        var response = await mediator.Send(new RejeitarOrdemServicoPorTokenCommand { TokenAprovacao = token });
+        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Cpf);
+        if (string.IsNullOrWhiteSpace(documentoCliente))
+        {
+            return Unauthorized();
+        }
+
+        var response = await mediator.Send(new RejeitarOrdemServicoPorTokenCommand
+        {
+            TokenAprovacao = token,
+            DocumentoCliente = documentoCliente
+        });
         return Ok(presenter.Present(response));
     }
 }

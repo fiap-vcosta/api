@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using IntegrationTests.Infrastructure;
@@ -9,6 +10,9 @@ namespace IntegrationTests.OrdemServico;
 
 public abstract class OrdemServicoIntegrationTestBase
 {
+    protected const string DocumentoClienteSeed1 = "43372251034";
+    protected const string DocumentoClienteSeed2 = "74694481024";
+
     protected static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     protected readonly CustomWebApplicationFactory Factory;
@@ -25,6 +29,11 @@ public abstract class OrdemServicoIntegrationTestBase
 
     protected void ClearAuthentication() =>
         Client.DefaultRequestHeaders.Authorization = null;
+
+    protected void AuthenticateAsCliente(string documento) =>
+        Client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", ClienteJwtHelper.CreateToken(documento));
+
 
     protected async Task<int> CriarOrdemAsync(int idVeiculo, IEnumerable<object>? servicos = null)
     {
@@ -81,17 +90,17 @@ public abstract class OrdemServicoIntegrationTestBase
         response.EnsureSuccessStatusCode();
     }
 
-    protected async Task AprovarPublicamenteAsync(string token)
+    protected async Task AprovarPublicamenteAsync(string token, string documentoCliente = DocumentoClienteSeed1)
     {
-        ClearAuthentication();
+        AuthenticateAsCliente(documentoCliente);
         var response = await Client.PostAsync($"/api/public/ordens-servico/aprovar?token={Uri.EscapeDataString(token)}", null);
         response.EnsureSuccessStatusCode();
         await AuthenticateAsAdminAsync();
     }
 
-    protected async Task RejeitarPublicamenteAsync(string token)
+    protected async Task RejeitarPublicamenteAsync(string token, string documentoCliente = DocumentoClienteSeed1)
     {
-        ClearAuthentication();
+        AuthenticateAsCliente(documentoCliente);
         var response = await Client.PostAsync($"/api/public/ordens-servico/rejeitar?token={Uri.EscapeDataString(token)}", null);
         response.EnsureSuccessStatusCode();
         await AuthenticateAsAdminAsync();

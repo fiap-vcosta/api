@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Api.Auth;
 using Api.Controllers.OrdemServico.PublicApi;
 using Api.Presenters.OrdemServico;
 using Api.ViewModels.OrdemServico;
@@ -8,6 +10,7 @@ using Application.UseCases.OrdemServico.Commands.RejeitarOrdemServicoPorToken;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.OrdemServico.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -20,7 +23,19 @@ public class OrdemServicoPublicControllerTests
 
     public OrdemServicoPublicControllerTests()
     {
-        _controller = new OrdemServicoPublicController(_mediator.Object, new OrdemServicoPresenter());
+        _controller = new OrdemServicoPublicController(_mediator.Object, new OrdemServicoPresenter())
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                    [
+                        new Claim(ClienteJwtClaims.Cpf, "43372251034")
+                    ], authenticationType: "Cliente"))
+                }
+            }
+        };
     }
 
     [Fact]
@@ -57,6 +72,12 @@ public class OrdemServicoPublicControllerTests
         // Assert
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.IsType<AprovarOrdemServicoViewModel>(ok.Value);
+        _mediator.Verify(
+            m => m.Send(
+                It.Is<AprovarOrdemServicoPorTokenCommand>(c =>
+                    c.TokenAprovacao == "token-abc" && c.DocumentoCliente == "43372251034"),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]

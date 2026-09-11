@@ -2,13 +2,13 @@ using Api.Contracts.Validation;
 
 namespace UnitTests.Api.Contracts.Validation;
 
-public class DocumentoCpfCnpjValidatorTests
+public class DocumentoValidatorTests
 {
     [Fact]
     public void TryNormalizeValidCpfOrCnpj_ReturnsTrue_ForValidCpf()
     {
         // Arrange / Act
-        var ok = DocumentoCpfCnpjValidator.TryNormalizeValidCpfOrCnpj(
+        var ok = DocumentoValidator.TryNormalizeValidCpfOrCnpj(
             "111.444.777-35",
             out var normalized,
             out var errors);
@@ -23,7 +23,7 @@ public class DocumentoCpfCnpjValidatorTests
     public void TryNormalizeValidCpfOrCnpj_ReturnsFalse_ForInvalidDocumento()
     {
         // Arrange / Act
-        var ok = DocumentoCpfCnpjValidator.TryNormalizeValidCpfOrCnpj("123", out _, out var errors);
+        var ok = DocumentoValidator.TryNormalizeValidCpfOrCnpj("123", out _, out var errors);
 
         // Assert
         Assert.False(ok);

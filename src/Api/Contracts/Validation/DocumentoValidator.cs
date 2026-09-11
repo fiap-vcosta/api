@@ -3,7 +3,7 @@ using Domain.Administrativo;
 
 namespace Api.Contracts.Validation;
 
-public static class DocumentoCpfCnpjValidator
+public static class DocumentoValidator
 {
     public static bool TryNormalizeValidCpfOrCnpj(
         string? documento,

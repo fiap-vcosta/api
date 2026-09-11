@@ -16,7 +16,7 @@ public class ClienteSystemController(IMediator mediator) : ControllerBase
     [HttpGet("por-documento/{documento}")]
     public async Task<IActionResult> PorDocumento(string documento, CancellationToken cancellationToken)
     {
-        if (!DocumentoCpfCnpjValidator.TryNormalizeValidCpfOrCnpj(documento, out var normalized, out var errors))
+        if (!DocumentoValidator.TryNormalizeValidCpfOrCnpj(documento, out var normalized, out var errors))
         {
             return BadRequest(new { Errors = errors });
         }

@@ -13,5 +13,5 @@ public static class AuthPolicies
 
 public static class ClienteJwtClaims
 {
-    public const string Cpf = "cpf";
+    public const string Documento = "documento";
 }

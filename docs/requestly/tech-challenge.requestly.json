@@ -1270,7 +1270,7 @@
         }
       },
       "rank": "a5",
-      "description": "Aprovação/rejeição com JWT cliente (Bearer {{tokenCliente}}) + token opaco. Mint: ./scripts/mint-cliente-jwt.sh <cpf>."
+      "description": "Aprovação/rejeição com JWT cliente (Bearer {{tokenCliente}}) + token opaco. Mint: ./scripts/mint-cliente-jwt.sh <documento>."
     },
     {
       "id": "ae4c7ae5-274f-4512-9633-de8e6e921fbd",

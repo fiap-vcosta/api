@@ -21,8 +21,8 @@ public class ClienteJwtSchemeTests
     public async Task ClienteScheme_AcceptsTokenSignedWithJwtClienteKey()
     {
         // Arrange
-        const string cpf = "11144477735";
-        var token = ClienteJwtHelper.CreateToken(cpf);
+        const string documento = "11144477735";
+        var token = ClienteJwtHelper.CreateToken(documento);
         using var scope = _factory.Services.CreateScope();
         var auth = scope.ServiceProvider.GetRequiredService<IAuthenticationService>();
         var httpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
@@ -36,7 +36,7 @@ public class ClienteJwtSchemeTests
 
         // Assert
         Assert.True(result.Succeeded);
-        Assert.Equal(cpf, result.Principal?.FindFirstValue(ClienteJwtClaims.Cpf));
+        Assert.Equal(documento, result.Principal?.FindFirstValue(ClienteJwtClaims.Documento));
     }
 
     [Fact]

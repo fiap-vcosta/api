@@ -12,14 +12,14 @@ public static class ClienteJwtHelper
     public const string DefaultIssuer = "tech-challenge-cliente";
     public const string DefaultAudience = "tech-challenge-cliente";
 
-    public static string CreateToken(string cpf)
+    public static string CreateToken(string documento)
     {
-        var digits = new string(cpf.Where(char.IsDigit).ToArray());
+        var digits = new string(documento.Where(char.IsDigit).ToArray());
         var signingKey = Encoding.ASCII.GetBytes(DefaultKey);
         var handler = new JwtSecurityTokenHandler();
         var descriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity([new Claim(ClienteJwtClaims.Cpf, digits)]),
+            Subject = new ClaimsIdentity([new Claim(ClienteJwtClaims.Documento, digits)]),
             Expires = DateTime.UtcNow.AddMinutes(30),
             Issuer = DefaultIssuer,
             Audience = DefaultAudience,

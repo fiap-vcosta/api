@@ -31,7 +31,7 @@ public class OrdemServicoPublicControllerTests
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(
                     [
-                        new Claim(ClienteJwtClaims.Cpf, "43372251034")
+                        new Claim(ClienteJwtClaims.Documento, "43372251034")
                     ], authenticationType: "Cliente"))
                 }
             }

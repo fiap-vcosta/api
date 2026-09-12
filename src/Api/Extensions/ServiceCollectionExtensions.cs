@@ -65,7 +65,7 @@ public static class ServiceCollectionExtensions
             {
                 policy.AddAuthenticationSchemes(AuthSchemes.Cliente);
                 policy.RequireAuthenticatedUser();
-                policy.RequireClaim(ClienteJwtClaims.Cpf);
+                policy.RequireClaim(ClienteJwtClaims.Documento);
             });
         });
     }

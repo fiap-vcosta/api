@@ -24,7 +24,7 @@ public class OrdemServicoPublicController(IMediator mediator, OrdemServicoPresen
             return BadRequest(new { Errors = TokenObrigatorioErrors });
         }
 
-        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Cpf);
+        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Documento);
         if (string.IsNullOrWhiteSpace(documentoCliente))
         {
             return Unauthorized();
@@ -46,7 +46,7 @@ public class OrdemServicoPublicController(IMediator mediator, OrdemServicoPresen
             return BadRequest(new { Errors = TokenObrigatorioErrors });
         }
 
-        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Cpf);
+        var documentoCliente = User.FindFirstValue(ClienteJwtClaims.Documento);
         if (string.IsNullOrWhiteSpace(documentoCliente))
         {
             return Unauthorized();

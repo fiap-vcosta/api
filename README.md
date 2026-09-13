@@ -52,8 +52,10 @@ Fluxo interno da API: `Controller` → `Use Case` → `Gateway` / `Domain` → `
 flowchart TB
   subgraph gcp["GCP"]
     ar[("Artifact Registry")]
+    ip["IP global tech-challenge-api"]
     subgraph gke["GKE Autopilot"]
-      lb["Service LoadBalancer"]
+      ing["Ingress GCE + ManagedCertificate"]
+      svc["Service ClusterIP"]
       subgraph pod["Pod"]
         api["API .NET"]
         proxy["Cloud SQL Auth Proxy"]
@@ -64,7 +66,9 @@ flowchart TB
     sm[("Secret Manager")]
   end
 
-  lb --> api
+  ip --> ing
+  ing --> svc
+  svc --> api
   hpa -.->|"escala"| api
   api -->|"127.0.0.1:5432"| proxy
   proxy -->|"IP privado + IAM"| sql
@@ -112,16 +116,26 @@ API local: http://localhost:5225
 
 ## Deploy na GCP
 
-Manifests em [`k8s/`](k8s/): namespace, service account, ConfigMap, Deployment, Service `LoadBalancer` e HPA. O Deployment roda o **Cloud SQL Auth Proxy como sidecar nativo**, que autentica na instância por IAM (Workload Identity) e escuta em `127.0.0.1:5432` — a API só conhece `localhost`.
+Manifests em [`k8s/`](k8s/): namespace, service account, ConfigMap, Deployment, Service `ClusterIP`, Ingress GCE, ManagedCertificate e HPA. O Deployment roda o **Cloud SQL Auth Proxy como sidecar nativo**, que autentica na instância por IAM (Workload Identity) e escuta em `127.0.0.1:5432` — a API só conhece `localhost`.
+
+Entrada pública: **HTTPS** em `https://api.vcosta-fiap.online` (Ingress GCE + certificado gerenciado). O IP global `tech-challenge-api` e o record DNS da janela vêm do [`infra-k8s`](https://github.com/fiap-vcosta/infra-k8s); o A público na Hostinger (enquanto os NS não forem Google) precisa apontar para esse IP **antes** do cert ficar Active.
 
 Não há Job de migration: a aplicação roda `db.Database.Migrate()` no start, e o sidecar nativo garante que o túnel esteja pronto antes disso.
 
 | Workflow | Quando | O que faz |
 |----------|--------|-----------|
 | [`build-push`](.github/workflows/build-push.yml) | Merge em `main` | Build da imagem e push no Artifact Registry (`:latest` + SHA curto) |
-| [`deploy`](.github/workflows/deploy.yml) | Só manual | Aplica os manifests com a imagem `:latest` e devolve o IP público |
+| [`deploy`](.github/workflows/deploy.yml) | Só manual | Aplica os manifests com a imagem `:latest` e faz smoke em `https://api.vcosta-fiap.online/health` |
 
 O `build-push` mantém o registry sempre com a imagem da `main`, e é independente de cluster e banco — roda fora da janela de demo. O `deploy` sempre usa `:latest`.
+
+Ordem típica na janela (detalhe no README do `infra-k8s`):
+
+1. `infra-db` → `tf-apply`, depois `infra-k8s` → `tf-apply` (cluster + IP estático + records Cloud DNS)
+2. DNS autoritativo atual (Hostinger Zone Editor): **A** `api` → output `api_static_ip`
+3. Este repo → **`deploy`** (Ingress + ManagedCertificate)
+4. Esperar ManagedCertificate **Active** (o smoke do workflow tenta ~15 min; se falhar, reexecute após o cert)
+5. Atualizar org var `API_BASE_URL` para `https://api.vcosta-fiap.online` e reaplicar o Cloud Run auth no `infra-k8s` se necessário
 
 A cada deploy o workflow:
 - lê a senha do banco no Secret Manager;
@@ -136,7 +150,7 @@ Pré-requisitos: cluster no ar (`infra-k8s` → `tf-apply`), banco no ar (`infra
 
 | Secret | Uso |
 |--------|-----|
-| `JWT_CLIENTE_KEY` | Assinatura/validação do JWT cliente (mesma chave que a Function usará na §8) |
+| `JWT_CLIENTE_KEY` | Assinatura/validação do JWT cliente (mesma chave que o Cloud Run `auth`) |
 | `SERVICE_AUTH_KEY` | Header `X-Service-Key` no endpoint `GET /api/system/clientes/por-documento/{documento}` |
 
 Gerar valores (exemplo):
@@ -151,7 +165,7 @@ Localmente (Compose), use `JWT_FUNCIONARIO_*` e `JWT_CLIENTE_*` no `.env` — ve
 Evidência de HPA depois do deploy:
 
 ```bash
-./scripts/stress-hpa.sh http://<ip-do-loadbalancer>
+./scripts/stress-hpa.sh https://api.vcosta-fiap.online
 kubectl get hpa,pods -n tech-challenge
 ```
 

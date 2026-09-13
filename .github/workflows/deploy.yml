@@ -98,37 +98,38 @@ jobs:
         run: |
           export IMAGE
           envsubst '${IMAGE}' < k8s/deployment.yaml > deployment.rendered.yaml
-          kubectl apply -f k8s/configmap.yaml -f deployment.rendered.yaml -f k8s/service.yaml -f k8s/hpa.yaml
+          kubectl apply \
+            -f k8s/configmap.yaml \
+            -f deployment.rendered.yaml \
+            -f k8s/service.yaml \
+            -f k8s/managedcertificate.yaml \
+            -f k8s/ingress.yaml \
+            -f k8s/hpa.yaml
           # JwtFuncionario__Key é regenerada a cada deploy: sem restart os pods seguem com a antiga
           kubectl rollout restart deployment/api --namespace "$K8S_NAMESPACE"
           kubectl rollout status deployment/api --namespace "$K8S_NAMESPACE" --timeout=10m
 
-      - name: Endereço público e smoke de health
+      - name: Smoke HTTPS nomeado
+        env:
+          API_HOST: api.vcosta-fiap.online
         run: |
-          for _ in $(seq 1 30); do
-            ip="$(kubectl get service api --namespace "$K8S_NAMESPACE" \
-              -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
-            [[ -n "$ip" ]] && break
-            sleep 10
-          done
-
-          if [[ -z "$ip" ]]; then
-            echo "LoadBalancer sem IP externo depois de 5 min" >&2
-            exit 1
-          fi
-
-          for _ in $(seq 1 18); do
-            if curl -fsS --max-time 5 "http://$ip/health" >/dev/null; then
+          health_url="https://${API_HOST}/health"
+          # Cert gerenciado pode levar vários minutos após o A apontar para o IP estático.
+          for _ in $(seq 1 60); do
+            if curl -fsS --max-time 10 "$health_url" >/dev/null; then
               {
                 echo "## API no ar"
                 echo ""
-                echo "- Health: http://$ip/health"
-                echo "- Swagger: http://$ip/swagger"
+                echo "- Health: $health_url"
+                echo "- Swagger: https://${API_HOST}/swagger"
               } >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            sleep 10
+            sleep 15
           done
 
-          echo "http://$ip/health não respondeu 200 em 3 min" >&2
+          echo "Smoke HTTPS falhou após ~15 min: $health_url" >&2
+          echo "Confira: A de api → IP estático tech-challenge-api; ManagedCertificate Active; Ingress." >&2
+          kubectl describe managedcertificate api --namespace "$K8S_NAMESPACE" >&2 || true
+          kubectl describe ingress api --namespace "$K8S_NAMESPACE" >&2 || true
           exit 1

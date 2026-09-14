@@ -4535,6 +4535,355 @@
         }
       },
       "rank": "a4"
+    },
+    {
+      "id": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "name": "12-gateway-cliente-aprovar",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "ab",
+      "description": "Caminho feliz via entrada oficial (só Requestly): login → cliente/veículo (CPF válido 92561324354) → OS → finalizar → POST {{authUrl}} → aprovar público. Pré: environment GCP-Gateway (ou Docker com authUrl). tokenAprovacao não vem na API — após AguardandoAprovacao, preencha no environment (SELECT \"TokenAprovacao\" FROM \"OrdensServico\" WHERE \"Id\" = …)."
+    },
+    {
+      "id": "8d953c5a-915a-4559-90af-8b806868283c",
+      "name": "00-login",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/auth/login",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 9752891198,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"admin\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"baseUrl\")) {\n  rq.environment.set(\"baseUrl\", \"https://vcosta-fiap.online\");\n}\nif (!rq.environment.get(\"authUrl\")) {\n  rq.environment.set(\"authUrl\", \"https://vcosta-fiap.online/auth\");\n}\nif (!rq.environment.get(\"documentoCliente\")) {\n  rq.environment.set(\"documentoCliente\", \"92561324354\");\n}\n",
+          "postResponse": "rq.test(\"Login retorna 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Login retorna token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"token\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "379fd4ea-00ff-4041-91cf-1aa7ab167028",
+      "name": "01-criar-cliente",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/clientes",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1117376941,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"Nome\": \"E2E Cliente Gateway\",\n  \"TipoDocumento\": 0,\n  \"Documento\": \"{{documentoCliente}}\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "var code = (rq.response.code != null ? rq.response.code : rq.response.status);\nif (code === 201) {\n  var jsonData = rq.response.json();\n  rq.environment.set(\"clienteId\", jsonData.id);\n}\nrq.test(\"Criar cliente 201 ou conflito\", function () {\n  rq.expect(code).to.be.oneOf([201, 400, 409, 422, 500]);\n});\n"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "9813ae36-0741-433b-86cb-0852adaf00e0",
+      "name": "02-resolver-cliente-id",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/clientes",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Listar clientes 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar items = rq.response.json();\nif (!Array.isArray(items)) { items = items.items || items.data || []; }\nvar doc = String(rq.environment.get(\"documentoCliente\") || \"\").replace(/\\D/g, \"\");\nvar found = items.find(function (c) {\n  return String(c.documento || \"\").replace(/\\D/g, \"\") === doc;\n});\nrq.test(\"Cliente do documento existe\", function () {\n  rq.expect(found).to.exist;\n});\nrq.environment.set(\"clienteId\", found.id);\n"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "acb59c17-7879-4bed-82db-4c6f18bdfbf0",
+      "name": "03-criar-veiculo",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/veiculos",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 9467390754,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarVeiculoBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "var n = Date.now();\nvar L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';\nvar placa = L[n%26] + L[Math.floor(n/26)%26] + L[Math.floor(n/676)%26]\n  + String(Math.floor(n/10)%10) + L[Math.floor(n/100)%26]\n  + String(Math.floor(n/1000)%10) + String(Math.floor(n/10000)%10);\nrq.environment.set(\"criarVeiculoBody\", JSON.stringify({\n  Placa: placa,\n  IdCliente: Number(rq.environment.get('clienteId')),\n  Modelo: 'Gol',\n  Marca: 'Volkswagen'\n}));\n",
+          "postResponse": "rq.test(\"Criar veículo 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.environment.set(\"veiculoId\", jsonData.id);\n"
+        }
+      },
+      "rank": "a3"
+    },
+    {
+      "id": "1a91a578-b88e-47d3-b851-14b27365157e",
+      "name": "04-criar-os-com-servicos",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordens-servico",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726151200014,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{{criarOsBody}}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "rq.environment.set(\"criarOsBody\", JSON.stringify({\n  IdVeiculo: Number(rq.environment.get('veiculoId')),\n  Servicos: [{\n    IdServico: 1,\n    ValorCobrado: 150,\n    ItensNecessarios: [{ IdItemEstoque: 1, Quantidade: 1 }]\n  }]\n}));\n",
+          "postResponse": "rq.test(\"Criar OS 201\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(201);\n});\nvar jsonData = rq.response.json();\nrq.environment.set(\"ordemServicoId\", jsonData.id);\n"
+        }
+      },
+      "rank": "a4"
+    },
+    {
+      "id": "9c5524cf-7170-4da4-b1a9-a7b6684869bf",
+      "name": "05-finalizar-diagnostico",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}/finalizar-diagnostico",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Finalizar diagnóstico ok\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a5"
+    },
+    {
+      "id": "b2d6285d-bfb7-4fae-8b52-37258f7c55fc",
+      "name": "06-assert-aguardando-aprovacao",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Status AguardandoAprovacao\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"AguardandoAprovacao\");\n});"
+        }
+      },
+      "rank": "a6"
+    },
+    {
+      "id": "0492548a-6dca-4fae-89a9-3f6e91f08335",
+      "name": "07-auth-emitir-jwt-cliente",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1841576136,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"{{documentoCliente}}\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Auth 200 + token\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"tokenCliente\", rq.response.json().token);"
+        }
+      },
+      "rank": "a7"
+    },
+    {
+      "id": "b85b2229-fd55-463f-b995-6d04381be83d",
+      "name": "08-aprovar-publico",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/public/ordens-servico/aprovar?token={{tokenAprovacao}}",
+          "method": "POST",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{tokenCliente}}"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get('tokenAprovacao')) {\n  throw new Error('Defina tokenAprovacao no environment (Cloud SQL/Compose: SELECT \"TokenAprovacao\" FROM \"OrdensServico\" WHERE \"Id\" = ordemServicoId)');\n}\n",
+          "postResponse": "rq.test(\"Aprovar público ok\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
+        }
+      },
+      "rank": "a8"
+    },
+    {
+      "id": "c7d426eb-3dcb-4274-b59a-3e072fbd0bdb",
+      "name": "09-assert-liberada-para-execucao",
+      "type": "api",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/api/ordens-servico/{{ordemServicoId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Status LiberadaParaExecucao\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().status).to.equal(\"LiberadaParaExecucao\");\n});"
+        }
+      },
+      "rank": "a9"
     }
   ],
   "environments": [
@@ -4589,6 +4938,10 @@
         "jwtClienteIssuer": {
           "type": "string",
           "syncValue": "tech-challenge-cliente"
+        },
+        "authUrl": {
+          "type": "string",
+          "syncValue": "http://localhost:8081"
         }
       }
     },
@@ -4635,6 +4988,68 @@
         "documentoCliente": {
           "type": "string",
           "syncValue": "11144477735"
+        },
+        "tokenCliente": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "jwtClienteIssuer": {
+          "type": "string",
+          "syncValue": "tech-challenge-cliente"
+        },
+        "authUrl": {
+          "type": "string",
+          "syncValue": "http://localhost:8081"
+        }
+      }
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "name": "GCP-Gateway",
+      "variables": {
+        "baseUrl": {
+          "type": "string",
+          "syncValue": "https://vcosta-fiap.online"
+        },
+        "authUrl": {
+          "type": "string",
+          "syncValue": "https://vcosta-fiap.online/auth"
+        },
+        "token": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "tokenAprovacao": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "ordemServicoId": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "clienteId": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "veiculoId": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "servicoId": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "itemEstoqueId": {
+          "type": "string",
+          "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "documentoCliente": {
+          "type": "string",
+          "syncValue": "92561324354"
         },
         "tokenCliente": {
           "type": "secret",

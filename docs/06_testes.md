@@ -59,11 +59,11 @@ Exercitam a API **já em execução** (Docker ou `dotnet run`), fora da suite .N
 | Guia | [`07_api.md`](07_api.md) |
 | Exploratória | [`requestly/tech-challenge.requestly.json`](requestly/tech-challenge.requestly.json) |
 | Suites Runner | [`requestly/tech-challenge-e2e-tests.requestly.json`](requestly/tech-challenge-e2e-tests.requestly.json) |
-| Environments | Docker `http://localhost:8080` · Local `http://localhost:5225` |
+| Environments | Docker · Local · **GCP-Gateway** (`https://vcosta-fiap.online`) |
 
 Importar no [Requestly](https://requestly.com/), escolher o environment, rodar login (seed `admin` / `admin`) e as pastas de fluxo no Collection Runner. Alternativa visual: Swagger.
 
-Aprovação como **ator cliente**: token opaco na query **+** JWT cliente (Bearer); ownership por CPF. Collections Requestly atualizam quando o contrato for implementado.
+Aprovação como **ator cliente**: token opaco na query **+** JWT cliente (Bearer); ownership por CPF. Suite `12-gateway-cliente-aprovar` cobre o caminho feliz na entrada oficial (preencher `tokenAprovacao` a partir do banco entre finalizar diagnóstico e aprovar).
 
 ---
 

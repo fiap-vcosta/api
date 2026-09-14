@@ -30,7 +30,7 @@ public class AprovarServicosParcialmenteCommandHandler(
 
         ordemServico.AprovarServicosParcialmente(request.IdServicosAprovados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         return new AprovarServicosParcialmenteCommandResponse()
         {

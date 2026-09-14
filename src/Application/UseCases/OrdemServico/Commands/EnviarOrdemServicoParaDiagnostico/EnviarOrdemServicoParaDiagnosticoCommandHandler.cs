@@ -27,7 +27,7 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandler(
         ordemServico.EnviarParaDiagnostico();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
         await notificacaoService.NotificarUsuariosPorTipo(TipoUsuario.Mecanico, $"Ordem de Serviço {ordemServico.Id} recebida para diagnóstico.");
 
         await mediator.Publish(new DomainEventNotification<OrdemServicoRecebidaDiagnosticoEvent>(new OrdemServicoRecebidaDiagnosticoEvent(ordemServico.Id)), cancellationToken);

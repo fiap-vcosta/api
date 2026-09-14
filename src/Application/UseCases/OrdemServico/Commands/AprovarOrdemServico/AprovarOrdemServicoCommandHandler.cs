@@ -25,7 +25,7 @@ public class AprovarOrdemServicoCommandHandler(
         ordemServico.AprovarServicosSugeridos();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
         await mediator.Publish(new DomainEventNotification<OrdemServicoAprovadaEvent>(new OrdemServicoAprovadaEvent(ordemServico.Id)), cancellationToken);
 
         return new AprovarOrdemServicoCommandResponse()

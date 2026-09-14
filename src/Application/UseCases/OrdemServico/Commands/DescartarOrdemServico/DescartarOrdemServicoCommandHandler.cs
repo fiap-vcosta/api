@@ -25,7 +25,7 @@ public class DescartarOrdemServicoCommandHandler(
         ordemServico.Descartar();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
         await mediator.Publish(new DomainEventNotification<OrdemServicoDescartadaEvent>(new OrdemServicoDescartadaEvent(ordemServico.Id)), cancellationToken);
 
         return new DescartarOrdemServicoResponse

@@ -34,7 +34,7 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

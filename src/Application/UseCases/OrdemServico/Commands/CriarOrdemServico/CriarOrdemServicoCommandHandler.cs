@@ -49,7 +49,7 @@ public class CriarOrdemServicoCommandHandler(
 
         var ordemServico = OrdemServicoAggregateRoot.Criar(clienteOrdemServico, veiculoOrdemServico);
         await ordemServicoGateway.CriarAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         foreach (var servicoRequest in request.Servicos)
         {

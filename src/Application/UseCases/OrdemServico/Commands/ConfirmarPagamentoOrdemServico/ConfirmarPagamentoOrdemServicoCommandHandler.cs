@@ -20,7 +20,7 @@ public class ConfirmarPagamentoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarPagamento();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         return OrdemServicoResponse.From(ordemServico);
     }

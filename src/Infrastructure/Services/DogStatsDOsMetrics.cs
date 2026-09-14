@@ -6,7 +6,7 @@ using StatsdClient;
 
 namespace Infrastructure.Services;
 
-public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
+public sealed partial class DogStatsDOsMetrics : IOsMetrics, IDisposable
 {
     private readonly bool _configured;
 
@@ -15,7 +15,7 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
         var agentHost = configuration["DD_AGENT_HOST"];
         if (string.IsNullOrWhiteSpace(agentHost))
         {
-            logger.LogWarning("DD_AGENT_HOST ausente; métricas DogStatsD de OS desabilitadas");
+            LogAgentHostAusente(logger);
             _configured = false;
             return;
         }
@@ -29,7 +29,7 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
 
         if (!_configured)
         {
-            logger.LogWarning("Falha ao configurar DogStatsD em {AgentHost}; métricas de OS desabilitadas", agentHost);
+            LogFalhaConfigurarDogStatsD(logger, agentHost);
         }
     }
 
@@ -52,4 +52,10 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
             DogStatsd.Dispose();
         }
     }
+
+    [LoggerMessage(EventId = 1, Level = LogLevel.Warning, Message = "DD_AGENT_HOST ausente; métricas DogStatsD de OS desabilitadas")]
+    private static partial void LogAgentHostAusente(ILogger logger);
+
+    [LoggerMessage(EventId = 2, Level = LogLevel.Warning, Message = "Falha ao configurar DogStatsD em {AgentHost}; métricas de OS desabilitadas")]
+    private static partial void LogFalhaConfigurarDogStatsD(ILogger logger, string agentHost);
 }

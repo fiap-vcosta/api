@@ -8,6 +8,7 @@ using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
 

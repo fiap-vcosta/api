@@ -7,6 +7,7 @@ using Domain.Estoque.Entities;
 using Domain.OrdemServico.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.AlocarEstoqueOrdemServico;
 

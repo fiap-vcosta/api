@@ -2,6 +2,7 @@ using Application.Abstractions.Gateways;
 using Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
 

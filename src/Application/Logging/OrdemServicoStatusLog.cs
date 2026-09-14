@@ -1,6 +1,7 @@
 using Domain.OrdemServico.Entities;
+using Microsoft.Extensions.Logging;
 
-namespace Microsoft.Extensions.Logging;
+namespace Application.Logging;
 
 public static partial class OrdemServicoStatusLog
 {

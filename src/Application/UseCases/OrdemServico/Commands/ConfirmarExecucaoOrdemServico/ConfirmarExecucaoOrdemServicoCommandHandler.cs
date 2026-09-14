@@ -4,6 +4,7 @@ using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItens
 using Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 

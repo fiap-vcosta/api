@@ -6,6 +6,7 @@ using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;
 

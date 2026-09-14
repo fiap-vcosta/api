@@ -4537,7 +4537,7 @@
       "rank": "a4"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000001",
+      "id": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "name": "12-gateway-cliente-aprovar",
       "type": "collection",
       "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
@@ -4551,10 +4551,10 @@
       "description": "Caminho feliz via entrada oficial (só Requestly): login → cliente/veículo (CPF válido 92561324354) → OS → finalizar → POST {{authUrl}} → aprovar público. Pré: environment GCP-Gateway (ou Docker com authUrl). tokenAprovacao não vem na API — após AguardandoAprovacao, preencha no environment (SELECT \"TokenAprovacao\" FROM \"OrdensServico\" WHERE \"Id\" = …)."
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000010",
+      "id": "8d953c5a-915a-4559-90af-8b806868283c",
       "name": "00-login",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4590,10 +4590,10 @@
       "rank": "a0"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000011",
+      "id": "379fd4ea-00ff-4041-91cf-1aa7ab167028",
       "name": "01-criar-cliente",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4628,10 +4628,10 @@
       "rank": "a1"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000012",
+      "id": "9813ae36-0741-433b-86cb-0852adaf00e0",
       "name": "02-resolver-cliente-id",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4656,10 +4656,10 @@
       "rank": "a2"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000013",
+      "id": "acb59c17-7879-4bed-82db-4c6f18bdfbf0",
       "name": "03-criar-veiculo",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4695,10 +4695,10 @@
       "rank": "a3"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000014",
+      "id": "1a91a578-b88e-47d3-b851-14b27365157e",
       "name": "04-criar-os-com-servicos",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4734,10 +4734,10 @@
       "rank": "a4"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000015",
+      "id": "9c5524cf-7170-4da4-b1a9-a7b6684869bf",
       "name": "05-finalizar-diagnostico",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4762,10 +4762,10 @@
       "rank": "a5"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000016",
+      "id": "b2d6285d-bfb7-4fae-8b52-37258f7c55fc",
       "name": "06-assert-aguardando-aprovacao",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4790,10 +4790,10 @@
       "rank": "a6"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000017",
+      "id": "0492548a-6dca-4fae-89a9-3f6e91f08335",
       "name": "07-auth-emitir-jwt-cliente",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4819,7 +4819,7 @@
           "contentType": "raw"
         },
         "auth": {
-          "type": "no_auth"
+          "type": "inherit"
         },
         "scripts": {
           "postResponse": "rq.test(\"Auth 200 + token\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n  rq.expect(rq.response.json().token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"tokenCliente\", rq.response.json().token);"
@@ -4828,10 +4828,10 @@
       "rank": "a7"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000018",
+      "id": "b85b2229-fd55-463f-b995-6d04381be83d",
       "name": "08-aprovar-publico",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",
@@ -4858,10 +4858,10 @@
       "rank": "a8"
     },
     {
-      "id": "d12a0001-gate-0001-4001-8001-000000000019",
+      "id": "c7d426eb-3dcb-4274-b59a-3e072fbd0bdb",
       "name": "09-assert-liberada-para-execucao",
       "type": "api",
-      "parentId": "d12a0001-gate-0001-4001-8001-000000000001",
+      "parentId": "6f4bf0fd-79c5-41a2-bd09-6c705235e158",
       "deleted": false,
       "data": {
         "type": "http",

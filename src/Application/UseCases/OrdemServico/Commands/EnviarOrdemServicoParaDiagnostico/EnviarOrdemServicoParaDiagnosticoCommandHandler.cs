@@ -11,6 +11,7 @@ namespace Application.UseCases.OrdemServico.Commands.EnviarOrdemServicoParaDiagn
 public class EnviarOrdemServicoParaDiagnosticoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
     INotificacaoService notificacaoService,
+    IOsMetrics osMetrics,
     IMediator mediator
 ) : IRequestHandler<EnviarOrdemServicoParaDiagnosticoCommand>
 {
@@ -25,6 +26,7 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandler(
         ordemServico.EnviarParaDiagnostico();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
         await notificacaoService.NotificarUsuariosPorTipo(TipoUsuario.Mecanico, $"Ordem de Serviço {ordemServico.Id} recebida para diagnóstico.");
 
         await mediator.Publish(new DomainEventNotification<OrdemServicoRecebidaDiagnosticoEvent>(new OrdemServicoRecebidaDiagnosticoEvent(ordemServico.Id)), cancellationToken);

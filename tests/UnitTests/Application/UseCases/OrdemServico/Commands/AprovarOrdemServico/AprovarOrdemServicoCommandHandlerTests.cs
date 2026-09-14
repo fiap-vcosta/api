@@ -1,6 +1,7 @@
 using Application.Abstractions.Events;
 using Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
@@ -33,7 +34,7 @@ public class AprovarOrdemServicoCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
         mockMediator.Setup(m => m.Publish(It.IsAny<DomainEventNotification<OrdemServicoAprovadaEvent>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var handler = new AprovarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, mockMediator.Object);
+        var handler = new AprovarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>(), mockMediator.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

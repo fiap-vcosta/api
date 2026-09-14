@@ -1,14 +1,17 @@
 using System.Transactions;
-using Domain.Exceptions;
-
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItensEstoque;
+using Domain.Exceptions;
 using MediatR;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 
-public class ConfirmarExecucaoOrdemServicoCommandHandler(IOrdemServicoGateway ordemServicoGateway, IMediator mediator)
-    : IRequestHandler<ConfirmarExecucaoOrdemServicoCommand, OrdemServicoResponse>
+public class ConfirmarExecucaoOrdemServicoCommandHandler(
+    IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics,
+    IMediator mediator
+) : IRequestHandler<ConfirmarExecucaoOrdemServicoCommand, OrdemServicoResponse>
 {
     public async Task<OrdemServicoResponse> Handle(ConfirmarExecucaoOrdemServicoCommand request, CancellationToken cancellationToken)
     {
@@ -31,6 +34,7 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(IOrdemServicoGateway or
 
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

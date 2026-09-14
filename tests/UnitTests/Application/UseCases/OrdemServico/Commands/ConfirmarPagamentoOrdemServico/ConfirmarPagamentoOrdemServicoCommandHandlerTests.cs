@@ -1,5 +1,6 @@
 using Application.UseCases.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using Moq;
@@ -36,7 +37,7 @@ public class ConfirmarPagamentoOrdemServicoCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordemServico);
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
 
-        var handler = new ConfirmarPagamentoOrdemServicoCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new ConfirmarPagamentoOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>());
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

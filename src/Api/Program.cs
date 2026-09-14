@@ -1,32 +1,53 @@
 using Api.Extensions;
+using Api.Logging;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Formatting.Compact;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(new RenderedCompactJsonFormatter())
+    .CreateBootstrapLogger();
 
-builder.Services.AddApiServices(builder.Configuration);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+try
 {
-    options.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
-app.UseApiConfiguration();
+    builder.Host.UseSerilog(DatadogLogging.Configure);
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    builder.Services.AddApiServices(builder.Configuration);
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
+    });
+
+    var app = builder.Build();
+    app.UseApiConfiguration();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+    }
+
+    app.MapGet("/health", async (AppDbContext appDbContext) =>
+    {
+        var isDbOk = await appDbContext.Database.CanConnectAsync();
+        return isDbOk ? Results.Ok("OK") : Results.StatusCode(503);
+    });
+
+    app.Run();
 }
-
-app.MapGet("/health", async (AppDbContext appDbContext) =>
+catch (Exception ex)
 {
-    var isDbOk = await appDbContext.Database.CanConnectAsync();
-    return isDbOk ? Results.Ok("OK") : Results.StatusCode(503);
-});
-
-app.Run();
+    Log.Fatal(ex, "Aplicação encerrada inesperadamente");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 public partial class Program;

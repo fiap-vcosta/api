@@ -4,6 +4,7 @@ using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCom
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
 using Domain.Estoque.Entities;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
@@ -45,6 +46,7 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
+            Mock.Of<IOsMetrics>(),
             mockMediator.Object);
 
         // Act
@@ -90,6 +92,7 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
+            Mock.Of<IOsMetrics>(),
             mockMediator.Object);
 
         // Act
@@ -121,6 +124,7 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
+            Mock.Of<IOsMetrics>(),
             mockMediator.Object);
 
         // Act & Assert

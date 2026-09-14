@@ -68,13 +68,14 @@ jobs:
           DB_PASSWORD_SECRET: ${{ vars.GCP_DB_PASSWORD_SECRET }}
           JWT_CLIENTE_KEY: ${{ secrets.JWT_CLIENTE_KEY }}
           SERVICE_AUTH_KEY: ${{ secrets.SERVICE_AUTH_KEY }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
         run: |
           missing=()
-          for name in JWT_CLIENTE_KEY SERVICE_AUTH_KEY; do
+          for name in JWT_CLIENTE_KEY SERVICE_AUTH_KEY DD_API_KEY; do
             [[ -n "${!name}" ]] || missing+=("$name")
           done
           if (( ${#missing[@]} > 0 )); then
-            echo "repo secrets faltando: ${missing[*]}" >&2
+            echo "repo/org secrets faltando: ${missing[*]}" >&2
             exit 1
           fi
 
@@ -89,17 +90,22 @@ jobs:
             --from-literal=JwtFuncionario__Key="$JWT_FUNCIONARIO_KEY" \
             --from-literal=JwtCliente__Key="$JWT_CLIENTE_KEY" \
             --from-literal=ServiceAuth__Key="$SERVICE_AUTH_KEY" \
+            --from-literal=DD_API_KEY="$DD_API_KEY" \
             --dry-run=client -o yaml \
           | kubectl apply -f -
 
       - name: Aplicar manifests
         env:
           IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_AR_REPOSITORY }}/api:latest
+          DD_SITE: ${{ vars.DD_SITE }}
+          DD_VERSION: ${{ github.sha }}
         run: |
-          export IMAGE
-          envsubst '${IMAGE}' < k8s/deployment.yaml > deployment.rendered.yaml
+          export IMAGE DD_VERSION
+          export DD_SITE="${DD_SITE:-datadoghq.com}"
+          envsubst '${DD_SITE}' < k8s/configmap.yaml > configmap.rendered.yaml
+          envsubst '${IMAGE} ${DD_VERSION}' < k8s/deployment.yaml > deployment.rendered.yaml
           kubectl apply \
-            -f k8s/configmap.yaml \
+            -f configmap.rendered.yaml \
             -f deployment.rendered.yaml \
             -f k8s/service.yaml \
             -f k8s/managedcertificate.yaml \

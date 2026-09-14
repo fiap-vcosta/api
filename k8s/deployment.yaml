@@ -5,6 +5,8 @@ metadata:
   namespace: tech-challenge
   labels:
     app: api
+    tags.datadoghq.com/service: api
+    tags.datadoghq.com/env: prod
 spec:
   replicas: 1
   selector:
@@ -14,6 +16,8 @@ spec:
     metadata:
       labels:
         app: api
+        tags.datadoghq.com/service: api
+        tags.datadoghq.com/env: prod
     spec:
       serviceAccountName: api
       initContainers:
@@ -61,6 +65,9 @@ spec:
                 name: api
             - secretRef:
                 name: api
+          env:
+            - name: DD_VERSION
+              value: "${DD_VERSION}"
           startupProbe:
             httpGet:
               path: /health
@@ -80,4 +87,41 @@ spec:
           resources:
             requests:
               cpu: "250m"
+              memory: "512Mi"
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:7.68.3
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: DD_API_KEY
+            - name: DD_SITE
+              valueFrom:
+                configMapKeyRef:
+                  name: api
+                  key: DD_SITE
+            - name: DD_APM_ENABLED
+              value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "false"
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+              value: "false"
+            - name: DD_LOGS_ENABLED
+              value: "false"
+            - name: DD_PROCESS_AGENT_ENABLED
+              value: "false"
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "false"
+            - name: DD_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DD_CONTAINER_EXCLUDE
+              value: "name:.*"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
               memory: "512Mi"

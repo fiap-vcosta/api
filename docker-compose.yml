@@ -64,6 +64,12 @@ services:
       JwtCliente__Issuer: ${JWT_CLIENTE_ISSUER:?JWT_CLIENTE_ISSUER is required}
       JwtCliente__Audience: ${JWT_CLIENTE_AUDIENCE:?JWT_CLIENTE_AUDIENCE is required}
       ServiceAuth__Key: ${SERVICE_AUTH_KEY:?SERVICE_AUTH_KEY is required}
+      DD_SERVICE: api
+      DD_ENV: local
+      DD_LOGS_INJECTION: "true"
+      DD_API_KEY: ${DD_API_KEY:-}
+      DD_SITE: ${DD_SITE:-datadoghq.com}
+      DD_AGENT_HOST: ${DD_AGENT_HOST:-127.0.0.1}
     depends_on:
       db:
         condition: service_healthy

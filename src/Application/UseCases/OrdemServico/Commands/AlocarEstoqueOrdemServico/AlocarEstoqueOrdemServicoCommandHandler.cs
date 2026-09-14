@@ -1,5 +1,6 @@
 using System.Transactions;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCompra;
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
 using Domain.Exceptions;
@@ -12,6 +13,7 @@ namespace Application.UseCases.OrdemServico.Commands.AlocarEstoqueOrdemServico;
 public class AlocarEstoqueOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
     IItemEstoqueGateway itemEstoqueGateway,
+    IOsMetrics osMetrics,
     IMediator mediator
 ) : IRequestHandler<AlocarEstoqueOrdemServicoCommand, Unit>
 {
@@ -101,6 +103,7 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
         }
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
         scope.Complete();
 
         return Unit.Value;

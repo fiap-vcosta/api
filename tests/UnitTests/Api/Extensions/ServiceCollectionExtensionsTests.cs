@@ -15,6 +15,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
+        services.AddLogging();
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -39,6 +40,7 @@ public class ServiceCollectionExtensionsTests
         Assert.NotNull(provider.GetService<IJwtService>());
         Assert.NotNull(provider.GetService<INotificacaoService>());
         Assert.NotNull(provider.GetService<ISmtpService>());
+        Assert.NotNull(provider.GetService<IOsMetrics>());
         Assert.NotNull(provider.GetService<IValidator<CriarOrdemServicoRequest>>());
         Assert.NotNull(scoped.GetRequiredService<IClienteGateway>());
         Assert.NotNull(scoped.GetRequiredService<IVeiculoGateway>());

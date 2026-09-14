@@ -1,4 +1,5 @@
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
@@ -6,7 +7,8 @@ using MediatR;
 namespace Application.UseCases.OrdemServico.Commands.RejeitarOrdemServico;
 
 public class RejeitarOrdemServicoCommandHandler(
-    IOrdemServicoGateway ordemServicoGateway
+    IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics
 ) : IRequestHandler<RejeitarOrdemServicoCommand, RejeitarOrdemServicoCommandResponse>
 {
     public async Task<RejeitarOrdemServicoCommandResponse> Handle(RejeitarOrdemServicoCommand request, CancellationToken cancellationToken)
@@ -16,10 +18,11 @@ public class RejeitarOrdemServicoCommandHandler(
         {
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
-        
+
         ordemServico.RejeitarServicosSugeridos();
-        
+
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         return new RejeitarOrdemServicoCommandResponse()
         {

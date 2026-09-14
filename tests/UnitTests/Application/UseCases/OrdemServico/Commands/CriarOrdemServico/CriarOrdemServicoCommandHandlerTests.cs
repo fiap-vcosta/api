@@ -4,6 +4,7 @@ using Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Administrativo.Entities;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
@@ -49,6 +50,7 @@ public class CriarOrdemServicoCommandHandlerTests
             mockVeiculoGateway.Object,
             mockClienteGateway.Object,
             mockOrdemServicoGateway.Object,
+            Mock.Of<IOsMetrics>(),
             mockMediator.Object);
 
         // Act
@@ -122,6 +124,7 @@ public class CriarOrdemServicoCommandHandlerTests
             mockVeiculoGateway.Object,
             mockClienteGateway.Object,
             mockOrdemServicoGateway.Object,
+            Mock.Of<IOsMetrics>(),
             mockMediator.Object);
 
         var command = new CriarOrdemServicoCommand

@@ -1,4 +1,5 @@
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
@@ -6,7 +7,8 @@ using MediatR;
 namespace Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
 
 public class AprovarServicosParcialmenteCommandHandler(
-    IOrdemServicoGateway ordemServicoGateway
+    IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics
 ): IRequestHandler<AprovarServicosParcialmenteCommand, AprovarServicosParcialmenteCommandResponse>
 {
     public async Task<AprovarServicosParcialmenteCommandResponse> Handle(AprovarServicosParcialmenteCommand request, CancellationToken cancellationToken)
@@ -25,9 +27,10 @@ public class AprovarServicosParcialmenteCommandHandler(
         {
             throw new DomainNotFoundException($"Serviços [{string.Join(", ", idsInvalidos)}] não pertencem a Ordem de Serviço {request.IdOrdemServico}");
         }
-        
+
         ordemServico.AprovarServicosParcialmente(request.IdServicosAprovados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         return new AprovarServicosParcialmenteCommandResponse()
         {

@@ -30,10 +30,10 @@ public static class DatadogLogging
             return;
         }
 
-        var intakeUrl = context.Configuration["Datadog:LogsIntakeUrl"];
-        if (string.IsNullOrWhiteSpace(intakeUrl))
+        var intakeUrl = ResolveLogsIntakeUrl(context.Configuration["DD_SITE"]);
+        if (intakeUrl is null)
         {
-            Log.Warning("Datadog:LogsIntakeUrl ausente; sink Datadog de logs não será registrado");
+            Log.Warning("DD_SITE ausente; sink Datadog de logs não será registrado");
             return;
         }
 
@@ -44,5 +44,15 @@ public static class DatadogLogging
             host: Environment.MachineName,
             tags: [$"env:{env}"],
             configuration: new DatadogConfiguration { Url = intakeUrl });
+    }
+
+    public static string? ResolveLogsIntakeUrl(string? ddSite)
+    {
+        if (string.IsNullOrWhiteSpace(ddSite))
+        {
+            return null;
+        }
+
+        return $"https://http-intake.logs.{ddSite.Trim()}";
     }
 }

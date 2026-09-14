@@ -9,6 +9,7 @@ using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.EnviarOrdemServicoParaDiagnostico;
 
@@ -37,8 +38,8 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandlerTests
         var handler = new EnviarOrdemServicoParaDiagnosticoCommandHandler(
             ordemServicoGateway.Object,
             notificacaoService.Object,
-            Mock.Of<IOsMetrics>(),
-            mediator.Object);
+            mediator.Object,
+            NullLogger<EnviarOrdemServicoParaDiagnosticoCommandHandler>.Instance);
 
         // Act
         await handler.Handle(new EnviarOrdemServicoParaDiagnosticoCommand { IdOrdemServico = 7 }, CancellationToken.None);
@@ -63,8 +64,8 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandlerTests
         var handler = new EnviarOrdemServicoParaDiagnosticoCommandHandler(
             ordemServicoGateway.Object,
             new Mock<INotificacaoService>().Object,
-            Mock.Of<IOsMetrics>(),
-            new Mock<IMediator>().Object);
+            new Mock<IMediator>().Object,
+            NullLogger<EnviarOrdemServicoParaDiagnosticoCommandHandler>.Instance);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>

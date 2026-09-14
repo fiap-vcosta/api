@@ -1,17 +1,18 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
 
 public class AprovarOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
-    IOsMetrics osMetrics,
-    IMediator mediator
+    IMediator mediator,
+    ILogger<AprovarOrdemServicoCommandHandler> logger
 ) : IRequestHandler<AprovarOrdemServicoCommand, AprovarOrdemServicoCommandResponse>
 {
     public async Task<AprovarOrdemServicoCommandResponse> Handle(AprovarOrdemServicoCommand request, CancellationToken cancellationToken)
@@ -25,7 +26,7 @@ public class AprovarOrdemServicoCommandHandler(
         ordemServico.AprovarServicosSugeridos();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
         await mediator.Publish(new DomainEventNotification<OrdemServicoAprovadaEvent>(new OrdemServicoAprovadaEvent(ordemServico.Id)), cancellationToken);
 
         return new AprovarOrdemServicoCommandResponse()

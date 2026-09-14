@@ -1,6 +1,5 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
@@ -8,6 +7,8 @@ using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
 
@@ -15,8 +16,8 @@ public class CriarOrdemServicoCommandHandler(
     IVeiculoGateway veiculoGateway,
     IClienteGateway clienteGateway,
     IOrdemServicoGateway ordemServicoGateway,
-    IOsMetrics osMetrics,
-    IMediator mediator
+    IMediator mediator,
+    ILogger<CriarOrdemServicoCommandHandler> logger
 ) : IRequestHandler<CriarOrdemServicoCommand, CriarOrdemServicoCommandResponse>
 {
     public async Task<CriarOrdemServicoCommandResponse> Handle(CriarOrdemServicoCommand request, CancellationToken cancellationToken)
@@ -49,7 +50,7 @@ public class CriarOrdemServicoCommandHandler(
 
         var ordemServico = OrdemServicoAggregateRoot.Criar(clienteOrdemServico, veiculoOrdemServico);
         await ordemServicoGateway.CriarAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         foreach (var servicoRequest in request.Servicos)
         {

@@ -1,18 +1,19 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;
 
 public class FinalizarDiagnosticoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
-    IOsMetrics osMetrics,
-    IMediator mediator
+    IMediator mediator,
+    ILogger<FinalizarDiagnosticoCommandHandler> logger
 ) : IRequestHandler<FinalizarDiagnosticoCommand, FinalizarDiagnosticoCommandResponse>
 {
     public async Task<FinalizarDiagnosticoCommandResponse> Handle(FinalizarDiagnosticoCommand request, CancellationToken cancellationToken)
@@ -25,7 +26,7 @@ public class FinalizarDiagnosticoCommandHandler(
 
         ordemServico.FinalizarDiagnostico();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         switch (ordemServico.Status)
         {

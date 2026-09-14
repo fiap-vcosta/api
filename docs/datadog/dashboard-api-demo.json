@@ -1,6 +1,6 @@
 {
   "title": "Tech Challenge — API (demo)",
-  "description": "Dashboard da janela de demo: latência APM, erros HTTP e status de OS (DogStatsD).",
+  "description": "Dashboard da janela de demo: latência APM, erros HTTP e transições de OS (logs).",
   "layout_type": "ordered",
   "reflow_type": "auto",
   "widgets": [
@@ -34,8 +34,27 @@
         "type": "timeseries",
         "requests": [
           {
-            "q": "sum:techchallenge.ordem_servico.status{status:Recebida}.as_count()",
-            "display_type": "bars"
+            "response_format": "timeseries",
+            "display_type": "bars",
+            "queries": [
+              {
+                "data_source": "logs",
+                "name": "query1",
+                "indexes": ["*"],
+                "compute": {
+                  "aggregation": "count"
+                },
+                "group_by": [],
+                "search": {
+                  "query": "service:api env:prod @Status:Recebida \"movida para o status\""
+                }
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ]
           }
         ]
       }
@@ -46,8 +65,36 @@
         "type": "timeseries",
         "requests": [
           {
-            "q": "sum:techchallenge.ordem_servico.status{*} by {status}.as_count()",
-            "display_type": "bars"
+            "response_format": "timeseries",
+            "display_type": "bars",
+            "queries": [
+              {
+                "data_source": "logs",
+                "name": "query1",
+                "indexes": ["*"],
+                "compute": {
+                  "aggregation": "count"
+                },
+                "group_by": [
+                  {
+                    "facet": "@Status",
+                    "limit": 20,
+                    "sort": {
+                      "aggregation": "count",
+                      "order": "desc"
+                    }
+                  }
+                ],
+                "search": {
+                  "query": "service:api env:prod \"movida para o status\""
+                }
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ]
           }
         ]
       }

@@ -1,14 +1,15 @@
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
 
 public class AprovarServicosParcialmenteCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
-    IOsMetrics osMetrics
+    ILogger<AprovarServicosParcialmenteCommandHandler> logger
 ): IRequestHandler<AprovarServicosParcialmenteCommand, AprovarServicosParcialmenteCommandResponse>
 {
     public async Task<AprovarServicosParcialmenteCommandResponse> Handle(AprovarServicosParcialmenteCommand request, CancellationToken cancellationToken)
@@ -30,7 +31,7 @@ public class AprovarServicosParcialmenteCommandHandler(
 
         ordemServico.AprovarServicosParcialmente(request.IdServicosAprovados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         return new AprovarServicosParcialmenteCommandResponse()
         {

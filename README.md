@@ -178,9 +178,9 @@ APM e logs da API na janela da demo (RNF22/RNF23; ADR [`docs/adrs/001-datadog-ap
 
 | Peça | Como |
 |------|------|
-| Logs | Serilog JSON no console + sink HTTP Datadog quando `DD_API_KEY` existe |
+| Logs | Serilog JSON no console + sink HTTP Datadog quando `DD_API_KEY` existe (intake derivado de `DD_SITE`) |
 | APM | `Datadog.Trace.Bundle` + Agent **sidecar** no Deployment |
-| Métricas OS | DogStatsD (`techchallenge.ordem_servico.*`) via eventos de domínio |
+| Status OS | Log Info `OS {id} movida para o status {Status}` nos handlers (widgets de log no dashboard) |
 | `/health` | Continua **público** (probes e smoke) |
 
 Secrets/vars (org ou repo):

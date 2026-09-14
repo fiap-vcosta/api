@@ -1,13 +1,14 @@
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Domain.Exceptions;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Application.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
 
 public class ConfirmarPagamentoOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
-    IOsMetrics osMetrics
+    ILogger<ConfirmarPagamentoOrdemServicoCommandHandler> logger
 ) : IRequestHandler<ConfirmarPagamentoOrdemServicoCommand, OrdemServicoResponse>
 {
     public async Task<OrdemServicoResponse> Handle(ConfirmarPagamentoOrdemServicoCommand request, CancellationToken cancellationToken)
@@ -20,7 +21,7 @@ public class ConfirmarPagamentoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarPagamento();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        logger.LogStatusMovido(ordemServico.Id, ordemServico.Status);
 
         return OrdemServicoResponse.From(ordemServico);
     }

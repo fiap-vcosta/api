@@ -4,12 +4,12 @@ using Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Administrativo.Entities;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.CriarOrdemServico;
 
@@ -50,8 +50,8 @@ public class CriarOrdemServicoCommandHandlerTests
             mockVeiculoGateway.Object,
             mockClienteGateway.Object,
             mockOrdemServicoGateway.Object,
-            Mock.Of<IOsMetrics>(),
-            mockMediator.Object);
+            mockMediator.Object,
+            NullLogger<CriarOrdemServicoCommandHandler>.Instance);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -124,8 +124,8 @@ public class CriarOrdemServicoCommandHandlerTests
             mockVeiculoGateway.Object,
             mockClienteGateway.Object,
             mockOrdemServicoGateway.Object,
-            Mock.Of<IOsMetrics>(),
-            mockMediator.Object);
+            mockMediator.Object,
+            NullLogger<CriarOrdemServicoCommandHandler>.Instance);
 
         var command = new CriarOrdemServicoCommand
         {

@@ -10,9 +10,16 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
 
     public DogStatsDOsMetrics(IConfiguration configuration)
     {
-        var agentHost = configuration["DD_AGENT_HOST"]
-            ?? Environment.GetEnvironmentVariable("DD_AGENT_HOST")
-            ?? "127.0.0.1";
+        var agentHost = configuration["DD_AGENT_HOST"];
+        if (string.IsNullOrWhiteSpace(agentHost))
+        {
+            agentHost = Environment.GetEnvironmentVariable("DD_AGENT_HOST");
+        }
+
+        if (string.IsNullOrWhiteSpace(agentHost))
+        {
+            agentHost = "127.0.0.1";
+        }
 
         _configured = DogStatsd.Configure(new StatsdConfig
         {

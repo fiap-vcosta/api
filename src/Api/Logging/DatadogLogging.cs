@@ -15,13 +15,28 @@ public static class DatadogLogging
             return;
         }
 
-        var service = context.Configuration["DD_SERVICE"]
-            ?? context.Configuration["Serilog:Properties:service"]
-            ?? "api";
-        var env = context.Configuration["DD_ENV"]
-            ?? context.HostingEnvironment.EnvironmentName;
-        var intakeUrl = context.Configuration["Datadog:LogsIntakeUrl"]
-            ?? "https://http-intake.logs.datadoghq.com";
+        var service = context.Configuration["DD_SERVICE"];
+        if (string.IsNullOrWhiteSpace(service))
+        {
+            service = context.Configuration["Serilog:Properties:service"];
+        }
+
+        if (string.IsNullOrWhiteSpace(service))
+        {
+            service = "api";
+        }
+
+        var env = context.Configuration["DD_ENV"];
+        if (string.IsNullOrWhiteSpace(env))
+        {
+            env = context.HostingEnvironment.EnvironmentName;
+        }
+
+        var intakeUrl = context.Configuration["Datadog:LogsIntakeUrl"];
+        if (string.IsNullOrWhiteSpace(intakeUrl))
+        {
+            intakeUrl = "https://http-intake.logs.datadoghq.com";
+        }
 
         configuration.WriteTo.DatadogLogs(
             apiKey,

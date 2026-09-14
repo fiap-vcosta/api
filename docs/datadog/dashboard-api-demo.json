@@ -1,6 +1,8 @@
 {
   "title": "Tech Challenge — API (demo)",
   "description": "Dashboard da janela de demo: latência APM, erros HTTP e status de OS (DogStatsD).",
+  "layout_type": "ordered",
+  "reflow_type": "auto",
   "widgets": [
     {
       "definition": {
@@ -62,7 +64,5 @@
         ]
       }
     }
-  ],
-  "layout_type": "ordered",
-  "reflow_type": "fixed"
+  ]
 }

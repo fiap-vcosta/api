@@ -1,5 +1,4 @@
 using Application.Abstractions.Gateways;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
@@ -7,8 +6,7 @@ using MediatR;
 namespace Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
 
 public class AprovarServicosParcialmenteCommandHandler(
-    IOrdemServicoGateway ordemServicoGateway,
-    IMediator mediator
+    IOrdemServicoGateway ordemServicoGateway
 ): IRequestHandler<AprovarServicosParcialmenteCommand, AprovarServicosParcialmenteCommandResponse>
 {
     public async Task<AprovarServicosParcialmenteCommandResponse> Handle(AprovarServicosParcialmenteCommand request, CancellationToken cancellationToken)
@@ -30,7 +28,6 @@ public class AprovarServicosParcialmenteCommandHandler(
         
         ordemServico.AprovarServicosParcialmente(request.IdServicosAprovados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
 
         return new AprovarServicosParcialmenteCommandResponse()
         {

@@ -1,9 +1,11 @@
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using Infrastructure.Database;
 using Infrastructure.Database.Gateways;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace UnitTests.Infrastructure.Database.Gateways;
 
@@ -25,7 +27,7 @@ public class ItemServicoGatewayTests : IDisposable
         _context = new AppDbContext(options);
         _context.Database.EnsureCreated();
         _gateway = new ItemServicoGateway(_context);
-        _ordemGateway = new OrdemServicoGateway(_context);
+        _ordemGateway = new OrdemServicoGateway(_context, Mock.Of<IOsMetrics>());
     }
 
     [Fact]

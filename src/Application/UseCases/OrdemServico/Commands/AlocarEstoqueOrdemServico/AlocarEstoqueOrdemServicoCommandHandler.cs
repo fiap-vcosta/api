@@ -2,7 +2,6 @@ using System.Transactions;
 using Application.Abstractions.Gateways;
 using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCompra;
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
-using Application.UseCases.OrdemServico;
 using Domain.Exceptions;
 using Domain.Estoque.Entities;
 using Domain.OrdemServico.Entities;
@@ -102,7 +101,6 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
         }
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
         scope.Complete();
 
         return Unit.Value;

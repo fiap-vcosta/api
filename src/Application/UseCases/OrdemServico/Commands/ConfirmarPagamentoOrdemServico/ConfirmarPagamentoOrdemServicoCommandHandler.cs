@@ -1,14 +1,12 @@
 using Application.Abstractions.Gateways;
-using Application.UseCases.OrdemServico;
 using Domain.Exceptions;
+
 using MediatR;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarPagamentoOrdemServico;
 
-public class ConfirmarPagamentoOrdemServicoCommandHandler(
-    IOrdemServicoGateway ordemServicoGateway,
-    IMediator mediator
-) : IRequestHandler<ConfirmarPagamentoOrdemServicoCommand, OrdemServicoResponse>
+public class ConfirmarPagamentoOrdemServicoCommandHandler(IOrdemServicoGateway ordemServicoGateway)
+    : IRequestHandler<ConfirmarPagamentoOrdemServicoCommand, OrdemServicoResponse>
 {
     public async Task<OrdemServicoResponse> Handle(ConfirmarPagamentoOrdemServicoCommand request, CancellationToken cancellationToken)
     {
@@ -20,7 +18,6 @@ public class ConfirmarPagamentoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarPagamento();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
 
         return OrdemServicoResponse.From(ordemServico);
     }

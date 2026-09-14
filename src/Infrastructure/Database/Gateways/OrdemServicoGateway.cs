@@ -1,11 +1,12 @@
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.Administrativo;
 using Domain.OrdemServico.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database.Gateways;
 
-public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
+public class OrdemServicoGateway(AppDbContext context, IOsMetrics metrics) : IOrdemServicoGateway
 {
     private static readonly StatusOrdemServico[] StatusExcluidosDaListagem =
     [
@@ -29,6 +30,7 @@ public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
     {
         context.OrdensServico.Add(ordemServico);
         await context.SaveChangesAsync();
+        metrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
     }
 
     public async Task<OrdemServicoAggregateRoot?> GetByIdAsync(int idOrdemServico)
@@ -74,8 +76,16 @@ public class OrdemServicoGateway(AppDbContext context) : IOrdemServicoGateway
 
     public async Task UpdateAsync(OrdemServicoAggregateRoot ordemServico)
     {
+        var statusAnterior = context.Entry(ordemServico).Property(o => o.Status).OriginalValue;
+        var statusAlterado = statusAnterior != ordemServico.Status;
+
         context.OrdensServico.Update(ordemServico);
         await context.SaveChangesAsync();
+
+        if (statusAlterado)
+        {
+            metrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        }
     }
 
     private IQueryable<OrdemServicoAggregateRoot> QueryCompleta()

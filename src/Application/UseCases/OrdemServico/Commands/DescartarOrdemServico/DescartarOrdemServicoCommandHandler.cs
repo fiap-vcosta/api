@@ -1,6 +1,5 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -24,7 +23,6 @@ public class DescartarOrdemServicoCommandHandler(
         ordemServico.Descartar();
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
         await mediator.Publish(new DomainEventNotification<OrdemServicoDescartadaEvent>(new OrdemServicoDescartadaEvent(ordemServico.Id)), cancellationToken);
 
         return new DescartarOrdemServicoResponse

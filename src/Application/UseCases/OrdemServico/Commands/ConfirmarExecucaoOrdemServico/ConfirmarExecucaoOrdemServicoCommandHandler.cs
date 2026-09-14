@@ -1,14 +1,18 @@
 using System.Transactions;
-using Domain.Exceptions;
-
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItensEstoque;
+using Application.UseCases.OrdemServico;
+using Domain.Exceptions;
 using MediatR;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 
-public class ConfirmarExecucaoOrdemServicoCommandHandler(IOrdemServicoGateway ordemServicoGateway, IMediator mediator)
-    : IRequestHandler<ConfirmarExecucaoOrdemServicoCommand, OrdemServicoResponse>
+public class ConfirmarExecucaoOrdemServicoCommandHandler(
+    IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics,
+    IMediator mediator
+) : IRequestHandler<ConfirmarExecucaoOrdemServicoCommand, OrdemServicoResponse>
 {
     public async Task<OrdemServicoResponse> Handle(ConfirmarExecucaoOrdemServicoCommand request, CancellationToken cancellationToken)
     {
@@ -29,8 +33,10 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(IOrdemServicoGateway or
         var command = new ConfirmarUtilizacaoItensEstoqueCommand { IdOrdemServico = ordemServico.Id };
         await mediator.Send(command, cancellationToken);
 
+        var statusAnterior = ordemServico.Status;
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

@@ -1,11 +1,9 @@
-using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using Infrastructure.Database;
 using Infrastructure.Database.Gateways;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace UnitTests.Infrastructure.Database.Gateways;
 
@@ -13,7 +11,6 @@ public class OrdemServicoGatewayTests : IDisposable
 {
     private readonly AppDbContext _context;
     private readonly OrdemServicoGateway _gateway;
-    private readonly Mock<IOsMetrics> _metrics = new();
 
     public OrdemServicoGatewayTests()
     {
@@ -27,7 +24,7 @@ public class OrdemServicoGatewayTests : IDisposable
         _context = new AppDbContext(options);
         _context.Database.EnsureCreated(); 
         
-        _gateway = new OrdemServicoGateway(_context, _metrics.Object);
+        _gateway = new OrdemServicoGateway(_context);
     }
 
     [Fact]
@@ -54,7 +51,6 @@ public class OrdemServicoGatewayTests : IDisposable
         Assert.Equal(StatusOrdemServico.EmDiagnostico, saved.Status);
         Assert.Single(saved.Servicos);
         Assert.Single(saved.Servicos.First().ItensNecessarios);
-        _metrics.Verify(m => m.IncrementStatus(ordem.Id, StatusOrdemServico.EmDiagnostico), Times.Once);
     }
 
     [Fact]

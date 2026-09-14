@@ -1,6 +1,7 @@
 using Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
 using Domain.Exceptions;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using Moq;
@@ -21,7 +22,7 @@ public class AprovarServicosParcialmenteCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordem);
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>());
         var command = new AprovarServicosParcialmenteCommand
         {
             IdOrdemServico = 1,
@@ -46,7 +47,7 @@ public class AprovarServicosParcialmenteCommandHandlerTests
 
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordem);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>());
         var command = new AprovarServicosParcialmenteCommand
         {
             IdOrdemServico = 1,
@@ -64,7 +65,7 @@ public class AprovarServicosParcialmenteCommandHandlerTests
         var mockOrdemServicoGateway = new Mock<IOrdemServicoGateway>();
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((OrdemServicoAggregateRoot?)null);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>());
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>

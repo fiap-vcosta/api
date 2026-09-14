@@ -1,5 +1,7 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
+using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
@@ -10,6 +12,7 @@ namespace Application.UseCases.OrdemServico.Commands.FinalizarDiagnostico;
 
 public class FinalizarDiagnosticoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics,
     IMediator mediator
 ) : IRequestHandler<FinalizarDiagnosticoCommand, FinalizarDiagnosticoCommandResponse>
 {
@@ -20,9 +23,11 @@ public class FinalizarDiagnosticoCommandHandler(
         {
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
-        
+
+        var statusAnterior = ordemServico.Status;
         ordemServico.FinalizarDiagnostico();
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
 
         switch (ordemServico.Status)
         {

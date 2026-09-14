@@ -1,5 +1,7 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
+using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -9,6 +11,7 @@ namespace Application.UseCases.OrdemServico.Commands.AprovarOrdemServico;
 
 public class AprovarOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
+    IOsMetrics osMetrics,
     IMediator mediator
 ) : IRequestHandler<AprovarOrdemServicoCommand, AprovarOrdemServicoCommandResponse>
 {
@@ -19,10 +22,12 @@ public class AprovarOrdemServicoCommandHandler(
         {
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
-        
+
+        var statusAnterior = ordemServico.Status;
         ordemServico.AprovarServicosSugeridos();
-        
+
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
         await mediator.Publish(new DomainEventNotification<OrdemServicoAprovadaEvent>(new OrdemServicoAprovadaEvent(ordemServico.Id)), cancellationToken);
 
         return new AprovarOrdemServicoCommandResponse()

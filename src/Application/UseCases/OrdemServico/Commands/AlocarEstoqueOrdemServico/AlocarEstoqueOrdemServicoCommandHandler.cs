@@ -1,7 +1,9 @@
 using System.Transactions;
 using Application.Abstractions.Gateways;
+using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCompra;
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
+using Application.UseCases.OrdemServico;
 using Domain.Exceptions;
 using Domain.Estoque.Entities;
 using Domain.OrdemServico.Entities;
@@ -12,6 +14,7 @@ namespace Application.UseCases.OrdemServico.Commands.AlocarEstoqueOrdemServico;
 public class AlocarEstoqueOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
     IItemEstoqueGateway itemEstoqueGateway,
+    IOsMetrics osMetrics,
     IMediator mediator
 ) : IRequestHandler<AlocarEstoqueOrdemServicoCommand, Unit>
 {
@@ -86,6 +89,7 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
         var itensEstoque = (await itemEstoqueGateway.GetEBloquearItensAsync(idsItensEstoque)).ToList();
         var saldosDisponiveis = itensEstoque.ToDictionary(item => item.Id, item => item.SaldoDisponivel);
 
+        var statusAnterior = ordemServico.Status;
         ordemServico.ChecarItensNecessarios(saldosDisponiveis);
 
         switch (ordemServico.Status)
@@ -101,6 +105,7 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
         }
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
         scope.Complete();
 
         return Unit.Value;

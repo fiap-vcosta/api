@@ -37,6 +37,7 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandlerTests
         var handler = new EnviarOrdemServicoParaDiagnosticoCommandHandler(
             ordemServicoGateway.Object,
             notificacaoService.Object,
+            Mock.Of<IOsMetrics>(),
             mediator.Object);
 
         // Act
@@ -62,6 +63,7 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandlerTests
         var handler = new EnviarOrdemServicoParaDiagnosticoCommandHandler(
             ordemServicoGateway.Object,
             new Mock<INotificacaoService>().Object,
+            Mock.Of<IOsMetrics>(),
             new Mock<IMediator>().Object);
 
         // Act & Assert

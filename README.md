@@ -192,7 +192,7 @@ Secrets/vars (org ou repo):
 
 Na demo, com o stack no ar e tráfego (Requestly):
 
-1. Datadog → **APM** → serviço `api` (`env:demo`) — traces e latência.
+1. Datadog → **APM** → serviço `api` (`env:prod`) — traces e latência.
 2. **Logs** — JSON com `RequestId`; abra um log e siga para o trace (`dd.trace_id`).
 3. Dashboard: importe [`docs/datadog/dashboard-api-demo.json`](docs/datadog/dashboard-api-demo.json) — passos em [`docs/datadog/README.md`](docs/datadog/README.md).
 4. Monitor de erros / Synthetics em `/health` — mesmo doc.

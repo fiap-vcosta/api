@@ -6,7 +6,7 @@ metadata:
   labels:
     app: api
     tags.datadoghq.com/service: api
-    tags.datadoghq.com/env: demo
+    tags.datadoghq.com/env: prod
 spec:
   replicas: 1
   selector:
@@ -17,7 +17,7 @@ spec:
       labels:
         app: api
         tags.datadoghq.com/service: api
-        tags.datadoghq.com/env: demo
+        tags.datadoghq.com/env: prod
     spec:
       serviceAccountName: api
       initContainers:

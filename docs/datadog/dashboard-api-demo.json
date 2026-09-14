@@ -8,7 +8,7 @@
         "type": "timeseries",
         "requests": [
           {
-            "q": "p95:trace.aspnet.request{service:api,env:demo}",
+            "q": "p95:trace.aspnet.request{service:api,env:prod}",
             "display_type": "line"
           }
         ]
@@ -20,7 +20,7 @@
         "type": "timeseries",
         "requests": [
           {
-            "q": "sum:trace.aspnet.request.errors{service:api,env:demo}.as_count()",
+            "q": "sum:trace.aspnet.request.errors{service:api,env:prod}.as_count()",
             "display_type": "bars"
           }
         ]
@@ -56,7 +56,7 @@
         "type": "timeseries",
         "requests": [
           {
-            "q": "avg:runtime.dotnet.cpu.percent{service:api,env:demo}",
+            "q": "avg:runtime.dotnet.cpu.percent{service:api,env:prod}",
             "display_type": "line"
           }
         ]

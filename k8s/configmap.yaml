@@ -12,7 +12,7 @@ data:
   JwtCliente__Audience: "tech-challenge-cliente"
   CLOUD_SQL_CONNECTION_NAME: "vcosta-fiap-tech-challenge:us-central1:tech-challenge-pg"
   DD_SERVICE: "api"
-  DD_ENV: "demo"
+  DD_ENV: "prod"
   DD_AGENT_HOST: "127.0.0.1"
   DD_TRACE_AGENT_PORT: "8126"
   DD_LOGS_INJECTION: "true"

@@ -75,7 +75,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<INotificacaoService, NotificacaoService>();
         services.AddSingleton<ISmtpService, SmtpService>();
-        services.AddSingleton<IOsMetrics, DogStatsDOsMetrics>();
     }
 
     private static void AddUsuarioServices(this IServiceCollection services)

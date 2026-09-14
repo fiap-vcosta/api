@@ -2,12 +2,12 @@ using Application.Abstractions.Events;
 using Domain.Exceptions;
 using Application.UseCases.OrdemServico.Commands.DescartarOrdemServico;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.Events;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.DescartarOrdemServico;
 
@@ -30,7 +30,8 @@ public class DescartarOrdemServicoCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
         mockMediator.Setup(m => m.Publish(It.IsAny<DomainEventNotification<OrdemServicoDescartadaEvent>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var handler = new DescartarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>(), mockMediator.Object);
+        var handler = new DescartarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, mockMediator.Object,
+            NullLogger<DescartarOrdemServicoCommandHandler>.Instance);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -48,7 +49,8 @@ public class DescartarOrdemServicoCommandHandlerTests
         var mockOrdemServicoGateway = new Mock<IOrdemServicoGateway>();
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((OrdemServicoAggregateRoot?)null);
 
-        var handler = new DescartarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>(), new Mock<IMediator>().Object);
+        var handler = new DescartarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, new Mock<IMediator>().Object,
+            NullLogger<DescartarOrdemServicoCommandHandler>.Instance);
         var command = new DescartarOrdemServicoCommand { IdOrdemServico = 999 };
 
         // Act & Assert

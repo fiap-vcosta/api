@@ -4,11 +4,11 @@ using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCom
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
 using Domain.Estoque.Entities;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.AlocarEstoqueOrdemServico;
 
@@ -46,8 +46,8 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
-            Mock.Of<IOsMetrics>(),
-            mockMediator.Object);
+            mockMediator.Object,
+            NullLogger<AlocarEstoqueOrdemServicoCommandHandler>.Instance);
 
         // Act
         await handler.Handle(new AlocarEstoqueOrdemServicoCommand(1), CancellationToken.None);
@@ -92,8 +92,8 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
-            Mock.Of<IOsMetrics>(),
-            mockMediator.Object);
+            mockMediator.Object,
+            NullLogger<AlocarEstoqueOrdemServicoCommandHandler>.Instance);
 
         // Act
         await handler.Handle(new AlocarEstoqueOrdemServicoCommand(1), CancellationToken.None);
@@ -124,8 +124,8 @@ public class AlocarEstoqueOrdemServicoCommandHandlerTests
         var handler = new AlocarEstoqueOrdemServicoCommandHandler(
             mockOrdemServicoGateway.Object,
             mockItemEstoqueGateway.Object,
-            Mock.Of<IOsMetrics>(),
-            mockMediator.Object);
+            mockMediator.Object,
+            NullLogger<AlocarEstoqueOrdemServicoCommandHandler>.Instance);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>

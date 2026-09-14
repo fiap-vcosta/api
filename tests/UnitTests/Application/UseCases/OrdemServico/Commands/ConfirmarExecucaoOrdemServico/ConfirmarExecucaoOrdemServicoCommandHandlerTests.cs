@@ -1,10 +1,10 @@
 using Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
 using MediatR;
 using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
 
@@ -43,7 +43,8 @@ public class ConfirmarExecucaoOrdemServicoCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
         mockMediator.Setup(m => m.Send(It.IsAny<IRequest<Unit>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(Unit.Value));
 
-        var handler = new ConfirmarExecucaoOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, Mock.Of<IOsMetrics>(), mockMediator.Object);
+        var handler = new ConfirmarExecucaoOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, mockMediator.Object,
+            NullLogger<ConfirmarExecucaoOrdemServicoCommandHandler>.Instance);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

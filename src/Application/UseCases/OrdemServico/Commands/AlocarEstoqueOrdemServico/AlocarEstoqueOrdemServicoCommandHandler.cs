@@ -1,20 +1,20 @@
 using System.Transactions;
 using Application.Abstractions.Gateways;
-using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.EnviarNotificacaoParaCompra;
 using Application.UseCases.Estoque.ItemEstoque.Commands.TravarItensNecessarios;
 using Domain.Exceptions;
 using Domain.Estoque.Entities;
 using Domain.OrdemServico.Entities;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.OrdemServico.Commands.AlocarEstoqueOrdemServico;
 
 public class AlocarEstoqueOrdemServicoCommandHandler(
     IOrdemServicoGateway ordemServicoGateway,
     IItemEstoqueGateway itemEstoqueGateway,
-    IOsMetrics osMetrics,
-    IMediator mediator
+    IMediator mediator,
+    ILogger<AlocarEstoqueOrdemServicoCommandHandler> logger
 ) : IRequestHandler<AlocarEstoqueOrdemServicoCommand, Unit>
 {
     private async Task TravarEstoqueParaOrdemServico(OrdemServicoAggregateRoot ordemServico, IEnumerable<ItemEstoqueAggregateRoot> itensEstoque)
@@ -103,7 +103,7 @@ public class AlocarEstoqueOrdemServicoCommandHandler(
         }
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
+        OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
         scope.Complete();
 
         return Unit.Value;

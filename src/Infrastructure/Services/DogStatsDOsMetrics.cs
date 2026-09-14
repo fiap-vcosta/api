@@ -1,5 +1,6 @@
 using Application.Abstractions.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using StatsdClient;
 
 namespace Infrastructure.Services;
@@ -8,17 +9,14 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
 {
     private readonly bool _configured;
 
-    public DogStatsDOsMetrics(IConfiguration configuration)
+    public DogStatsDOsMetrics(IConfiguration configuration, ILogger<DogStatsDOsMetrics> logger)
     {
         var agentHost = configuration["DD_AGENT_HOST"];
         if (string.IsNullOrWhiteSpace(agentHost))
         {
-            agentHost = Environment.GetEnvironmentVariable("DD_AGENT_HOST");
-        }
-
-        if (string.IsNullOrWhiteSpace(agentHost))
-        {
-            agentHost = "127.0.0.1";
+            logger.LogWarning("DD_AGENT_HOST ausente; métricas DogStatsD de OS desabilitadas");
+            _configured = false;
+            return;
         }
 
         _configured = DogStatsd.Configure(new StatsdConfig
@@ -27,6 +25,11 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
             StatsdPort = 8125,
             Prefix = "techchallenge"
         });
+
+        if (!_configured)
+        {
+            logger.LogWarning("Falha ao configurar DogStatsD em {AgentHost}; métricas de OS desabilitadas", agentHost);
+        }
     }
 
     public void IncrementCriada() => Increment("ordem_servico.criada");
@@ -51,5 +54,11 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
         DogStatsd.Increment(metric, tags: tags);
     }
 
-    public void Dispose() => DogStatsd.Dispose();
+    public void Dispose()
+    {
+        if (_configured)
+        {
+            DogStatsd.Dispose();
+        }
+    }
 }

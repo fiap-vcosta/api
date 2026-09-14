@@ -12,30 +12,29 @@ public static class DatadogLogging
         var apiKey = context.Configuration["DD_API_KEY"];
         if (string.IsNullOrWhiteSpace(apiKey))
         {
+            Log.Information("DD_API_KEY ausente; sink Datadog de logs não será registrado");
             return;
         }
 
         var service = context.Configuration["DD_SERVICE"];
         if (string.IsNullOrWhiteSpace(service))
         {
-            service = context.Configuration["Serilog:Properties:service"];
-        }
-
-        if (string.IsNullOrWhiteSpace(service))
-        {
-            service = "api";
+            Log.Warning("DD_SERVICE ausente; sink Datadog de logs não será registrado");
+            return;
         }
 
         var env = context.Configuration["DD_ENV"];
         if (string.IsNullOrWhiteSpace(env))
         {
-            env = context.HostingEnvironment.EnvironmentName;
+            Log.Warning("DD_ENV ausente; sink Datadog de logs não será registrado");
+            return;
         }
 
         var intakeUrl = context.Configuration["Datadog:LogsIntakeUrl"];
         if (string.IsNullOrWhiteSpace(intakeUrl))
         {
-            intakeUrl = "https://http-intake.logs.datadoghq.com";
+            Log.Warning("Datadog:LogsIntakeUrl ausente; sink Datadog de logs não será registrado");
+            return;
         }
 
         configuration.WriteTo.DatadogLogs(

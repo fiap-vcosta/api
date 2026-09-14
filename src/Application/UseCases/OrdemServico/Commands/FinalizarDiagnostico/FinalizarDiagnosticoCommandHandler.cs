@@ -1,5 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
@@ -23,6 +24,7 @@ public class FinalizarDiagnosticoCommandHandler(
         
         ordemServico.FinalizarDiagnostico();
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
 
         switch (ordemServico.Status)
         {

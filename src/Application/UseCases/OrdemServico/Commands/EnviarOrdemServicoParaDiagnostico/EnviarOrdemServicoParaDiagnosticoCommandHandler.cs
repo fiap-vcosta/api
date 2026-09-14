@@ -1,6 +1,7 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
+using Application.UseCases.OrdemServico;
 using Domain.Administrativo.Entities;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -25,6 +26,7 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandler(
         ordemServico.EnviarParaDiagnostico();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
         await notificacaoService.NotificarUsuariosPorTipo(TipoUsuario.Mecanico, $"Ordem de Serviço {ordemServico.Id} recebida para diagnóstico.");
 
         await mediator.Publish(new DomainEventNotification<OrdemServicoRecebidaDiagnosticoEvent>(new OrdemServicoRecebidaDiagnosticoEvent(ordemServico.Id)), cancellationToken);

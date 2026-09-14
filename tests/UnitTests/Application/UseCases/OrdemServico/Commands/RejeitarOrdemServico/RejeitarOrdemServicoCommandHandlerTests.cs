@@ -2,6 +2,7 @@ using Application.UseCases.OrdemServico.Commands.RejeitarOrdemServico;
 using Application.Abstractions.Gateways;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
+using MediatR;
 using Moq;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.RejeitarOrdemServico;
@@ -28,7 +29,13 @@ public class RejeitarOrdemServicoCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordemServico);
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
 
-        var handler = new RejeitarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object);
+        ordemServico.LimparStatusAlterados();
+        var mediator = new Mock<IMediator>();
+        mediator
+            .Setup(m => m.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var handler = new RejeitarOrdemServicoCommandHandler(mockOrdemServicoGateway.Object, mediator.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

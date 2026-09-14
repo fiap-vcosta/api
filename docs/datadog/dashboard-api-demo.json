@@ -1,6 +1,6 @@
 {
   "title": "Tech Challenge — API (demo)",
-  "description": "Dashboard da janela de demo: latência APM, erros HTTP e volume de OS (DogStatsD).",
+  "description": "Dashboard da janela de demo: latência APM, erros HTTP e status de OS (DogStatsD).",
   "widgets": [
     {
       "definition": {
@@ -28,11 +28,11 @@
     },
     {
       "definition": {
-        "title": "Volume OS criada",
+        "title": "OS recebidas (status Recebida)",
         "type": "timeseries",
         "requests": [
           {
-            "q": "sum:techchallenge.ordem_servico.criada{*}.as_count()",
+            "q": "sum:techchallenge.ordem_servico.status{status:Recebida}.as_count()",
             "display_type": "bars"
           }
         ]
@@ -40,11 +40,11 @@
     },
     {
       "definition": {
-        "title": "Eventos OS por status",
+        "title": "Transições OS por status",
         "type": "timeseries",
         "requests": [
           {
-            "q": "sum:techchallenge.ordem_servico.evento{*} by {evento}.as_count()",
+            "q": "sum:techchallenge.ordem_servico.status{*} by {status}.as_count()",
             "display_type": "bars"
           }
         ]

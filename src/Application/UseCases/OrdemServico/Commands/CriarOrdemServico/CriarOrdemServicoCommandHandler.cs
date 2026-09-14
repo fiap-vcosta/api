@@ -1,5 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Commands.AdicionarItemOrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
@@ -47,6 +48,7 @@ public class CriarOrdemServicoCommandHandler(
 
         var ordemServico = OrdemServicoAggregateRoot.Criar(clienteOrdemServico, veiculoOrdemServico);
         await ordemServicoGateway.CriarAsync(ordemServico);
+        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
 
         foreach (var servicoRequest in request.Servicos)
         {

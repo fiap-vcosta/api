@@ -1,8 +1,8 @@
+using Domain.OrdemServico.Entities;
+
 namespace Application.Abstractions.Services;
 
 public interface IOsMetrics
 {
-    void IncrementCriada();
-
-    void IncrementEvento(string evento);
+    void IncrementStatus(int idOrdemServico, StatusOrdemServico status);
 }

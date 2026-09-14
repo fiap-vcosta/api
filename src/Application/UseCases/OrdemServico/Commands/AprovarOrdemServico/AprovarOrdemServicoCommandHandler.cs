@@ -1,5 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
+using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -23,6 +24,7 @@ public class AprovarOrdemServicoCommandHandler(
         ordemServico.AprovarServicosSugeridos();
         
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
         await mediator.Publish(new DomainEventNotification<OrdemServicoAprovadaEvent>(new OrdemServicoAprovadaEvent(ordemServico.Id)), cancellationToken);
 
         return new AprovarOrdemServicoCommandResponse()

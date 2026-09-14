@@ -1,8 +1,8 @@
 using System.Transactions;
-using Domain.Exceptions;
-
 using Application.Abstractions.Gateways;
 using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItensEstoque;
+using Application.UseCases.OrdemServico;
+using Domain.Exceptions;
 using MediatR;
 
 namespace Application.UseCases.OrdemServico.Commands.ConfirmarExecucaoOrdemServico;
@@ -31,6 +31,7 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(IOrdemServicoGateway or
 
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
+        await OrdemServicoStatusAlteradoPublisher.PublishAsync(mediator, ordemServico, cancellationToken);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

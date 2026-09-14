@@ -1,4 +1,5 @@
 using Application.Abstractions.Services;
+using Domain.OrdemServico.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StatsdClient;
@@ -32,26 +33,16 @@ public sealed class DogStatsDOsMetrics : IOsMetrics, IDisposable
         }
     }
 
-    public void IncrementCriada() => Increment("ordem_servico.criada");
-
-    public void IncrementEvento(string evento)
-    {
-        if (string.IsNullOrWhiteSpace(evento))
-        {
-            return;
-        }
-
-        Increment("ordem_servico.evento", $"evento:{evento}");
-    }
-
-    private void Increment(string metric, params string[] tags)
+    public void IncrementStatus(int idOrdemServico, StatusOrdemServico status)
     {
         if (!_configured)
         {
             return;
         }
 
-        DogStatsd.Increment(metric, tags: tags);
+        DogStatsd.Increment(
+            "ordem_servico.status",
+            tags: [$"status:{status}", $"ordem_servico_id:{idOrdemServico}"]);
     }
 
     public void Dispose()

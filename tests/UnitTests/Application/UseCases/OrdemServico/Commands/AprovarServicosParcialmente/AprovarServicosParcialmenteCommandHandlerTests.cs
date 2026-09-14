@@ -3,6 +3,7 @@ using Domain.Exceptions;
 using Application.Abstractions.Gateways;
 using Domain.OrdemServico.Entities;
 using Domain.OrdemServico.ValueObjects;
+using MediatR;
 using Moq;
 
 namespace UnitTests.Application.UseCases.OrdemServico.Commands.AprovarServicosParcialmente;
@@ -21,7 +22,13 @@ public class AprovarServicosParcialmenteCommandHandlerTests
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordem);
         mockOrdemServicoGateway.Setup(r => r.UpdateAsync(It.IsAny<OrdemServicoAggregateRoot>())).Returns(Task.CompletedTask);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        ordem.LimparStatusAlterados();
+        var mediator = new Mock<IMediator>();
+        mediator
+            .Setup(m => m.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, mediator.Object);
         var command = new AprovarServicosParcialmenteCommand
         {
             IdOrdemServico = 1,
@@ -46,7 +53,7 @@ public class AprovarServicosParcialmenteCommandHandlerTests
 
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(ordem);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, new Mock<IMediator>().Object);
         var command = new AprovarServicosParcialmenteCommand
         {
             IdOrdemServico = 1,
@@ -64,7 +71,7 @@ public class AprovarServicosParcialmenteCommandHandlerTests
         var mockOrdemServicoGateway = new Mock<IOrdemServicoGateway>();
         mockOrdemServicoGateway.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((OrdemServicoAggregateRoot?)null);
 
-        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object);
+        var handler = new AprovarServicosParcialmenteCommandHandler(mockOrdemServicoGateway.Object, new Mock<IMediator>().Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<DomainNotFoundException>(() =>

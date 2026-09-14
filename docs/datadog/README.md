@@ -12,6 +12,7 @@
 Na UI: **Monitors** → **New Monitor** → **APM**:
 
 - Métrica / query: taxa de erro do serviço `api` em `env:prod` (ex. `trace.aspnet.request.errors` / hits), ou monitor de **Error Tracking** nos spans de rotas `ordens-servico`.
+- Métricas de negócio: `techchallenge.ordem_servico.status` com tags `status:<StatusOrdemServico>` e `ordem_servico_id:<id>`.
 - Janela: 5–10 minutos.
 - Alerta: e-mail da conta estudante.
 - Nome: `demo — erros HTTP na API (OS)`.

@@ -4548,7 +4548,7 @@
         }
       },
       "rank": "ab",
-      "description": "Caminho feliz via entrada oficial: login → cliente/veículo (CPF válido 92561324354) → OS → finalizar → POST {{authUrl}} → aprovar público. Pré: GCP-Gateway (ou Docker+auth). tokenAprovacao não vem na API — após 05, cole do Cloud SQL/Compose ou use ./scripts/e2e-cliente-aprovar.sh (automatiza tudo)."
+      "description": "Caminho feliz via entrada oficial (só Requestly): login → cliente/veículo (CPF válido 92561324354) → OS → finalizar → POST {{authUrl}} → aprovar público. Pré: environment GCP-Gateway (ou Docker com authUrl). tokenAprovacao não vem na API — após AguardandoAprovacao, preencha no environment (SELECT \"TokenAprovacao\" FROM \"OrdensServico\" WHERE \"Id\" = …)."
     },
     {
       "id": "d12a0001-gate-0001-4001-8001-000000000010",
@@ -4851,7 +4851,7 @@
           "token": "{{tokenCliente}}"
         },
         "scripts": {
-          "preRequest": "if (!rq.environment.get('tokenAprovacao')) {\n  throw new Error('Após 06: defina tokenAprovacao (Cloud SQL/Compose) ou use ./scripts/e2e-cliente-aprovar.sh');\n}\n",
+          "preRequest": "if (!rq.environment.get('tokenAprovacao')) {\n  throw new Error('Defina tokenAprovacao no environment (Cloud SQL/Compose: SELECT \"TokenAprovacao\" FROM \"OrdensServico\" WHERE \"Id\" = ordemServicoId)');\n}\n",
           "postResponse": "rq.test(\"Aprovar público ok\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.be.oneOf([200, 201, 204]);\n});"
         }
       },

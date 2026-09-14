@@ -59,19 +59,13 @@ Cole a saída em `tokenCliente`. O script lê `JWT_CLIENTE_*` do `.env`.
 Em cada pasta de fluxo (ex.: `01-criar-com-servicos-ate-entregue`): menu **⋯ → Run**.  
 Cada pasta é autônoma (começa com login) e usa `rq.test` / `rq.expect`.
 
-Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose). Usa CPF **válido** `92561324354` (cria cliente/veículo se preciso — seeds da API usam CPFs inválidos no algoritmo e o auth rejeita):
+Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose): pasta Requestly `12-gateway-cliente-aprovar` com environment **GCP-Gateway** (ou Docker/`authUrl` local). Usa CPF **válido** `92561324354` (cria cliente/veículo se preciso — seeds da API usam CPFs inválidos no algoritmo e o auth rejeita).
 
-```bash
-# Local
-./scripts/e2e-cliente-aprovar.sh
+O token opaco não vem na API (RF21.2). Após o passo que deixa a OS em `AguardandoAprovacao`, consulte o banco e preencha `tokenAprovacao` no environment antes de seguir o auth + aprovar:
 
-# Gateway (apex)
-BASE_URL=https://vcosta-fiap.online \
-AUTH_URL=https://vcosta-fiap.online/auth \
-./scripts/e2e-cliente-aprovar.sh
+```sql
+SELECT "TokenAprovacao" FROM "OrdensServico" WHERE "Id" = <ordemServicoId>;
 ```
-
-No Requestly: pasta `12-gateway-cliente-aprovar` (environment **GCP-Gateway**). O token opaco não vem na API — após finalizar o diagnóstico, preencha `tokenAprovacao` (Cloud SQL / Compose) ou use o script acima.
 
 ### Ator cliente (aprovação com JWT + token opaco)
 

@@ -1,18 +1,22 @@
 {
   "meta": {
     "version": "1.1.0",
-    "exportedAt": "2026-07-19T05:38:27.102Z",
+    "exportedAt": "2026-09-14T00:00:00.000Z",
     "exportedUsing": "Requestly API Client"
   },
   "records": [],
   "environments": [
     {
-      "id": "d228b119-d919-476b-beee-351d0c595795",
-      "name": "Docker",
+      "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "name": "GCP-Gateway",
       "variables": {
         "baseUrl": {
           "type": "string",
-          "syncValue": "http://localhost:8080"
+          "syncValue": "https://vcosta-fiap.online"
+        },
+        "authUrl": {
+          "type": "string",
+          "syncValue": "https://vcosta-fiap.online/auth"
         },
         "token": {
           "type": "secret",
@@ -44,11 +48,11 @@
         },
         "serviceAuthKey": {
           "type": "secret",
-          "syncValue": "local-service-auth-key-change-me"
+          "syncValue": ""
         },
         "documentoCliente": {
           "type": "string",
-          "syncValue": "11144477735"
+          "syncValue": "92561324354"
         },
         "tokenCliente": {
           "type": "secret",
@@ -57,10 +61,6 @@
         "jwtClienteIssuer": {
           "type": "string",
           "syncValue": "tech-challenge-cliente"
-        },
-        "authUrl": {
-          "type": "string",
-          "syncValue": "http://localhost:8081"
         }
       }
     }

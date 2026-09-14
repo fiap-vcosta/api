@@ -14,18 +14,20 @@ Pasta: [`requestly/`](requestly/)
 | [`requestly/tech-challenge-e2e-tests.requestly.json`](requestly/tech-challenge-e2e-tests.requestly.json) | Suites **automatizadas** (Collection Runner) |
 | [`requestly/environments/docker.requestly.json`](requestly/environments/docker.requestly.json) | Environment **Docker** → `http://localhost:8080` |
 | [`requestly/environments/local.requestly.json`](requestly/environments/local.requestly.json) | Environment **Local** → `http://localhost:5225` |
-| [`requestly/environments/all.requestly.json`](requestly/environments/all.requestly.json) | Docker + Local num único arquivo |
+| [`requestly/environments/gcp-gateway.requestly.json`](requestly/environments/gcp-gateway.requestly.json) | Environment **GCP-Gateway** → `https://vcosta-fiap.online` |
+| [`requestly/environments/all.requestly.json`](requestly/environments/all.requestly.json) | Docker + Local + GCP-Gateway |
 
-As collections já embutem os environments Docker e Local; ao importá-las, os dois ambientes entram juntos.
+As collections já embutem os environments; ao importá-las, os ambientes entram juntos.
 
 ### Environments
 
-| Nome | `baseUrl` | Quando usar |
-|------|-----------|-------------|
-| **Docker** | `http://localhost:8080` | `docker compose --profile app up -d` |
-| **Local** | `http://localhost:5225` | `dotnet run --project src/Api --launch-profile http` |
+| Nome | `baseUrl` / `authUrl` | Quando usar |
+|------|----------------------|-------------|
+| **Docker** | `http://localhost:8080` / `http://localhost:8081` | `docker compose --profile app up -d` + auth local |
+| **Local** | `http://localhost:5225` / `http://localhost:8081` | `dotnet run` + auth local |
+| **GCP-Gateway** | `https://vcosta-fiap.online` / `…/auth` | Entrada oficial (API Gateway + apex) |
 
-Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenCliente` (JWT cliente — mint local até a Function existir), `tokenAprovacao`, `serviceAuthKey` (secret do header `X-Service-Key`), `documentoCliente`, `jwtClienteIssuer`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
+Variáveis incluídas: `baseUrl`, `authUrl`, `token` (secret, preenchido no login), `tokenCliente` (JWT cliente via auth ou mint), `tokenAprovacao`, `serviceAuthKey` (secret do header `X-Service-Key`), `documentoCliente`, `jwtClienteIssuer`, e ids auxiliares (`ordemServicoId`, `clienteId`, …).
 
 ### Como importar
 
@@ -33,27 +35,43 @@ Variáveis incluídas: `baseUrl`, `token` (secret, preenchido no login), `tokenC
 2. Abra o [Requestly API Client](https://requestly.com/)
 3. **Import → Requestly** (Collection & Environment)
 4. Importe a collection desejada **ou** só `environments/all.requestly.json`
-5. No seletor de environment (canto superior), escolha **Docker** ou **Local**
+5. No seletor de environment (canto superior), escolha **Docker**, **Local** ou **GCP-Gateway**
 6. Rode `00-auth / login` (ou `00-login` nas suites e2e) antes das rotas Admin
 
 Credenciais seed: `admin` / `admin`.
 
 Para o endpoint de sistema (RF23), use o valor de `SERVICE_AUTH_KEY` do `.env` em `serviceAuthKey` (já vem com o default local do `.env.example`).
 
-### JWT cliente local (antes da Function `auth`)
+### JWT cliente
 
-Até a §8, mint o Bearer cliente com o mesmo material `JwtCliente` do Compose:
+Preferencial: Function/Cloud Run [`auth`](https://github.com/fiap-vcosta/auth) — no Gateway, `POST {{authUrl}}` com `{ "documento": "…" }` (suite `12-gateway-cliente-aprovar`).
+
+Mint local (mesmo material `JwtCliente` do Compose), se o auth não estiver no ar:
 
 ```bash
-./scripts/mint-cliente-jwt.sh 11144477735
+./scripts/mint-cliente-jwt.sh 92561324354
 ```
 
-Cole a saída em `tokenCliente` no environment Docker/Local. O script lê `JWT_CLIENTE_*` do `.env`.
+Cole a saída em `tokenCliente`. O script lê `JWT_CLIENTE_*` do `.env`.
 
 ### Collection Runner (e2e)
 
 Em cada pasta de fluxo (ex.: `01-criar-com-servicos-ate-entregue`): menu **⋯ → Run**.  
 Cada pasta é autônoma (começa com login) e usa `rq.test` / `rq.expect`.
+
+Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose). Usa CPF **válido** `92561324354` (cria cliente/veículo se preciso — seeds da API usam CPFs inválidos no algoritmo e o auth rejeita):
+
+```bash
+# Local
+./scripts/e2e-cliente-aprovar.sh
+
+# Gateway (apex)
+BASE_URL=https://vcosta-fiap.online \
+AUTH_URL=https://vcosta-fiap.online/auth \
+./scripts/e2e-cliente-aprovar.sh
+```
+
+No Requestly: pasta `12-gateway-cliente-aprovar` (environment **GCP-Gateway**). O token opaco não vem na API — após finalizar o diagnóstico, preencha `tokenAprovacao` (Cloud SQL / Compose) ou use o script acima.
 
 ### Ator cliente (aprovação com JWT + token opaco)
 
@@ -62,9 +80,9 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 - `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 - `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. JWT cliente será emitido pelo repo [`auth`](https://github.com/fiap-vcosta/auth); localmente use `scripts/mint-cliente-jwt.sh` (seed CPF dono: `43372251034`; outro: `74694481024`).
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. Para o fluxo com Function auth, use CPF **válido** (ex.: `92561324354` via create cliente); seeds `43372251034` / `74694481024` passam no banco mas falham na validação do auth.
 
-No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404) e `11-jwt-cliente-vs-funcionario-publico` (JWT funcionário no caminho público → 401; JWT cliente aceito no scheme).
+No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404), `11-jwt-cliente-vs-funcionario-publico` e `12-gateway-cliente-aprovar`.
 
 ### Endpoint de serviço (RF23 — Function → API)
 

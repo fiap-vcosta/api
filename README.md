@@ -195,6 +195,7 @@ dotnet test tests/IntegrationTests/IntegrationTests.csproj   # requer Docker
 
 - Estratégia: [`docs/06_testes.md`](docs/06_testes.md)
 - Collections HTTP: [`docs/07_api.md`](docs/07_api.md) (Swagger + Requestly)
+- E2E cliente (Gateway/Compose): `./scripts/e2e-cliente-aprovar.sh`
 - CI: lint + unit + integration em paralelo ([`ci.yml`](.github/workflows/ci.yml))
 - CD: `build-push` em merge na `main`, `deploy` manual (ver [Deploy na GCP](#deploy-na-gcp))
 

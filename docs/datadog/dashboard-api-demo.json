@@ -1,0 +1,68 @@
+{
+  "title": "Tech Challenge — API (demo)",
+  "description": "Dashboard da janela de demo: latência APM, erros HTTP e volume de OS (DogStatsD).",
+  "widgets": [
+    {
+      "definition": {
+        "title": "Latência p95 (APM)",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "p95:trace.aspnet.request{service:api,env:demo}",
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Erros HTTP (APM)",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "sum:trace.aspnet.request.errors{service:api,env:demo}.as_count()",
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Volume OS criada",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "sum:techchallenge.ordem_servico.criada{*}.as_count()",
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Eventos OS por status",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "sum:techchallenge.ordem_servico.evento{*} by {evento}.as_count()",
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Runtime .NET — CPU %",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:runtime.dotnet.cpu.percent{service:api,env:demo}",
+            "display_type": "line"
+          }
+        ]
+      }
+    }
+  ],
+  "layout_type": "ordered",
+  "reflow_type": "fixed"
+}

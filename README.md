@@ -152,6 +152,7 @@ Pré-requisitos: cluster no ar (`infra-k8s` → `tf-apply`), banco no ar (`infra
 |--------|-----|
 | `JWT_CLIENTE_KEY` | Assinatura/validação do JWT cliente (mesma chave que o Cloud Run `auth`) |
 | `SERVICE_AUTH_KEY` | Header `X-Service-Key` no endpoint `GET /api/system/clientes/por-documento/{documento}` |
+| `DD_API_KEY` | Datadog Agent sidecar + sink de logs (org ou repo) |
 
 Gerar valores (exemplo):
 
@@ -168,6 +169,35 @@ Evidência de HPA depois do deploy:
 ./scripts/stress-hpa.sh https://api.vcosta-fiap.online
 kubectl get hpa,pods -n tech-challenge
 ```
+
+---
+
+## Observabilidade (Datadog)
+
+APM e logs da API na janela da demo (RNF22/RNF23; ADR [`docs/adrs/001-datadog-apm.md`](docs/adrs/001-datadog-apm.md)).
+
+| Peça | Como |
+|------|------|
+| Logs | Serilog JSON no console + sink HTTP Datadog quando `DD_API_KEY` existe |
+| APM | `Datadog.Trace.Bundle` + Agent **sidecar** no Deployment |
+| Métricas OS | DogStatsD (`techchallenge.ordem_servico.*`) via eventos de domínio |
+| `/health` | Continua **público** (probes e smoke) |
+
+Secrets/vars (org ou repo):
+
+| Nome | Tipo | Uso |
+|------|------|-----|
+| `DD_API_KEY` | Secret | Agent sidecar + sink de logs |
+| `DD_SITE` | Variable (opcional) | Default `datadoghq.com` se omitida |
+
+Na demo, com o stack no ar e tráfego (Requestly):
+
+1. Datadog → **APM** → serviço `api` (`env:demo`) — traces e latência.
+2. **Logs** — JSON com `RequestId`; abra um log e siga para o trace (`dd.trace_id`).
+3. Dashboard: importe [`docs/datadog/dashboard-api-demo.json`](docs/datadog/dashboard-api-demo.json) — passos em [`docs/datadog/README.md`](docs/datadog/README.md).
+4. Monitor de erros / Synthetics em `/health` — mesmo doc.
+
+Compose local: JSON no console sempre; envio ao Datadog só se `DD_API_KEY` estiver no `.env` (sem sidecar local por padrão).
 
 ---
 

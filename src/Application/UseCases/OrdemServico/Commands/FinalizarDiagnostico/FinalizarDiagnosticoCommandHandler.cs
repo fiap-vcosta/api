@@ -25,7 +25,7 @@ public class FinalizarDiagnosticoCommandHandler(
 
         ordemServico.FinalizarDiagnostico();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
 
         switch (ordemServico.Status)
         {

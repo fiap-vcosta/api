@@ -22,7 +22,7 @@ public class RejeitarOrdemServicoCommandHandler(
         ordemServico.RejeitarServicosSugeridos();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
 
         return new RejeitarOrdemServicoCommandResponse()
         {

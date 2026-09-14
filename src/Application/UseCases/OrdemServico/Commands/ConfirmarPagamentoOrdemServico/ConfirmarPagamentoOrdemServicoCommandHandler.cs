@@ -1,5 +1,4 @@
 using Application.Abstractions.Gateways;
-using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -21,7 +20,7 @@ public class ConfirmarPagamentoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarPagamento();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
 
         return OrdemServicoResponse.From(ordemServico);
     }

@@ -1,7 +1,6 @@
 using System.Transactions;
 using Application.Abstractions.Gateways;
 using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItensEstoque;
-using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -35,7 +34,7 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(
 
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
+        Application.UseCases.OrdemServico.Commands.OrdemServicoStatusLog.Emit(logger, ordemServico.Id, ordemServico.Status);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

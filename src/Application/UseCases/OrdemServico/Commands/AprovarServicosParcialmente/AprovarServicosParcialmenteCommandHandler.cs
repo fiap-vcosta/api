@@ -1,6 +1,5 @@
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
@@ -29,10 +28,9 @@ public class AprovarServicosParcialmenteCommandHandler(
             throw new DomainNotFoundException($"Serviços [{string.Join(", ", idsInvalidos)}] não pertencem a Ordem de Serviço {request.IdOrdemServico}");
         }
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.AprovarServicosParcialmente(request.IdServicosAprovados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         return new AprovarServicosParcialmenteCommandResponse()
         {

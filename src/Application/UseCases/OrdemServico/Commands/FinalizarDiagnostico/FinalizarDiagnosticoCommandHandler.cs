@@ -1,7 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Entities;
@@ -24,10 +23,9 @@ public class FinalizarDiagnosticoCommandHandler(
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.FinalizarDiagnostico();
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         switch (ordemServico.Status)
         {

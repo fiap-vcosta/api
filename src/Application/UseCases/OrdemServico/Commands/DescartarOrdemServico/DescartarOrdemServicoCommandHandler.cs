@@ -1,7 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -23,11 +22,10 @@ public class DescartarOrdemServicoCommandHandler(
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.Descartar();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
         await mediator.Publish(new DomainEventNotification<OrdemServicoDescartadaEvent>(new OrdemServicoDescartadaEvent(ordemServico.Id)), cancellationToken);
 
         return new DescartarOrdemServicoResponse

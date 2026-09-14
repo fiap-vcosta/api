@@ -1,7 +1,6 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
-using Application.UseCases.OrdemServico;
 using Domain.Administrativo.Entities;
 using Domain.Exceptions;
 using Domain.OrdemServico.Events;
@@ -24,11 +23,10 @@ public class EnviarOrdemServicoParaDiagnosticoCommandHandler(
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada.");
         }
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.EnviarParaDiagnostico();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
         await notificacaoService.NotificarUsuariosPorTipo(TipoUsuario.Mecanico, $"Ordem de Serviço {ordemServico.Id} recebida para diagnóstico.");
 
         await mediator.Publish(new DomainEventNotification<OrdemServicoRecebidaDiagnosticoEvent>(new OrdemServicoRecebidaDiagnosticoEvent(ordemServico.Id)), cancellationToken);

@@ -2,7 +2,6 @@ using System.Transactions;
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
 using Application.UseCases.Estoque.ItemEstoque.Commands.ConfirmarUtilizacaoItensEstoque;
-using Application.UseCases.OrdemServico;
 using Domain.Exceptions;
 using MediatR;
 
@@ -33,10 +32,9 @@ public class ConfirmarExecucaoOrdemServicoCommandHandler(
         var command = new ConfirmarUtilizacaoItensEstoqueCommand { IdOrdemServico = ordemServico.Id };
         await mediator.Send(command, cancellationToken);
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.ConfirmarExecucao(request.ServicosExecutados);
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         scope.Complete();
         return OrdemServicoResponse.From(ordemServico);

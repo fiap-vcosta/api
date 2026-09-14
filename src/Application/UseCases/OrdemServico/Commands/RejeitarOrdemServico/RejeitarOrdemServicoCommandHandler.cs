@@ -1,6 +1,5 @@
 using Application.Abstractions.Gateways;
 using Application.Abstractions.Services;
-using Application.UseCases.OrdemServico;
 using Application.UseCases.OrdemServico.Responses;
 using Domain.Exceptions;
 using MediatR;
@@ -20,11 +19,10 @@ public class RejeitarOrdemServicoCommandHandler(
             throw new DomainNotFoundException($"Ordem de Serviço com id {request.IdOrdemServico} não encontrada");
         }
 
-        var statusAnterior = ordemServico.Status;
         ordemServico.RejeitarServicosSugeridos();
 
         await ordemServicoGateway.UpdateAsync(ordemServico);
-        OrdemServicoStatusMetrics.EmitIfChanged(osMetrics, ordemServico, statusAnterior);
+        osMetrics.IncrementStatus(ordemServico.Id, ordemServico.Status);
 
         return new RejeitarOrdemServicoCommandResponse()
         {

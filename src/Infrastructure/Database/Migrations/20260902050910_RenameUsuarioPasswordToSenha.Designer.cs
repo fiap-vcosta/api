@@ -63,7 +63,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            Documento = "43372251034",
+                            Documento = "52998224725",
                             Email = "joao.silva@email.com",
                             Nome = "João Silva",
                             TipoDocumento = "Cpf"
@@ -71,7 +71,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            Documento = "74694481024",
+                            Documento = "39053344705",
                             Email = "maria.oliveira@email.com",
                             Nome = "Maria Oliveira",
                             TipoDocumento = "Cpf"
@@ -79,7 +79,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            Documento = "31868352011",
+                            Documento = "15350946056",
                             Email = "carlos.santos@email.com",
                             Nome = "Carlos Santos",
                             TipoDocumento = "Cpf"
@@ -87,7 +87,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 4,
-                            Documento = "17293524021",
+                            Documento = "23100296028",
                             Email = "ana.costa@email.com",
                             Nome = "Ana Costa",
                             TipoDocumento = "Cpf"
@@ -95,7 +95,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 5,
-                            Documento = "84617462057",
+                            Documento = "04531783085",
                             Email = "lucas.ferreira@email.com",
                             Nome = "Lucas Ferreira",
                             TipoDocumento = "Cpf"
@@ -103,7 +103,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 6,
-                            Documento = "53820257000159",
+                            Documento = "11222333000181",
                             Email = "contato@autopecascentral.com.br",
                             Nome = "Auto Peças Central Ltda",
                             TipoDocumento = "Cnpj"
@@ -111,7 +111,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 7,
-                            Documento = "19183615000195",
+                            Documento = "11444777000161",
                             Email = "oficinatoninho@email.com",
                             Nome = "Oficina do Toninho ME",
                             TipoDocumento = "Cnpj"
@@ -119,7 +119,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 8,
-                            Documento = "75294528000185",
+                            Documento = "12345678000195",
                             Email = "logistica@rapidosul.com.br",
                             Nome = "Transportadora Rápido Sul",
                             TipoDocumento = "Cnpj"
@@ -127,7 +127,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 9,
-                            Documento = "42168936000152",
+                            Documento = "27865757000102",
                             Email = "frota@xyzlocadora.com.br",
                             Nome = "Locadora de Veículos XYZ",
                             TipoDocumento = "Cnpj"
@@ -135,7 +135,7 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 10,
-                            Documento = "85303964000182",
+                            Documento = "60746948000112",
                             Email = "vendas@bateriaspotencia.com.br",
                             Nome = "Comercial de Baterias Potência",
                             TipoDocumento = "Cnpj"

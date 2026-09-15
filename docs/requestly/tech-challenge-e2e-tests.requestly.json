@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.1.0",
-    "exportedAt": "2026-07-19T05:38:27.109Z",
+    "exportedAt": "2026-09-15T00:00:00.000Z",
     "exportedUsing": "Requestly API Client"
   },
   "records": [
@@ -3212,7 +3212,7 @@
           "token": "{{tokenCliente}}"
         },
         "scripts": {
-          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 52998224725)');\n}\n",
           "postResponse": "rq.test(\"Token inválido com JWT cliente retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
         }
       },
@@ -4375,7 +4375,7 @@
         }
       },
       "rank": "aa",
-      "description": "Caminho público: JWT funcionário (login) deve falhar (401); JWT cliente é o scheme aceito (token opaco inválido → 404). Pré: mint tokenCliente com ./scripts/mint-cliente-jwt.sh 43372251034"
+      "description": "Caminho público: JWT funcionário (login) deve falhar (401); JWT cliente é o scheme aceito (token opaco inválido → 404). Pré: mint tokenCliente com ./scripts/mint-cliente-jwt.sh 52998224725"
     },
     {
       "id": "57d9f837-a1b9-45cd-830f-4dc0637681c7",
@@ -4500,7 +4500,7 @@
           "token": "{{tokenCliente}}"
         },
         "scripts": {
-          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 52998224725)');\n}\n",
           "postResponse": "rq.test(\"JWT cliente aceito no scheme (token opaco inválido → 404)\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
         }
       },
@@ -4530,7 +4530,7 @@
           "token": "{{tokenCliente}}"
         },
         "scripts": {
-          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 43372251034)');\n}\n",
+          "preRequest": "if (!rq.environment.get('tokenCliente')) {\n  throw new Error('Defina tokenCliente (./scripts/mint-cliente-jwt.sh 52998224725)');\n}\n",
           "postResponse": "rq.test(\"Rejeitar público com JWT cliente (token inválido → 404)\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\n"
         }
       },
@@ -4884,6 +4884,135 @@
         }
       },
       "rank": "a9"
+    },
+    {
+      "id": "63698bc2-41b9-4f2a-94f2-88ce9340fd34",
+      "name": "13-auth-emitir-jwt",
+      "type": "collection",
+      "parentId": "ff81be1a-4ac9-499a-ae73-04e7eae06005",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "m0",
+      "description": "E2E HTTP do auth (documento → JWT): 200, 400 inválido, 404 inexistente."
+    },
+    {
+      "id": "e201e0ed-cf59-4248-b5df-3b634b7535ff",
+      "name": "00-emitir-token-ok",
+      "type": "api",
+      "parentId": "63698bc2-41b9-4f2a-94f2-88ce9340fd34",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150001001,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"{{documentoCliente}}\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "preRequest": "if (!rq.environment.get(\"authUrl\")) {\n  rq.environment.set(\"authUrl\", \"http://localhost:8081\");\n}\nif (!rq.environment.get(\"documento\")) {\n  rq.environment.set(\"documento\", \"92561324354\");\n}",
+          "postResponse": "rq.test(\"Emite JWT com 200\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(200);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Resposta tem token\", function () {\n  rq.expect(jsonData).to.have.property(\"token\");\n  rq.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\n});\nrq.environment.set(\"tokenCliente\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "514951d0-4b91-44bf-bbde-06deb3208f2c",
+      "name": "01-documento-invalido-400",
+      "type": "api",
+      "parentId": "63698bc2-41b9-4f2a-94f2-88ce9340fd34",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150001002,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"111\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Documento inválido retorna 400\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(400);\n});\nvar jsonData = rq.response.json();\nrq.test(\"errors no formato da API\", function () {\n  rq.expect(jsonData.errors).to.deep.equal([\"Documento inválido.\"]);\n});"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "cff78bb9-fcce-40b8-814c-fe991773e083",
+      "name": "02-documento-inexistente-404",
+      "type": "api",
+      "parentId": "63698bc2-41b9-4f2a-94f2-88ce9340fd34",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150001003,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"11144477735\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "rq.test(\"Documento inexistente retorna 404\", function () {\n  rq.expect((rq.response.code != null ? rq.response.code : rq.response.status)).to.equal(404);\n});\nvar jsonData = rq.response.json();\nrq.test(\"Problem Details\", function () {\n  rq.expect(jsonData.title).to.equal(\"Not Found\");\n  rq.expect(jsonData.status).to.equal(404);\n  rq.expect(jsonData.type).to.be.a(\"string\");\n  rq.expect(jsonData.traceId).to.be.a(\"string\");\n});"
+        }
+      },
+      "rank": "a2"
     }
   ],
   "environments": [

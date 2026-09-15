@@ -11,8 +11,8 @@ namespace UnitTests.Application.UseCases.OrdemServico.Commands.AprovarOrdemServi
 
 public class AprovarOrdemServicoPorTokenCommandHandlerTests
 {
-    private const string DocumentoJoaoSilva = "43372251034";
-    private const string DocumentoMariaOliveira = "74694481024";
+    private const string DocumentoJoaoSilva = "52998224725";
+    private const string DocumentoMariaOliveira = "39053344705";
 
     [Fact]
     public async Task Handle_SendsAprovarCommand_WhenTokenAndOwnershipMatch()

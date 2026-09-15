@@ -1,0 +1,21 @@
+{
+  "name": "demo — falhas no fluxo de OS (logs error)",
+  "type": "log alert",
+  "query": "logs(\"service:api env:prod status:error (ordem OR OS OR OrdemServico)\").index(\"*\").rollup(\"count\").last(\"10m\") > 3",
+  "message": "{{#is_alert}}Logs de erro relacionados a OS na API nos últimos 10 minutos. Conferir APM e Logs Explorer.{{/is_alert}}\n{{#is_recovery}}Erros de OS nos logs voltaram ao normal.{{/is_recovery}}",
+  "tags": [
+    "service:api",
+    "env:prod",
+    "demo:tech-challenge"
+  ],
+  "options": {
+    "thresholds": {
+      "critical": 3
+    },
+    "enable_logs_sample": true,
+    "notify_audit": false,
+    "include_tags": true,
+    "groupby_simple_monitor": false
+  },
+  "priority": 3
+}

@@ -8,10 +8,12 @@ Camada **e2e HTTP**: ver também [`06_testes.md`](06_testes.md).
 
 Pasta: [`requestly/`](requestly/)
 
+Collection **única** para API + auth (o repo [`auth`](https://github.com/fiap-vcosta/auth) aponta para cá).
+
 | Arquivo | Uso |
 |---------|-----|
-| [`requestly/tech-challenge.requestly.json`](requestly/tech-challenge.requestly.json) | Collection **exploratória** (todos os endpoints) |
-| [`requestly/tech-challenge-e2e-tests.requestly.json`](requestly/tech-challenge-e2e-tests.requestly.json) | Suites **automatizadas** (Collection Runner) |
+| [`requestly/tech-challenge.requestly.json`](requestly/tech-challenge.requestly.json) | Collection **exploratória** (API + pasta `07-auth`) |
+| [`requestly/tech-challenge-e2e-tests.requestly.json`](requestly/tech-challenge-e2e-tests.requestly.json) | Suites **automatizadas** (inclui `13-auth-emitir-jwt`) |
 | [`requestly/environments/docker.requestly.json`](requestly/environments/docker.requestly.json) | Environment **Docker** → `http://localhost:8080` |
 | [`requestly/environments/local.requestly.json`](requestly/environments/local.requestly.json) | Environment **Local** → `http://localhost:5225` |
 | [`requestly/environments/gcp-gateway.requestly.json`](requestly/environments/gcp-gateway.requestly.json) | Environment **GCP-Gateway** → `https://vcosta-fiap.online` |
@@ -59,7 +61,7 @@ Cole a saída em `tokenCliente`. O script lê `JWT_CLIENTE_*` do `.env`.
 Em cada pasta de fluxo (ex.: `01-criar-com-servicos-ate-entregue`): menu **⋯ → Run**.  
 Cada pasta é autônoma (começa com login) e usa `rq.test` / `rq.expect`.
 
-Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose): pasta Requestly `12-gateway-cliente-aprovar` com environment **GCP-Gateway** (ou Docker/`authUrl` local). Usa CPF **válido** `92561324354` (cria cliente/veículo se preciso — seeds da API usam CPFs inválidos no algoritmo e o auth rejeita).
+Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose): pasta Requestly `12-gateway-cliente-aprovar` com environment **GCP-Gateway** (ou Docker/`authUrl` local). Pode usar o CPF seed **`86421537090`** (João Silva) ou criar cliente/veículo com outro documento válido (ex.: `92561324354`).
 
 O token opaco não vem na API (RF21.2). Após o passo que deixa a OS em `AguardandoAprovacao`, consulte o banco e preencha `tokenAprovacao` no environment antes de seguir o auth + aprovar:
 
@@ -74,9 +76,9 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 - `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 - `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. Para o fluxo com Function auth, use CPF **válido** (ex.: `92561324354` via create cliente); seeds `43372251034` / `74694481024` passam no banco mas falham na validação do auth.
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. Seeds de cliente (ex.: João `86421537090`, Maria `71284693031`) passam na validação do auth; o fluxo Gateway também aceita CPF criado na hora (ex.: `92561324354`).
 
-No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404), `11-jwt-cliente-vs-funcionario-publico` e `12-gateway-cliente-aprovar`.
+No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`) e `07-auth` (emitir JWT); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404), `11-jwt-cliente-vs-funcionario-publico`, `12-gateway-cliente-aprovar` e `13-auth-emitir-jwt`.
 
 ### Endpoint de serviço (RF23 — Function → API)
 

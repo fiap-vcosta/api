@@ -11,6 +11,7 @@ Comece pelo [`README.md`](../README.md) na raiz.
 | `03_02_event-storming-agregados.jpg` | Agregados |
 | [06_testes.md](06_testes.md) | Unitários, integração e e2e HTTP |
 | [07_api.md](07_api.md) | Swagger + Requestly |
+| [08_modelo-de-dados.md](08_modelo-de-dados.md) | ER PostgreSQL + snapshots da OS |
 | [adrs/001-datadog-apm.md](adrs/001-datadog-apm.md) | Observabilidade Datadog (APM) |
 | [`datadog/`](datadog/) | Dashboard JSON + monitores da demo |
 | [`requestly/`](requestly/) | Collections e environments HTTP |

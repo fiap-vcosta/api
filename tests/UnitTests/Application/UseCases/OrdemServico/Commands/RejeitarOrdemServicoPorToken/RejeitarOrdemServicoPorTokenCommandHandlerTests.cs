@@ -11,8 +11,8 @@ namespace UnitTests.Application.UseCases.OrdemServico.Commands.RejeitarOrdemServ
 
 public class RejeitarOrdemServicoPorTokenCommandHandlerTests
 {
-    private const string DocumentoJoaoSilva = "43372251034";
-    private const string DocumentoMariaOliveira = "74694481024";
+    private const string DocumentoJoaoSilva = "86421537090";
+    private const string DocumentoMariaOliveira = "71284693031";
 
     [Fact]
     public async Task Handle_SendsRejeitarCommand_WhenTokenAndOwnershipMatch()

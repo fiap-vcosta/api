@@ -14,7 +14,7 @@ Person(admin, "Atendente / Admin", "Opera cadastros e o ciclo da OS (JWT staff).
 Person(cliente, "Cliente", "Aprova ou rejeita o orcamento (JWT CPF + token opaco).")
 
 System(oficina, "Gestao de Oficina", "Ordens de servico, cadastros, estoque e orcamento.")
-System_Ext(authFn, "Auth cliente", "Cloud Function CPF para JWT.")
+System_Ext(authFn, "Auth cliente", "Cloud Run documento para JWT.")
 
 Rel(admin, oficina, "HTTPS / JWT staff")
 Rel(cliente, authFn, "HTTPS / CPF")
@@ -35,7 +35,7 @@ System_Boundary(oficina, "Gestao de Oficina") {
     Container(api, "API", ".NET 8 / ASP.NET Core", "REST, JWT staff e aprovacao com JWT cliente + token.")
     ContainerDb(db, "PostgreSQL", "Banco relacional", "Clientes, veiculos, OS e estoque.")
 }
-System_Ext(authFn, "Auth cliente", "Function CPF para JWT.")
+System_Ext(authFn, "Auth cliente", "Cloud Run documento para JWT.")
 
 Rel(admin, api, "HTTPS / JWT staff")
 Rel(cliente, authFn, "HTTPS / CPF")
@@ -48,24 +48,35 @@ Fluxo interno da API: `Controller` → `Use Case` → `Gateway` / `Domain` → `
 
 ### Infraestrutura
 
+Diagrama completo (Gateway, Cloud Run auth, stacks): README do [`infra-k8s`](https://github.com/fiap-vcosta/infra-k8s#componentes-nuvem). Visão focada no workload da API:
+
 ```mermaid
 flowchart TB
+  subgraph entry["Entrada"]
+    apex["HTTPS LB apex + API Gateway"]
+  end
   subgraph gcp["GCP"]
     ar[("Artifact Registry")]
     ip["IP global tech-challenge-api"]
+    auth["Cloud Run auth"]
     subgraph gke["GKE Autopilot"]
       ing["Ingress GCE + ManagedCertificate"]
       svc["Service ClusterIP"]
       subgraph pod["Pod"]
         api["API .NET"]
         proxy["Cloud SQL Auth Proxy"]
+        dd["Datadog Agent"]
       end
       hpa["HPA"]
     end
     sql[("Cloud SQL PostgreSQL")]
     sm[("Secret Manager")]
   end
+  datadog["Datadog"]
 
+  apex -->|"/api"| ip
+  apex -->|"/auth"| auth
+  auth -->|"X-Service-Key"| api
   ip --> ing
   ing --> svc
   svc --> api
@@ -74,8 +85,10 @@ flowchart TB
   proxy -->|"IP privado + IAM"| sql
   ar -.->|"imagem"| api
   sm -.->|"senha no deploy"| api
+  dd -->|"APM + logs"| datadog
 ```
 
+Modelo de dados (ER): [`docs/08_modelo-de-dados.md`](docs/08_modelo-de-dados.md). Sequência auth CPF: README do [`auth`](https://github.com/fiap-vcosta/auth).
 ### CI
 
 ```mermaid
@@ -118,7 +131,7 @@ API local: http://localhost:5225
 
 Manifests em [`k8s/`](k8s/): namespace, service account, ConfigMap, Deployment, Service `ClusterIP`, Ingress GCE, ManagedCertificate e HPA. O Deployment roda o **Cloud SQL Auth Proxy como sidecar nativo**, que autentica na instância por IAM (Workload Identity) e escuta em `127.0.0.1:5432` — a API só conhece `localhost`.
 
-Entrada pública: **HTTPS** em `https://api.vcosta-fiap.online` (Ingress GCE + certificado gerenciado). O IP global `tech-challenge-api` e o record DNS da janela vêm do [`infra-k8s`](https://github.com/fiap-vcosta/infra-k8s); o A público na Hostinger (enquanto os NS não forem Google) precisa apontar para esse IP **antes** do cert ficar Active.
+Entrada pública: **HTTPS** em `https://api.vcosta-fiap.online` (Ingress GCE + certificado gerenciado). O IP global `tech-challenge-api` e o record DNS `api` (Cloud DNS) vêm do [`infra-k8s`](https://github.com/fiap-vcosta/infra-k8s); os nameservers do domínio já apontam para o Google, então o A sobe/desce com o `tf-apply` / `tf-destroy`. Entrada oficial do cliente: `https://vcosta-fiap.online/api/...` (API Gateway no apex).
 
 Não há Job de migration: a aplicação roda `db.Database.Migrate()` no start, e o sidecar nativo garante que o túnel esteja pronto antes disso.
 
@@ -131,12 +144,10 @@ O `build-push` mantém o registry sempre com a imagem da `main`, e é independen
 
 Ordem típica na janela (detalhe no README do `infra-k8s`):
 
-1. `infra-db` → `tf-apply`, depois `infra-k8s` → `tf-apply` (cluster + IP estático + records Cloud DNS)
-2. DNS autoritativo atual (Hostinger Zone Editor): **A** `api` → output `api_static_ip`
-3. Este repo → **`deploy`** (Ingress + ManagedCertificate)
-4. Esperar ManagedCertificate **Active** (o smoke do workflow tenta ~15 min; se falhar, reexecute após o cert)
-5. Atualizar org var `API_BASE_URL` para `https://api.vcosta-fiap.online` e reaplicar o Cloud Run auth no `infra-k8s` se necessário
-
+1. `infra-db` → `tf-apply`, depois `infra-k8s` → `tf-apply` (cluster + IP estático + records Cloud DNS `api`/`auth`/apex + Gateway)
+2. Este repo → **`deploy`** (Ingress + ManagedCertificate)
+3. Esperar ManagedCertificate **Active** em `api.…` e o cert do apex (o smoke do workflow tenta ~15 min; se falhar, reexecute após o cert)
+4. Smoke: `https://api.vcosta-fiap.online/health` e `https://vcosta-fiap.online/auth`
 A cada deploy o workflow:
 - lê a senha do banco no Secret Manager;
 - **gera** uma chave JWT de **funcionário** nova (`JwtFuncionario__Key`);
@@ -233,3 +244,11 @@ dotnet test tests/IntegrationTests/IntegrationTests.csproj   # requer Docker
 ## Documentação
 
 Índice: [`docs/README.md`](docs/README.md)
+
+| Repo | Papel | Diagrama / doc-chave |
+|------|--------|----------------------|
+| [`infra-bootstrap`](https://github.com/fiap-vcosta/infra-bootstrap) | Rede, WIF, AR, zona DNS | Persistente |
+| [`infra-db`](https://github.com/fiap-vcosta/infra-db) | Cloud SQL | ADRs de banco |
+| [`infra-k8s`](https://github.com/fiap-vcosta/infra-k8s) | GKE + Gateway + Cloud Run auth | [Componentes](https://github.com/fiap-vcosta/infra-k8s#componentes-nuvem) |
+| [`api`](https://github.com/fiap-vcosta/api) | App + manifests + Requestly | [ER](docs/08_modelo-de-dados.md) · C4 (acima) |
+| [`auth`](https://github.com/fiap-vcosta/auth) | Imagem documento → JWT | Sequência no README |

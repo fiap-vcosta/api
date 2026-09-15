@@ -9,7 +9,7 @@ namespace UnitTests.Application.UseCases.OrdemServico.Queries.GetOrdemServicoByT
 
 public class GetOrdemServicoByTokenEDocumentoQueryHandlerTests
 {
-    private const string DocumentoJoaoSilva = "43372251034";
+    private const string DocumentoJoaoSilva = "86421537090";
 
     [Fact]
     public async Task Handle_ReturnsOrdemId_WhenTokenAndDocumentoMatch()

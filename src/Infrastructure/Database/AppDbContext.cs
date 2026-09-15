@@ -141,7 +141,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 1, 
                 TipoDocumento = 0, 
-                Documento = "43372251034", 
+                Documento = "86421537090", 
                 Nome = "João Silva", 
                 Email = "joao.silva@email.com" 
             },
@@ -149,7 +149,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 2, 
                 TipoDocumento = 0, 
-                Documento = "74694481024", 
+                Documento = "71284693031", 
                 Nome = "Maria Oliveira", 
                 Email = "maria.oliveira@email.com" 
             },
@@ -157,7 +157,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 3, 
                 TipoDocumento = 0, 
-                Documento = "31868352011", 
+                Documento = "15350946056", 
                 Nome = "Carlos Santos", 
                 Email = "carlos.santos@email.com" 
             },
@@ -165,7 +165,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 4, 
                 TipoDocumento = 0, 
-                Documento = "17293524021", 
+                Documento = "23100296028", 
                 Nome = "Ana Costa", 
                 Email = "ana.costa@email.com" 
             },
@@ -173,7 +173,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 5, 
                 TipoDocumento = 0, 
-                Documento = "84617462057", 
+                Documento = "04531783085", 
                 Nome = "Lucas Ferreira", 
                 Email = "lucas.ferreira@email.com" 
             },
@@ -181,7 +181,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 6, 
                 TipoDocumento = (TipoDocumento)1, 
-                Documento = "53820257000159", 
+                Documento = "11222333000181", 
                 Nome = "Auto Peças Central Ltda", 
                 Email = "contato@autopecascentral.com.br" 
             },
@@ -189,7 +189,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 7, 
                 TipoDocumento = (TipoDocumento)1,
-                Documento = "19183615000195", 
+                Documento = "11444777000161", 
                 Nome = "Oficina do Toninho ME", 
                 Email = "oficinatoninho@email.com" 
             },
@@ -197,7 +197,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 8, 
                 TipoDocumento = (TipoDocumento)1,
-                Documento = "75294528000185", 
+                Documento = "12345678000195", 
                 Nome = "Transportadora Rápido Sul", 
                 Email = "logistica@rapidosul.com.br" 
             },
@@ -205,7 +205,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 9, 
                 TipoDocumento = (TipoDocumento)1,
-                Documento = "42168936000152", 
+                Documento = "27865757000102", 
                 Nome = "Locadora de Veículos XYZ", 
                 Email = "frota@xyzlocadora.com.br" 
             },
@@ -213,7 +213,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             { 
                 Id = 10, 
                 TipoDocumento = (TipoDocumento)1,
-                Documento = "85303964000182", 
+                Documento = "60746948000112", 
                 Nome = "Comercial de Baterias Potência", 
                 Email = "vendas@bateriaspotencia.com.br" 
             }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.1.0",
-    "exportedAt": "2026-07-19T05:38:27.104Z",
+    "exportedAt": "2026-09-15T00:00:00.000Z",
     "exportedUsing": "Requestly API Client"
   },
   "records": [
@@ -1412,6 +1412,156 @@
       },
       "rank": "a1",
       "description": "Esperado: 401 Unauthorized"
+    },
+    {
+      "id": "cf6fb991-7f2e-4e59-afd0-6d7fb19966e6",
+      "name": "07-auth",
+      "type": "collection",
+      "parentId": "a8b10b91-f6ac-4582-829c-3c9ee45c44db",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a7",
+      "description": "Function/Cloud Run auth (documento → JWT). Environments: authUrl + documentoCliente. Suites e2e: pasta 13-auth-emitir-jwt."
+    },
+    {
+      "id": "d3612829-8052-4ce3-8d2f-f7812e5938a2",
+      "name": "00-emitir-jwt",
+      "type": "collection",
+      "parentId": "cf6fb991-7f2e-4e59-afd0-6d7fb19966e6",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "POST / com documento (CPF/CNPJ) → JWT cliente. Pré-requisito: API em :8080 e auth em :8081; mesmos JWT_CLIENTE_* / SERVICE_AUTH_KEY."
+    },
+    {
+      "id": "8a65aa5e-5aba-4235-95ae-0b82fe91608c",
+      "name": "emitir-token",
+      "type": "api",
+      "parentId": "d3612829-8052-4ce3-8d2f-f7812e5938a2",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150000001,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"{{documentoCliente}}\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        },
+        "scripts": {
+          "postResponse": "var jsonData = rq.response.json();\nrq.environment.set(\"tokenCliente\", jsonData.token);"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "27f7478e-7c7f-481d-b8dc-609dfe1dd149",
+      "name": "01-casos",
+      "type": "collection",
+      "parentId": "cf6fb991-7f2e-4e59-afd0-6d7fb19966e6",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1",
+      "description": "Casos manuais (Documento inválido / inexistente)."
+    },
+    {
+      "id": "0d790187-7447-4624-918f-d17cb13a3317",
+      "name": "documento-invalido",
+      "type": "api",
+      "parentId": "27f7478e-7c7f-481d-b8dc-609dfe1dd149",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150000002,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"111\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "6b10c568-a299-48a6-a6ef-a0f1e2b4a420",
+      "name": "documento-inexistente",
+      "type": "api",
+      "parentId": "27f7478e-7c7f-481d-b8dc-609dfe1dd149",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{authUrl}}/",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1726150000003,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"documento\": \"11144477735\"\n}",
+            "rawContentType": "application/json"
+          },
+          "contentType": "raw"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1"
     }
   ],
   "environments": [

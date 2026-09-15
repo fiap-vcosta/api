@@ -54,16 +54,16 @@ namespace Infrastructure.Database.Migrations
                 columns: new[] { "Id", "Documento", "Email", "Nome", "TipoDocumento" },
                 values: new object[,]
                 {
-                    { 1, "43372251034", "joao.silva@email.com", "João Silva", "Cpf" },
-                    { 2, "74694481024", "maria.oliveira@email.com", "Maria Oliveira", "Cpf" },
-                    { 3, "31868352011", "carlos.santos@email.com", "Carlos Santos", "Cpf" },
-                    { 4, "17293524021", "ana.costa@email.com", "Ana Costa", "Cpf" },
-                    { 5, "84617462057", "lucas.ferreira@email.com", "Lucas Ferreira", "Cpf" },
-                    { 6, "53820257000159", "contato@autopecascentral.com.br", "Auto Peças Central Ltda", "Cnpj" },
-                    { 7, "19183615000195", "oficinatoninho@email.com", "Oficina do Toninho ME", "Cnpj" },
-                    { 8, "75294528000185", "logistica@rapidosul.com.br", "Transportadora Rápido Sul", "Cnpj" },
-                    { 9, "42168936000152", "frota@xyzlocadora.com.br", "Locadora de Veículos XYZ", "Cnpj" },
-                    { 10, "85303964000182", "vendas@bateriaspotencia.com.br", "Comercial de Baterias Potência", "Cnpj" }
+                    { 1, "86421537090", "joao.silva@email.com", "João Silva", "Cpf" },
+                    { 2, "71284693031", "maria.oliveira@email.com", "Maria Oliveira", "Cpf" },
+                    { 3, "15350946056", "carlos.santos@email.com", "Carlos Santos", "Cpf" },
+                    { 4, "23100296028", "ana.costa@email.com", "Ana Costa", "Cpf" },
+                    { 5, "04531783085", "lucas.ferreira@email.com", "Lucas Ferreira", "Cpf" },
+                    { 6, "11222333000181", "contato@autopecascentral.com.br", "Auto Peças Central Ltda", "Cnpj" },
+                    { 7, "11444777000161", "oficinatoninho@email.com", "Oficina do Toninho ME", "Cnpj" },
+                    { 8, "12345678000195", "logistica@rapidosul.com.br", "Transportadora Rápido Sul", "Cnpj" },
+                    { 9, "27865757000102", "frota@xyzlocadora.com.br", "Locadora de Veículos XYZ", "Cnpj" },
+                    { 10, "60746948000112", "vendas@bateriaspotencia.com.br", "Comercial de Baterias Potência", "Cnpj" }
                 });
 
             migrationBuilder.InsertData(

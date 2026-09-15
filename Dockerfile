@@ -25,6 +25,9 @@ EXPOSE 8080
 
 COPY --from=build --chown=app:app /app/publish .
 
+USER root
+RUN /app/datadog/createLogPath.sh
+
 USER app
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

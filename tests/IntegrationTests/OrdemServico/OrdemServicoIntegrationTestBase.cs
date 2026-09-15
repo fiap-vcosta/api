@@ -10,8 +10,8 @@ namespace IntegrationTests.OrdemServico;
 
 public abstract class OrdemServicoIntegrationTestBase
 {
-    protected const string DocumentoJoaoSilva = "52998224725";
-    protected const string DocumentoMariaOliveira = "39053344705";
+    protected const string DocumentoJoaoSilva = "86421537090";
+    protected const string DocumentoMariaOliveira = "71284693031";
 
     protected static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 

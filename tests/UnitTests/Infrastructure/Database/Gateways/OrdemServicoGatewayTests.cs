@@ -153,7 +153,7 @@ public class OrdemServicoGatewayTests : IDisposable
         await _gateway.CriarAsync(ordem);
 
         // Act
-        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "529.982.247-25");
+        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "864.215.370-90");
 
         // Assert
         Assert.NotNull(saved);
@@ -170,7 +170,7 @@ public class OrdemServicoGatewayTests : IDisposable
         await _gateway.CriarAsync(ordem);
 
         // Act
-        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "39053344705");
+        var saved = await _gateway.GetByTokenEDocumentoAsync(ordem.TokenAprovacao, "71284693031");
 
         // Assert
         Assert.Null(saved);

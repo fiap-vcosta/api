@@ -54,8 +54,8 @@ namespace Infrastructure.Database.Migrations
                 columns: new[] { "Id", "Documento", "Email", "Nome", "TipoDocumento" },
                 values: new object[,]
                 {
-                    { 1, "52998224725", "joao.silva@email.com", "João Silva", "Cpf" },
-                    { 2, "39053344705", "maria.oliveira@email.com", "Maria Oliveira", "Cpf" },
+                    { 1, "86421537090", "joao.silva@email.com", "João Silva", "Cpf" },
+                    { 2, "71284693031", "maria.oliveira@email.com", "Maria Oliveira", "Cpf" },
                     { 3, "15350946056", "carlos.santos@email.com", "Carlos Santos", "Cpf" },
                     { 4, "23100296028", "ana.costa@email.com", "Ana Costa", "Cpf" },
                     { 5, "04531783085", "lucas.ferreira@email.com", "Lucas Ferreira", "Cpf" },

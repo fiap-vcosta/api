@@ -31,7 +31,7 @@ public class OrdemServicoPublicControllerTests
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(
                     [
-                        new Claim(ClienteJwtClaims.Documento, "52998224725")
+                        new Claim(ClienteJwtClaims.Documento, "86421537090")
                     ], authenticationType: "Cliente"))
                 }
             }
@@ -75,7 +75,7 @@ public class OrdemServicoPublicControllerTests
         _mediator.Verify(
             m => m.Send(
                 It.Is<AprovarOrdemServicoPorTokenCommand>(c =>
-                    c.TokenAprovacao == "token-abc" && c.DocumentoCliente == "52998224725"),
+                    c.TokenAprovacao == "token-abc" && c.DocumentoCliente == "86421537090"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }

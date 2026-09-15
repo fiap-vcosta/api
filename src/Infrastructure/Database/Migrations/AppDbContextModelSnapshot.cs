@@ -60,7 +60,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Documento = "52998224725",
+                            Documento = "86421537090",
                             Email = "joao.silva@email.com",
                             Nome = "João Silva",
                             TipoDocumento = "Cpf"
@@ -68,7 +68,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Documento = "39053344705",
+                            Documento = "71284693031",
                             Email = "maria.oliveira@email.com",
                             Nome = "Maria Oliveira",
                             TipoDocumento = "Cpf"

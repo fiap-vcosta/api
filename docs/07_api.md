@@ -61,7 +61,7 @@ Cole a saída em `tokenCliente`. O script lê `JWT_CLIENTE_*` do `.env`.
 Em cada pasta de fluxo (ex.: `01-criar-com-servicos-ate-entregue`): menu **⋯ → Run**.  
 Cada pasta é autônoma (começa com login) e usa `rq.test` / `rq.expect`.
 
-Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose): pasta Requestly `12-gateway-cliente-aprovar` com environment **GCP-Gateway** (ou Docker/`authUrl` local). Pode usar o CPF seed **`52998224725`** (João Silva) ou criar cliente/veículo com outro documento válido (ex.: `92561324354`).
+Caminho feliz **OS → auth → aprovar** (entrada oficial ou Compose): pasta Requestly `12-gateway-cliente-aprovar` com environment **GCP-Gateway** (ou Docker/`authUrl` local). Pode usar o CPF seed **`86421537090`** (João Silva) ou criar cliente/veículo com outro documento válido (ex.: `92561324354`).
 
 O token opaco não vem na API (RF21.2). Após o passo que deixa a OS em `AguardandoAprovacao`, consulte o banco e preencha `tokenAprovacao` no environment antes de seguir o auth + aprovar:
 
@@ -76,7 +76,7 @@ Localiza a OS pelo token opaco na query e exige **JWT de cliente** (Bearer). Own
 - `POST …/ordens-servico/aprovar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 - `POST …/ordens-servico/rejeitar?token=...` (+ `Authorization: Bearer <JWT cliente>`)
 
-Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. Seeds de cliente (ex.: João `52998224725`, Maria `39053344705`) passam na validação do auth; o fluxo Gateway também aceita CPF criado na hora (ex.: `92561324354`).
+Chamam os mesmos use cases de aprovar/rejeitar da API Admin. Sem JWT cliente → `401`. Token inválido ou CPF do JWT ≠ dono da OS → `404` (mesmo shape). O token opaco não é exposto nas responses de criação/consulta. Seeds de cliente (ex.: João `86421537090`, Maria `71284693031`) passam na validação do auth; o fluxo Gateway também aceita CPF criado na hora (ex.: `92561324354`).
 
 No Requestly: pasta exploratória `05-public` (Bearer `{{tokenCliente}}`) e `07-auth` (emitir JWT); e2e `08-contratos-api` (sem JWT → 401; token inválido com JWT → 404), `11-jwt-cliente-vs-funcionario-publico`, `12-gateway-cliente-aprovar` e `13-auth-emitir-jwt`.
 
